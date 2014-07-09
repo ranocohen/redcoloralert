@@ -11,8 +11,14 @@ public class Alert {
 	private long id;
 	private String location;
 	private long x,y;
-	DateTime time;
-	
+	private DateTime time;
+	public Alert(long id, String loc , long x, long y , DateTime time) {
+		this.id = id;
+		this.location = loc;
+		this.x = x;
+		this.y = y;
+		this.time = time;
+	}
 	public Alert(Cursor cursor) {
 		this.id = cursor.getLong(cursor.getColumnIndex(RedColordb.Columns.ID));
 		this.location = cursor.getString(cursor.getColumnIndex(RedColordb.Columns.location));
@@ -40,7 +46,7 @@ public class Alert {
 		this.x = x;
 	}
 	public long getY() {
-		return x;
+		return y;
 	}
 	public void setY(long y) {
 		this.y = y;

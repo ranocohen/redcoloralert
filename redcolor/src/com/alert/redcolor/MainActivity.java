@@ -1,11 +1,18 @@
 package com.alert.redcolor;
 
+import org.joda.time.DateTime;
+
+import com.alert.redcolor.db.AlertProvider;
+import com.alert.redcolor.db.RedColordb;
+import com.alert.redcolor.model.Alert;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -23,6 +30,17 @@ public class MainActivity extends Activity   {
 		   // Notice that setContentView() is not used, because we use the root
 	    // android.R.id.content as the container for each fragment
 
+		
+	
+		//addAlert(new Alert(1,"ASHKELON",2000,1000,new DateTime()));
+		//addAlert(new Alert(2,"BATYAM",3000,1000,new DateTime()));
+		
+		
+		
+		
+		
+		
+		
 	    // setup action bar for tabs
 	    ActionBar actionBar = getActionBar();
 	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -36,9 +54,21 @@ public class MainActivity extends Activity   {
 
 	    tab = actionBar.newTab()
 	                   .setText("Tab2")
-	                   .setTabListener(new TabListener<PlaceholderFragment>(
-	                           this, "tab2", PlaceholderFragment.class));
+	                   .setTabListener(new TabListener<AlertsListFragment>(
+	                           this, "tab2", AlertsListFragment.class));
 	    actionBar.addTab(tab);
+	}
+
+	private void addAlert(Alert alert) {
+		ContentValues cv = new ContentValues();
+		cv.put(RedColordb.Columns.ID , alert.getId());
+		cv.put(RedColordb.Columns.xCord , alert.getX());
+		cv.put(RedColordb.Columns.yCord , alert.getY());
+		cv.put(RedColordb.Columns.location , alert.getLocation());
+		cv.put(RedColordb.Columns.time , alert.getTime().toString());
+		
+		getContentResolver().insert(
+				AlertProvider.ALERTS_CONTENT_URI, cv);
 	}
 
 	@Override
