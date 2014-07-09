@@ -122,7 +122,7 @@ public class MainActivity extends FragmentActivity implements
 					}
 				});
 
-		// For each of the sections in the app, add a tab to the action bar.
+/*		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
 			// Create a tab with text corresponding to the page title defined by
 			// the adapter.
@@ -132,7 +132,15 @@ public class MainActivity extends FragmentActivity implements
 			actionBar.addTab(actionBar.newTab()
 					.setText(mAppSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
-		}
+		}*/
+		//TODO add stings :)
+		actionBar.addTab(actionBar.newTab()
+				.setText("מפה")
+				.setTabListener(this));
+		
+		actionBar.addTab(actionBar.newTab()
+				.setText("רשימת התראות")
+				.setTabListener(this));
 	}
 
 	@Override
@@ -173,6 +181,12 @@ public class MainActivity extends FragmentActivity implements
 				// application.
 				// return new LaunchpadSectionFragment();
 				return new CustomMapFragment();
+			case 1:
+				return new AlertsListFragment();
+				
+				//TODO need to make listview within fragment and not to use listfragmet
+				// (or find a solution for this ^ )
+				// update: found one 
 
 			default:
 				// The other sections of the app are dummy placeholders.
@@ -186,7 +200,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return 3;
+			return 2;
 		}
 
 		@Override

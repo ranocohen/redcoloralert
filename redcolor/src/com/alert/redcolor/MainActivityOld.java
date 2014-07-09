@@ -1,4 +1,4 @@
-package com.alert.redcolor;
+/*package com.alert.redcolor;
 
 import org.joda.time.DateTime;
 
@@ -90,9 +90,9 @@ public class MainActivityOld extends Activity   {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
+	*//**
 	 * A placeholder fragment containing a simple view.
-	 */
+	 *//*
 	public static class PlaceholderFragment extends Fragment {
 
 		public PlaceholderFragment() {
@@ -113,18 +113,18 @@ public class MainActivityOld extends Activity   {
 	    private final String mTag;
 	    private final Class<T> mClass;
 
-	    /** Constructor used each time a new tab is created.
+	    *//** Constructor used each time a new tab is created.
 	      * @param activity  The host Activity, used to instantiate the fragment
 	      * @param tag  The identifier tag for the fragment
 	      * @param clz  The fragment's Class, used to instantiate the fragment
-	      */
+	      *//*
 	    public TabListener(Activity activity, String tag, Class<T> clz) {
 	        mActivity = activity;
 	        mTag = tag;
 	        mClass = clz;
 	    }
 
-	    /* The following are each of the ActionBar.TabListener callbacks */
+	     The following are each of the ActionBar.TabListener callbacks 
 
 	    public void onTabSelected(Tab tab, FragmentTransaction ft) {
 	        // Check if the fragment is already initialized
@@ -150,3 +150,4 @@ public class MainActivityOld extends Activity   {
 	    }
 	}
 }
+*/
