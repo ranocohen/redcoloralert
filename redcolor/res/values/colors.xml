@@ -1,0 +1,66 @@
+<!--
+  Copyright 2011 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+
+    <color name="transparent_white">#22ffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="actionbar_text">#ff29549f</color>
+    <color name="main_color">#ff0086b3</color>
+    <color name="listview_background">#f1f1f1</color>
+    <color name="body_text_1">#ff000000</color>
+    <color name="body_text_2">#99000000</color>
+    <color name="body_text_disabled">#66000000</color>
+    <color name="mygreen">#AACD4B</color>
+    <color name="body_text_1_inverse">#ffffffff</color>
+    <color name="body_text_2_inverse">#99ffffff</color>
+    <color name="dark_grey">#979797</color>
+    <color name="accent_1">#ff29549f</color>
+    <color name="hyperlink">#ffff549f</color>
+    <color name="background_1">#ffffffff</color>
+    <color name="red">#EEDD1E2F</color>
+    <color name="light_blue">#ff0099FF</color>
+    <color name="light_gray">#ffc8c8c8</color>
+    <color name="menu_checked">#ffb1b1b1</color>
+    <color name="list_header">#ffcccccc</color>
+    <color name="gray">#ff646464</color>
+    <color name="gray_transperent">#aaa4a4a4</color>
+    <color name="lighter_gray">#aaF5F5F5</color>
+    <color name="black">#ff000000</color>
+    <color name="all_track_color">#ff222222</color>
+    <color name="menu_background">#ff403D3E</color>
+    <color name="green">#ff33cc33</color>
+    <color name="block_column_1">#ff0fabff</color>
+    <color name="block_column_2">#ffdf1831</color>
+    <color name="block_column_3">#ff009939</color>
+    <color name="background_window">#FFE5E5E5</color>
+    <color name="tab_background">#ffb7b7b7</color>
+    <color name="dark_grey2">#ff5d5d5d</color>
+    <color name="darker_grey">#ff222222</color>
+    <color name="divider">#CC30C590</color>
+
+    <string-array name="colorPicker">
+        <item>#74A6BD</item>
+        <item>#7195A3</item>
+        <item>#90CA77</item>
+        <item>#218559</item>
+        <item>#E48743</item>
+        <item>#E9B64D</item>
+        <item>#DD1E2F</item>
+        <item>#9E3B33</item>
+
+    </string-array>
+
+</resources>

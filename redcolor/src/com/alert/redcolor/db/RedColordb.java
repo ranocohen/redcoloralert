@@ -2,21 +2,9 @@ package com.alert.redcolor.db;
 
 
 
-import java.util.ArrayList;
-import java.util.Locale;
-
-
-
-import android.app.ActionBar.Tab;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Color;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 
 
@@ -45,9 +33,10 @@ public class RedColordb extends SQLiteOpenHelper {
 
 	public interface Columns {
 		public static final String ID = "_id";
-		public static final String xCord = "work_id";
-		public static final String yCord = "date";
-		public static final String time = "start";
+		public static final String xCord = "x";
+		public static final String yCord = "y";
+		public static final String location = "location";
+		public static final String time = "time";
 		
 	}
 	/**
@@ -76,7 +65,8 @@ public class RedColordb extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE " + TABLE_NAME + " ("
 				+ Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ Columns.xCord + " INTEGER, "
-				+ Columns.yCord + " TEXT, "
+				+ Columns.yCord + " INTEGER, "
+				+ Columns.location + " TEXT, "
 				+ Columns.time + " TEXT);");
 				
 	}
@@ -86,6 +76,6 @@ public class RedColordb extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	
 }
