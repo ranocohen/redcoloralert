@@ -22,6 +22,7 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -47,6 +48,9 @@ public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
 		LocationListener {
 
+	//map testing
+	public static MapView map;
+	
 	// Location related variables
 	LocationRequest locationRequest;
 	LocationClient locationClient;
@@ -206,53 +210,6 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public CharSequence getPageTitle(int position) {
 			return "Section " + (position + 1);
-		}
-	}
-
-	/**
-	 * A fragment that launches other parts of the demo application.
-	 */
-	public static class LaunchpadSectionFragment extends Fragment {
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(
-					R.layout.fragment_section_launchpad, container, false);
-
-			// Demonstration of a collection-browsing activity.
-			rootView.findViewById(R.id.demo_collection_button)
-					.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							Intent intent = new Intent(getActivity(),
-									CollectionDemoActivity.class);
-							startActivity(intent);
-						}
-					});
-
-			// Demonstration of navigating to external activities.
-			rootView.findViewById(R.id.demo_external_activity)
-					.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							// Create an intent that asks the user to pick a
-							// photo, but using
-							// FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET, ensures that
-							// relaunching
-							// the application from the device home screen does
-							// not return
-							// to the external activity.
-							Intent externalActivityIntent = new Intent(
-									Intent.ACTION_PICK);
-							externalActivityIntent.setType("image/*");
-							externalActivityIntent
-									.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-							startActivity(externalActivityIntent);
-						}
-					});
-
-			return rootView;
 		}
 	}
 
