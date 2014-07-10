@@ -1,27 +1,10 @@
-/*
- * Copyright 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.alert.redcolor;
 
-<<<<<<< HEAD
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-=======
+
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -38,20 +21,18 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
->>>>>>> refs/heads/maptesting
 
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
-<<<<<<< HEAD
+
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-=======
+
 import android.content.Intent;
 import android.graphics.Color;
->>>>>>> refs/heads/maptesting
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -81,22 +62,14 @@ import com.google.android.gms.maps.MapView;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
-<<<<<<< HEAD
-		LocationListener {
+		LocationListener, OnGoogleMapFragmentListener {
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
 	    
 	private String SENDER_ID = "295544852061";
-	//map testing
-=======
-		LocationListener, OnGoogleMapFragmentListener {
-
-	// map testing
->>>>>>> refs/heads/maptesting
 	public static MapView map;
-<<<<<<< HEAD
 	 
 	 GoogleCloudMessaging gcm;
 	 AtomicInteger msgId = new AtomicInteger();
@@ -104,10 +77,8 @@ public class MainActivity extends FragmentActivity implements
 	Context context;
 
 	    String regid;
-=======
 	private GoogleMap mUIGoogleMap;
 
->>>>>>> refs/heads/maptesting
 	// Location related variables
 	LocationRequest locationRequest;
 	LocationClient locationClient;
@@ -132,7 +103,6 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		context = getApplicationContext();
 		setContentView(R.layout.activity_main);
-<<<<<<< HEAD
 		   // Check device for Play Services APK.
 	    if (checkPlayServices()) {
 	        gcm = GoogleCloudMessaging.getInstance(this);
@@ -146,14 +116,6 @@ public class MainActivity extends FragmentActivity implements
         } else {
             Log.i(Utils.TAG, "No valid Google Play Services APK found.");
         }
-	  
-		LocationManager manager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-		    locationEnabled = false;
-		    Toast.makeText(getApplication(), "Enable location services for accurate data", Toast.LENGTH_SHORT).show();
-		}
-		else locationEnabled = true;
-=======
 
 		//check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
@@ -168,7 +130,6 @@ public class MainActivity extends FragmentActivity implements
 			locationEnabled = true;
 		
 
->>>>>>> refs/heads/maptesting
 
 		locationClient = new LocationClient(this, this, this);
 		
@@ -450,7 +411,6 @@ public class MainActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 	}
-<<<<<<< HEAD
 	
 	// You need to do the Play Services APK check here too.
 	@Override
@@ -638,7 +598,6 @@ public class MainActivity extends FragmentActivity implements
 		e.printStackTrace();
 	}
 	}
-=======
 
 	@Override
 	public void onMapReady(GoogleMap map) {
@@ -646,5 +605,4 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
->>>>>>> refs/heads/maptesting
 }
