@@ -33,10 +33,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -278,7 +280,7 @@ public class MainActivity extends FragmentActivity implements
 				LatLng latLng = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-						latLng, 10);
+						latLng, 17);
 				mUIGoogleMap.animateCamera(cameraUpdate);
 				
 				drawMarkerWithCircle(latLng);
@@ -307,7 +309,11 @@ public class MainActivity extends FragmentActivity implements
 	private void drawMarkerWithCircle(LatLng position){
 	    double radiusInMeters = 100.0;
 	    int strokeColor = 0xffff0000; //red outline
-	    int shadeColor = 0x44ff0000; //opaque red fill
+	    //int shadeColor = 0xffff0000; //opaque red fill
+	    
+	    int shadeColor = Color.argb(255, 255, 0, 00);
+	    
+	    final LatLng positionc = position;
 
 	    CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
 	    mCircle = mUIGoogleMap.addCircle(circleOptions);
@@ -315,13 +321,30 @@ public class MainActivity extends FragmentActivity implements
 	    MarkerOptions markerOptions = new MarkerOptions().position(position);
 	    mMarker = mUIGoogleMap.addMarker(markerOptions);
 	    
-	    long cooldownTime=30000;
+	    final long cooldownTime=10000;
 	    new CountDownTimer(cooldownTime, 1000) {
+	    	
+	    	int start = 0;
+		    int shadeColor = Color.argb(255, 255, 0, 00);
+		    int strokeColor = 0xffff0000; //red outline
+
+		    int interval = 255 / 10; //divide by time in seconds
 
 	        public void onTick(long millisUntilFinished) {
-	        	mUIGoogleMap.clear();
 	        	
-	            //mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+	        	start = start - interval;
+	        	
+	        	int currColor = mCircle.getFillColor();
+	            int r = Color.red(currColor);
+	            int g = Color.green(currColor);
+	            int b = Color.blue(currColor);
+	            int a = Color.alpha(currColor);
+	            
+	            a = a- interval;
+	            
+	        	shadeColor = Color.argb(a, 255, 0, 00);
+	        	
+	        	mCircle.setFillColor(shadeColor);
 	        }
 
 	        public void onFinish() {
