@@ -18,6 +18,17 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="com.example.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+
+ 
+    <!-- Permission to vibrate -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -39,13 +50,26 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD6aB8Ik1HLXf1zkx0ADCNPTCE4g5ndaD8" />
+            android:value="AIzaSyACpdceFkGdmgiybsZXZQ4kF8cpIT5Txrw" />
         
+        <meta-data android:name="com.google.android.gms.version"
+           android:value="@integer/google_play_services_version" />
         
             <provider
             android:name=".db.AlertProvider"
             android:authorities="com.alert.redcolor.provider"
             android:exported="false" />
+            
+           <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".GcmIntentService" />
+
     </application>
 
 </manifest>
