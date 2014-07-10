@@ -16,21 +16,47 @@
 
 package com.alert.redcolor;
 
+<<<<<<< HEAD
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+=======
+import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+>>>>>>> refs/heads/maptesting
 
+import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
+<<<<<<< HEAD
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+=======
+import android.content.Intent;
+import android.graphics.Color;
+>>>>>>> refs/heads/maptesting
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -55,6 +81,7 @@ import com.google.android.gms.maps.MapView;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
+<<<<<<< HEAD
 		LocationListener {
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	public static final String EXTRA_MESSAGE = "message";
@@ -63,7 +90,13 @@ public class MainActivity extends FragmentActivity implements
 	    
 	private String SENDER_ID = "295544852061";
 	//map testing
+=======
+		LocationListener, OnGoogleMapFragmentListener {
+
+	// map testing
+>>>>>>> refs/heads/maptesting
 	public static MapView map;
+<<<<<<< HEAD
 	 
 	 GoogleCloudMessaging gcm;
 	 AtomicInteger msgId = new AtomicInteger();
@@ -71,10 +104,14 @@ public class MainActivity extends FragmentActivity implements
 	Context context;
 
 	    String regid;
+=======
+	private GoogleMap mUIGoogleMap;
+
+>>>>>>> refs/heads/maptesting
 	// Location related variables
 	LocationRequest locationRequest;
 	LocationClient locationClient;
-	boolean locationEnabled;
+	boolean locationEnabled = false;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the three primary sections of the app. We use a
@@ -95,6 +132,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		context = getApplicationContext();
 		setContentView(R.layout.activity_main);
+<<<<<<< HEAD
 		   // Check device for Play Services APK.
 	    if (checkPlayServices()) {
 	        gcm = GoogleCloudMessaging.getInstance(this);
@@ -115,8 +153,27 @@ public class MainActivity extends FragmentActivity implements
 		    Toast.makeText(getApplication(), "Enable location services for accurate data", Toast.LENGTH_SHORT).show();
 		}
 		else locationEnabled = true;
+=======
+
+		//check if location service is on
+		LocationManager manager = (LocationManager) getApplication()
+				.getSystemService(Context.LOCATION_SERVICE);
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+				&& !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+			locationEnabled = false;
+			Toast.makeText(getApplication(),
+					"Enable location services for accurate data",
+					Toast.LENGTH_SHORT).show();
+		} else
+			locationEnabled = true;
+		
+
+>>>>>>> refs/heads/maptesting
 
 		locationClient = new LocationClient(this, this, this);
+		
+		locationClient.connect();
+
 		locationRequest = new LocationRequest();
 		// Use high accuracy
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -160,24 +217,21 @@ public class MainActivity extends FragmentActivity implements
 					}
 				});
 
-/*		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter.
-			// Also specify this Activity object, which implements the
-			// TabListener interface, as the
-			// listener for when this tab is selected.
-			actionBar.addTab(actionBar.newTab()
-					.setText(mAppSectionsPagerAdapter.getPageTitle(i))
-					.setTabListener(this));
-		}*/
-		//TODO add stings :)
-		actionBar.addTab(actionBar.newTab()
-				.setText("מפה")
-				.setTabListener(this));
-		
-		actionBar.addTab(actionBar.newTab()
-				.setText("רשימת התראות")
+		/*
+		 * // For each of the sections in the app, add a tab to the action bar.
+		 * for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) { //
+		 * Create a tab with text corresponding to the page title defined by //
+		 * the adapter. // Also specify this Activity object, which implements
+		 * the // TabListener interface, as the // listener for when this tab is
+		 * selected. actionBar.addTab(actionBar.newTab()
+		 * .setText(mAppSectionsPagerAdapter.getPageTitle(i))
+		 * .setTabListener(this)); }
+		 */
+		// TODO add stings :)
+		actionBar
+				.addTab(actionBar.newTab().setText("מפה").setTabListener(this));
+
+		actionBar.addTab(actionBar.newTab().setText("רשימת התראות")
 				.setTabListener(this));
 	    
 	}
@@ -237,13 +291,14 @@ public class MainActivity extends FragmentActivity implements
 				// a launchpad into the other demonstrations in this example
 				// application.
 				// return new LaunchpadSectionFragment();
-				return new CustomMapFragment();
+				return new GoogleMapFragment();
 			case 1:
 				return new AlertsListFragment();
-				
-				//TODO need to make listview within fragment and not to use listfragmet
+
+				// TODO need to make listview within fragment and not to use
+				// listfragmet
 				// (or find a solution for this ^ )
-				// update: found one 
+				// update: found one
 
 			default:
 				// The other sections of the app are dummy placeholders.
@@ -299,31 +354,103 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
+	//check if the client already has the last location
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Location location = locationClient.getLastLocation();
 		if (location == null)
+			locationClient.connect();
 			locationClient.requestLocationUpdates(locationRequest, this);
-		
+
 		if (location != null) {
-		    Toast.makeText(getApplication(), "Location: " + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+			//animate to last location
+			if (mUIGoogleMap != null) {
+
+				LatLng latLng = new LatLng(location.getLatitude(),
+						location.getLongitude());
+				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+						latLng, 17);
+				mUIGoogleMap.animateCamera(cameraUpdate);
+				
+				drawMarkerWithCircle(latLng);
+				
+				// else
+				/*
+				 * Toast.makeText( getActivity(), "Location: " +
+				 * location.getLatitude() + ", " + location.getLongitude(),
+				 * Toast.LENGTH_SHORT) .show();
+				 */
+			}
+		} else if (location == null && locationEnabled) {
+			locationClient.requestLocationUpdates(locationRequest, this);
 		}
-		else if (location == null && locationEnabled) {
-		    locationClient.requestLocationUpdates(locationRequest, this);
-		}
-		// else
-		/*
-		 * Toast.makeText( getActivity(), "Location: " + location.getLatitude()
-		 * + ", " + location.getLongitude(), Toast.LENGTH_SHORT) .show();
-		 */
+
+
 
 	}
+	
+	//maps circle "hotzone" overlay
+/*	private void updateMarkerWithCircle(LatLng position) {
+	    mCircle.setCenter(position);
+	    mMarker.setPosition(position);
+	}*/
+
+	private void drawMarkerWithCircle(LatLng position){
+	    double radiusInMeters = 100.0;
+	    int strokeColor = 0xffff0000; //red outline
+	    //int shadeColor = 0xffff0000; //opaque red fill
+	    
+	    int shadeColor = Color.argb(255, 255, 0, 00);
+	    
+	    final LatLng positionc = position;
+
+	    CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
+	    mCircle = mUIGoogleMap.addCircle(circleOptions);
+
+	    MarkerOptions markerOptions = new MarkerOptions().position(position);
+	    mMarker = mUIGoogleMap.addMarker(markerOptions);
+	    
+	    final long cooldownTime=10000;
+	    new CountDownTimer(cooldownTime, 1000) {
+	    	
+	    	int start = 0;
+		    int shadeColor = Color.argb(255, 255, 0, 00);
+		    int strokeColor = 0xffff0000; //red outline
+
+		    int interval = 255 / 10; //divide by time in seconds
+
+	        public void onTick(long millisUntilFinished) {
+	        	
+	        	start = start - interval;
+	        	
+	        	int currColor = mCircle.getFillColor();
+	            int r = Color.red(currColor);
+	            int g = Color.green(currColor);
+	            int b = Color.blue(currColor);
+	            int a = Color.alpha(currColor);
+	            
+	            a = a- interval;
+	            
+	        	shadeColor = Color.argb(a, 255, 0, 00);
+	        	
+	        	mCircle.setFillColor(shadeColor);
+	        }
+
+	        public void onFinish() {
+	            //mTextField.setText("done!");
+	        }
+	     }.start();
+	}
+	
+	private Circle mCircle;
+	private Marker mMarker;
 
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
 
 	}
+<<<<<<< HEAD
 	
 	// You need to do the Play Services APK check here too.
 	@Override
@@ -511,4 +638,13 @@ public class MainActivity extends FragmentActivity implements
 		e.printStackTrace();
 	}
 	}
+=======
+
+	@Override
+	public void onMapReady(GoogleMap map) {
+		mUIGoogleMap = map;
+
+	}
+
+>>>>>>> refs/heads/maptesting
 }
