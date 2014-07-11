@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.RedColordb;
@@ -64,7 +65,11 @@ public class GcmIntentService extends IntentService
               	String time = extras.getString("timestamp");
               	Long l = Long.parseLong(time);
               	DateTime dt = new DateTime(l.longValue()*1000);
-              	
+              	String locationProvider = LocationManager.NETWORK_PROVIDER;
+					// Or use LocationManager.GPS_PROVIDER
+					LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+					Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+					
               	try {
   					JSONArray json = new JSONArray(jsonStr);
   					for(int i =0;i<json.length();i++) {
@@ -82,13 +87,15 @@ public class GcmIntentService extends IntentService
   								AlertProvider.ALERTS_CONTENT_URI, cv);
   						
   					
+  					
+  					
   						
-  						sendNotification("Received: " + extras.toString());
   					}
   				} catch (JSONException e) {
   					// TODO Auto-generated catch block
   					e.printStackTrace();
   				}
+              	  sendNotification("Received: " + extras.toString());
                   Log.i(Utils.TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                   // Post notification of received message.
                  
