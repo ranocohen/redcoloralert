@@ -613,7 +613,7 @@ public class MainActivity extends FragmentActivity implements
 	private void sendRegistrationIdToBackend(String regId) {
 		String serverUrl = Utils.SERVER_URL;
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("_id", regId);
+		params.put("regid", regId);
 		params.put("name", "idan");
 
 		try {
