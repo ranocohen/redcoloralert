@@ -25,23 +25,14 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationClient;
 
-public class GcmIntentService extends IntentService implements  GooglePlayServicesClient.ConnectionCallbacks,
-GooglePlayServicesClient.OnConnectionFailedListener {
+public class GcmIntentService extends IntentService
+ {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder builder;
-    private LocationClient mLocationClient;
-    private Location myLoc;
-    @Override
-    public void onCreate() {
-    
-    	super.onCreate();
-        /*
-         * Create a new location client, using the enclosing class to
-         * handle callbacks.
-         */
-        mLocationClient = new LocationClient(this, this, this);
-    }
+
+
+
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -93,7 +84,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
   						getContentResolver().insert(
   								AlertProvider.ALERTS_CONTENT_URI, cv);
   						
-  						myLoc = mLocationClient.getLastLocation();
+  					
   						
   						sendNotification("Received: " + extras.toString());
   					}
@@ -134,43 +125,6 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-	   
-        	 Toast.makeText(this, "Error cant get location.",
-                     Toast.LENGTH_SHORT).show();
-        
-    
-		
-	}
 
-	@Override
-	public void onConnected(Bundle arg0) {
-        // Display the connection status
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-		
-	}
-
-	@Override
-	public void onDisconnected() {
-		   // Display the connection status
-        Toast.makeText(this, "Disconnected. Please re-connect.",
-                Toast.LENGTH_SHORT).show();
-		
-	}
-	
-	@Override
-	public void onStart(Intent intent, int startId) {
-	
-		super.onStart(intent, startId);
-		mLocationClient.connect();
-	}
-	@Override
-	public void onDestroy() {
-		
-		super.onDestroy();
-		// Disconnecting the client invalidates it.
-        mLocationClient.disconnect();
-	}
 	
 }
