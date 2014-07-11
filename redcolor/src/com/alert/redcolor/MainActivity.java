@@ -602,6 +602,11 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onMapReady(GoogleMap map) {
 		mUIGoogleMap = map;
+		
+		mUIGoogleMap.setMyLocationEnabled(true);
+		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
 
 	}
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 
 public class GoogleMapFragment extends SupportMapFragment {
 
@@ -28,6 +29,12 @@ public class GoogleMapFragment extends SupportMapFragment {
 
         GoogleMapFragment fragment = new GoogleMapFragment();
         fragment.setArguments(arguments);
+        
+
+        //fragment.getMap().getUiSettings().setMyLocationButtonEnabled(true);
+        fragment.getMap().getUiSettings().setCompassEnabled(true);
+        fragment.getMap().getUiSettings().setZoomControlsEnabled(false);
+                
         return fragment;
     }
 
