@@ -4,10 +4,11 @@ package com.alert.redcolor.db;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,7 +16,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alert.redcolor.R;
-import com.alert.redcolor.Utils;
 
 
 
@@ -139,9 +139,15 @@ public class RedColordb extends SQLiteOpenHelper {
 		          
 		           
 		             String oref_loc_str = data[3];
+		             Pattern pattern = Pattern.compile("^(?<area>.*)\\s(?<num>\\d*)(?:\\s(.*))?$");
+		             int oref_idx=0;
+		             Matcher m = pattern.matcher(oref_loc_str);
+		             if (m.matches()) {
+		               oref_idx = Integer.parseInt(m.group(2));
+		             }
+		            
 		             
-		             String idxStr = oref_loc_str.substring(oref_loc_str.lastIndexOf(' ') + 1);
-		             Integer oref_idx = Integer.parseInt(idxStr);
+		             
 		             String time = data[4];
 		             Double lat = Double.parseDouble(data[5]);
 		             Double lng = Double.parseDouble(data[6]);
@@ -167,9 +173,15 @@ public class RedColordb extends SQLiteOpenHelper {
 		        	
 		        	ContentValues orefCv = new ContentValues();
 		        	
-		        	String name = curr.substring(0,curr.lastIndexOf(' '));
-		        	String idxStr = curr.substring(curr.lastIndexOf(' ') + 1);
-		            Integer oref_idx = Integer.parseInt(idxStr);
+		            Pattern pattern = Pattern.compile("^(?<area>.*)\\s(?<num>\\d*)(?:\\s(.*))?$");
+		             int oref_idx=0;
+		             String name="";
+		             Matcher m = pattern.matcher(curr);
+		             if (m.matches()) {
+		            	 name = m.group(1);
+		               oref_idx = Integer.parseInt(m.group(2));
+		             }
+		            
 		        	orefCv.put(OrefColumns.index, oref_idx);
 		        	orefCv.put(OrefColumns.name, name);
 		        	
