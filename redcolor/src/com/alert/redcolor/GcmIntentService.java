@@ -33,7 +33,7 @@ public class GcmIntentService extends IntentService
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder builder;
-    
+    /*
     boolean mBound = false;
 
     BackgroundLocationService mService;
@@ -54,7 +54,7 @@ public class GcmIntentService extends IntentService
             Log.e("GCM disconnected from location", "onServiceDisconnected");
             mBound = false;
         }
-    };
+    };*/
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -124,9 +124,9 @@ public class GcmIntentService extends IntentService
   				}
               	  sendNotification("Received: " + extras.toString());
               	  
-              	Intent intent1 = new Intent(this, BackgroundLocationService.class);
+              	/*Intent intent1 = new Intent(this, BackgroundLocationService.class);
               	bindService(intent1, mConnection, Context.BIND_AUTO_CREATE);
-              	  
+              	  */
                   Log.i(Utils.TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                   // Post notification of received message.
                  
