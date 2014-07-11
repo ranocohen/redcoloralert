@@ -5,39 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
-
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -50,6 +30,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
+import com.alert.redcolor.db.RedColordb;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
@@ -58,7 +40,15 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
@@ -102,6 +92,7 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = getApplicationContext();
+		initFirstData();
 		setContentView(R.layout.activity_main);
 		   // Check device for Play Services APK.
 	    if (checkPlayServices()) {
@@ -194,6 +185,7 @@ public class MainActivity extends FragmentActivity implements
 				.setTabListener(this));
 	    
 	}
+
 	/**
 	 * Check the device to make sure it has the Google Play Services APK. If
 	 * it doesn't, display a dialog that allows users to download the APK from
@@ -362,7 +354,16 @@ public class MainActivity extends FragmentActivity implements
 	    int shadeColor = Color.argb(255, 255, 0, 00);
 	    
 	    final LatLng positionc = position;
-
+	    Location l = new Location("");
+	    l.setLatitude(position.latitude);
+	    l.setLatitude(position.longitude);
+	    
+	    Location l2 = new Location("");
+	    l.setLatitude(position.latitude);
+	    l.setLatitude(position.longitude);
+	    
+	    
+	    
 	    CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
 	    mCircle = mUIGoogleMap.addCircle(circleOptions);
 
@@ -512,54 +513,9 @@ public class MainActivity extends FragmentActivity implements
 	    
 		
 	}
-	/**
-	 * Registers the application with GCM servers asynchronously.
-	 * <p>
-	 * Stores the registration ID and app versionCode in the application's
-	 * shared preferences.
-	 */
-	private void registerInBackground(final String regid2) {
 
-		new AsyncTask<Void, Void, String>() {
-			 
-            protected String doInBackground(Void... params) {
-            	 String msg = "";
-                 try {
-                     if (gcm == null) {
-                         gcm = GoogleCloudMessaging.getInstance(context);
-                     }
-                     regid = gcm.register(SENDER_ID);
-                     msg = "Device registered, registration ID=" + regid;
-
-                     // You should send the registration ID to your server over HTTP,
-                     // so it can use GCM/HTTP or CCS to send messages to your app.
-                     // The request to your server should be authenticated if your app
-                     // is using accounts.
-                     sendRegistrationIdToBackend(regid2);
-
-                     // For this demo: we don't need to send it because the device
-                     // will send upstream messages to a server that echo back the
-                     // message using the 'from' address in the message.
-
-                     // Persist the regID - no need to register again.
-                     storeRegistrationId(context, regid2);
-                 } catch (IOException ex) {
-                     msg = "Error :" + ex.getMessage();
-                     // If there is an error, don't just keep trying to register.
-                     // Require the user to click a button again, or perform
-                     // exponential back-off.
-                 }
-                 return msg;
-             }
-
-             @Override
-             protected void onPostExecute(String msg) {
-                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-             }
-         }.execute(null, null, null);
-	    
 		
-	}
+	
 	/**
 	 * Stores the registration ID and app versionCode in the application's
 	 * {@code SharedPreferences}.
@@ -607,5 +563,19 @@ public class MainActivity extends FragmentActivity implements
 
 
 	}
-
+	/* Inserting the data from csv to database only in the first launch */
+	private void initFirstData() {
+		  
+		  SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		  boolean firstInit = preferences.getBoolean("firstInit", false);
+		  if(!firstInit)
+		  {
+			  SharedPreferences.Editor editor = preferences.edit();
+			  editor.putBoolean("firstInit",true);
+			  editor.apply();  
+			  RedColordb.initData(getApplicationContext());
+		  }
+		  
+		
+	}
 }

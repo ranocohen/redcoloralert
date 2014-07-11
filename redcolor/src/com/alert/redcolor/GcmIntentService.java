@@ -10,21 +10,38 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.model.Alert;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.location.LocationClient;
 
-public class GcmIntentService extends IntentService {
+public class GcmIntentService extends IntentService implements  GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
-    NotificationCompat.Builder builder;
-
+    private NotificationCompat.Builder builder;
+    private LocationClient mLocationClient;
+    private Location myLoc;
+    @Override
+    public void onCreate() {
+    
+    	super.onCreate();
+        /*
+         * Create a new location client, using the enclosing class to
+         * handle callbacks.
+         */
+        mLocationClient = new LocationClient(this, this, this);
+    }
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -68,13 +85,17 @@ public class GcmIntentService extends IntentService {
   						
   						
   						ContentValues cv = new ContentValues();
-  						cv.put(RedColordb.Columns.xCord , alert.getX());
-  						cv.put(RedColordb.Columns.yCord , alert.getY());
-  						cv.put(RedColordb.Columns.location , alert.getLocation());
-  						cv.put(RedColordb.Columns.time , alert.getTime().toString());
+  						cv.put(RedColordb.AlertColumns.lat, alert.getLat());
+  						cv.put(RedColordb.AlertColumns.lng , alert.getLng());
+  						cv.put(RedColordb.AlertColumns.location , alert.getLocation());
+  						cv.put(RedColordb.AlertColumns.time , alert.getTime().toString());
   						
   						getContentResolver().insert(
   								AlertProvider.ALERTS_CONTENT_URI, cv);
+  						
+  						myLoc = mLocationClient.getLastLocation();
+  						
+  						sendNotification("Received: " + extras.toString());
   					}
   				} catch (JSONException e) {
   					// TODO Auto-generated catch block
@@ -82,7 +103,7 @@ public class GcmIntentService extends IntentService {
   				}
                   Log.i(Utils.TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                   // Post notification of received message.
-                  sendNotification("Received: " + extras.toString());
+                 
                   Log.i(Utils.TAG, "Received: " + extras.toString());
                   
               }
@@ -104,7 +125,7 @@ public class GcmIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
         .setContentTitle("GCM Notification")
-         .setSmallIcon(R.drawable.ic_launcher)
+        .setSmallIcon(R.drawable.ic_launcher)
         .setStyle(new NotificationCompat.BigTextStyle()
         .bigText(msg))
         .setContentText(msg);
@@ -112,4 +133,44 @@ public class GcmIntentService extends IntentService {
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+	   
+        	 Toast.makeText(this, "Error cant get location.",
+                     Toast.LENGTH_SHORT).show();
+        
+    
+		
+	}
+
+	@Override
+	public void onConnected(Bundle arg0) {
+        // Display the connection status
+        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+		
+	}
+
+	@Override
+	public void onDisconnected() {
+		   // Display the connection status
+        Toast.makeText(this, "Disconnected. Please re-connect.",
+                Toast.LENGTH_SHORT).show();
+		
+	}
+	
+	@Override
+	public void onStart(Intent intent, int startId) {
+	
+		super.onStart(intent, startId);
+		mLocationClient.connect();
+	}
+	@Override
+	public void onDestroy() {
+		
+		super.onDestroy();
+		// Disconnecting the client invalidates it.
+        mLocationClient.disconnect();
+	}
+	
 }
