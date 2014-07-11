@@ -111,8 +111,6 @@ public class MainActivity extends FragmentActivity implements
             if (regid.isEmpty()) {
                 registerInBackground();
             }
-            else
-            	registerInBackground(regid);
         } else {
             Log.i(Utils.TAG, "No valid Google Play Services APK found.");
         }
