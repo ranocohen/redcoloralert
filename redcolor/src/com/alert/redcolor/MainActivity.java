@@ -419,19 +419,46 @@ public class MainActivity extends FragmentActivity implements
 
 				mCircle.setStrokeColor(Color.argb(a1, 255, 0, 0));
 
-				//inform the user how much time left to stay in safe place
-				int timeLeft = (int) (millisUntilFinished/1000);
-				String msgFormat = getResources().getString(R.string.safe_place_timer);
-				String strMsg = String.format(msgFormat, timeLeft);
-
-				Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT)
-				.show();
 			}
 
 			public void onFinish() {
 				// mTextField.setText("done!");
 			}
 		}.start();
+	}
+	
+	public void stayInSafePlaceTimer() {
+		
+		final long cooldownTime = 1 * 10 * 1000; // 10 seconds
+		final long intervalTime = 1 * 1000; // 1 second interval
+		final int coolTime = 10;
+
+		// TODO change DEBUG Values
+		/*
+		 * final long cooldownTime = 10*60*1000; //10 minutes final long
+		 * intervalTime = 1*60*1000; //1 minute interval final int coolTime =
+		 * 10;
+		 */
+		new CountDownTimer(cooldownTime,intervalTime) {
+			
+			@Override
+			public void onTick(long millisUntilFinished) {
+				//inform the user how much time left to stay in safe place
+				int timeLeft = (int) (millisUntilFinished/1000);
+				String msgFormat = getResources().getString(R.string.safe_place_timer);
+				String strMsg = String.format(msgFormat, timeLeft);
+
+				Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT)
+				.show();				
+			}
+			
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
 	}
 
 	private Circle mCircle;
