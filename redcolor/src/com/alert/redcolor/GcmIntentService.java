@@ -123,6 +123,10 @@ public class GcmIntentService extends IntentService
   					e.printStackTrace();
   				}
               	  sendNotification("Received: " + extras.toString());
+              	  
+              	Intent intent1 = new Intent(this, BackgroundLocationService.class);
+              	bindService(intent1, mConnection, Context.BIND_AUTO_CREATE);
+              	  
                   Log.i(Utils.TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                   // Post notification of received message.
                  
