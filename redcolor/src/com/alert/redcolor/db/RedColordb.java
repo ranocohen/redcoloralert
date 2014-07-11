@@ -131,7 +131,11 @@ public class RedColordb extends SQLiteOpenHelper {
 		SortedSet<String> oref_loc = new TreeSet<String>();
 		    try {
 		        String line;
-		        while ((line = reader.readLine()) != null) {
+		        while ((line = reader.readLine()) != null ) {
+		        	
+		        	if(line.length()<=3)
+		        		break;
+		        		
 		             String[] data = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 		             
 		             String he_name = data[1];
@@ -139,15 +143,21 @@ public class RedColordb extends SQLiteOpenHelper {
 		          
 		           
 		             String oref_loc_str = data[3];
-		             Pattern pattern = Pattern.compile("^(?<area>.*)\\s(?<num>\\d*)(?:\\s(.*))?$");
-		             int oref_idx=0;
-		             Matcher m = pattern.matcher(oref_loc_str);
-		             if (m.matches()) {
-		               oref_idx = Integer.parseInt(m.group(2));
-		             }
-		            
+		             Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
 		             
-		             
+			         Matcher matcher = pattern.matcher(oref_loc_str.trim());
+			         
+			            
+			            String num = "";
+			           
+			            while (matcher.find()) 
+			                num = matcher.group(2);
+			         int oref_idx=0;   
+			         
+			         if(num.equals(""))   
+			        	 oref_idx = 1;
+			         else
+			         oref_idx = Integer.parseInt(num);
 		             String time = data[4];
 		             Double lat = Double.parseDouble(data[5]);
 		             Double lng = Double.parseDouble(data[6]);
@@ -172,18 +182,22 @@ public class RedColordb extends SQLiteOpenHelper {
 		        for(String curr : oref_loc) {
 		        	
 		        	ContentValues orefCv = new ContentValues();
-		        	
-		            Pattern pattern = Pattern.compile("^(?<area>.*)\\s(?<num>\\d*)(?:\\s(.*))?$");
-		             int oref_idx=0;
-		             String name="";
-		             Matcher m = pattern.matcher(curr);
-		             if (m.matches()) {
-		            	 name = m.group(1);
-		               oref_idx = Integer.parseInt(m.group(2));
-		             }
+		        	Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
+		            Matcher matcher = pattern.matcher(curr.trim());
+
+		            String area = "";
+		            String num = "";
+
+		            while (matcher.find()) {
+		            	area = matcher.group(1);
+			            num = matcher.group(2);
+		            }
 		            
+
+		             int oref_idx= Integer.parseInt(num);
+		             
 		        	orefCv.put(OrefColumns.index, oref_idx);
-		        	orefCv.put(OrefColumns.name, name);
+		        	orefCv.put(OrefColumns.name, area);
 		        	
 		        	mCon.getContentResolver().insert(
 							AlertProvider.OREF_CONTENT_URI, orefCv);
