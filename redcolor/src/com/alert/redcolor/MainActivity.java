@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
 import com.alert.redcolor.db.RedColordb;
+import com.alert.redcolor.services.BackgroundLocationService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
@@ -92,6 +94,10 @@ public class MainActivity extends FragmentActivity implements
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// run location service
+		Intent intent = new Intent(this, BackgroundLocationService.class);
+		startService(intent);
 
 		context = getApplicationContext();
 		initFirstData();
@@ -400,8 +406,6 @@ public class MainActivity extends FragmentActivity implements
 			int strockInterval = 240 / coolTime;
 
 			public void onTick(long millisUntilFinished) {
-				
-				
 
 				// filling alpha reduction
 				int currFillColor = mCircle.getFillColor();
@@ -426,9 +430,9 @@ public class MainActivity extends FragmentActivity implements
 			}
 		}.start();
 	}
-	
+
 	public void stayInSafePlaceTimer() {
-		
+
 		final long cooldownTime = 1 * 10 * 1000; // 10 seconds
 		final long intervalTime = 1 * 1000; // 1 second interval
 		final int coolTime = 10;
@@ -439,27 +443,28 @@ public class MainActivity extends FragmentActivity implements
 		 * intervalTime = 1*60*1000; //1 minute interval final int coolTime =
 		 * 10;
 		 */
-		new CountDownTimer(cooldownTime,intervalTime) {
-			
+		new CountDownTimer(cooldownTime, intervalTime) {
+
 			@Override
 			public void onTick(long millisUntilFinished) {
-				//inform the user how much time left to stay in safe place
-				int timeLeft = (int) (millisUntilFinished/1000);
-				String msgFormat = getResources().getString(R.string.safe_place_timer);
+				// inform the user how much time left to stay in safe place
+				int timeLeft = (int) (millisUntilFinished / 1000);
+				String msgFormat = getResources().getString(
+						R.string.safe_place_timer);
 				String strMsg = String.format(msgFormat, timeLeft);
 
-				Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT)
-				.show();				
+				Toast.makeText(getApplicationContext(), strMsg,
+						Toast.LENGTH_SHORT).show();
 			}
-			
+
 			@Override
 			public void onFinish() {
 
-				Toast.makeText(getApplicationContext(), "אפשר לצאת ממרחב מוגן", Toast.LENGTH_SHORT)
-				.show();				
+				Toast.makeText(getApplicationContext(), "אפשר לצאת ממרחב מוגן",
+						Toast.LENGTH_SHORT).show();
 			}
 		};
-		
+
 	}
 
 	private Circle mCircle;
@@ -615,7 +620,6 @@ public class MainActivity extends FragmentActivity implements
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("regid", regId);
 		params.put("name", "ran");
-
 
 		try {
 			ServerUtils.post(serverUrl, params);

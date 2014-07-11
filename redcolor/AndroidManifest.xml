@@ -69,6 +69,7 @@
             </intent-filter>
         </receiver>
         <service android:name=".GcmIntentService" />
+         <service android:name=".services.BackgroundLocationService" />
 
     </application>
 
