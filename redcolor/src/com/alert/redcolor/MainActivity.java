@@ -331,7 +331,8 @@ public class MainActivity extends FragmentActivity implements
 						latLng, 17);
 				mUIGoogleMap.animateCamera(cameraUpdate);
 				
-				drawMarkerWithCircle(latLng);
+				drawAlertHotzone(latLng);
+				
 				
 				// else
 				/*
@@ -353,8 +354,14 @@ public class MainActivity extends FragmentActivity implements
 	    mCircle.setCenter(position);
 	    mMarker.setPosition(position);
 	}*/
-
-	private void drawMarkerWithCircle(LatLng position){
+	
+	
+	/**
+	 * gets location for code red alert and mark the area as a 'hot zone' which would slowly faded
+	 * after 10 minutes according to home front command guidance 
+	 * @param position - where the code red alert was 'fired'
+	 */
+	private void drawAlertHotzone(LatLng position){
 	    double radiusInMeters = 100.0;
 	    int strokeColor = 0xffff0000; //red outline
 	    //int shadeColor = 0xffff0000; //opaque red fill
