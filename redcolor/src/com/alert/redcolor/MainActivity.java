@@ -616,6 +616,7 @@ public class MainActivity extends FragmentActivity implements
 		params.put("regid", regId);
 		params.put("name", "ran");
 
+
 		try {
 			ServerUtils.post(serverUrl, params);
 		} catch (IOException e) {

@@ -122,99 +122,111 @@ public class RedColordb extends SQLiteOpenHelper {
 		
 	}
 	
-	public static void initData(Context mCon) {
+	public static void initData(final Context mCon) {
 /* Inserting data to oref and cities tables from lidan's json file*/
 		
-		InputStreamReader isr = new InputStreamReader(
-					mCon.getResources().openRawResource(R.raw.redalert_en));
-		BufferedReader reader = new BufferedReader(isr);
-		SortedSet<String> oref_loc = new TreeSet<String>();
-		    try {
-		        String line;
-		        while ((line = reader.readLine()) != null ) {
-		        	
-		        	if(line.length()<=3)
-		        		break;
-		        		
-		             String[] data = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-		             
-		             String he_name = data[1];
-		             String en_name = data[2];
-		          
-		           
-		             String oref_loc_str = data[3];
-		             Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
-		             
-			         Matcher matcher = pattern.matcher(oref_loc_str.trim());
-			         
-			            
-			            String num = "";
+		
+		Runnable runnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				InputStreamReader isr = new InputStreamReader(
+						mCon.getResources().openRawResource(R.raw.redalert_en));
+			BufferedReader reader = new BufferedReader(isr);
+			SortedSet<String> oref_loc = new TreeSet<String>();
+			    try {
+			        String line;
+			        while ((line = reader.readLine()) != null ) {
+			        	
+			        	if(line.length()<=3)
+			        		break;
+			        		
+			             String[] data = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+			             
+			             String he_name = data[1];
+			             String en_name = data[2];
+			          
 			           
-			            while (matcher.find()) 
-			                num = matcher.group(2);
-			         int oref_idx=0;   
-			         
-			         if(num.equals(""))   
-			        	 oref_idx = 1;
-			         else
-			         oref_idx = Integer.parseInt(num);
-		             String time = data[4];
-		             Double lat = Double.parseDouble(data[5]);
-		             Double lng = Double.parseDouble(data[6]);
-		             
-		             ContentValues cityCv = new ContentValues();
-		             cityCv.put(CitiesColumns.lat, lat);
-		             cityCv.put(CitiesColumns.lng , lng);
-		             cityCv.put(CitiesColumns.name_he, he_name);
-		             cityCv.put(CitiesColumns.name_en , en_name);
-		             cityCv.put(CitiesColumns.oref_id, oref_idx);
-		             cityCv.put(CitiesColumns.time, time);
-		            
+			             String oref_loc_str = data[3];
+			             Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
+			             
+				         Matcher matcher = pattern.matcher(oref_loc_str.trim());
+				         
+				            
+				            String num = "";
+				           
+				            while (matcher.find()) 
+				                num = matcher.group(2);
+				         int oref_idx=0;   
+				         
+				         if(num.equals(""))   
+				        	 oref_idx = 1;
+				         else
+				         oref_idx = Integer.parseInt(num);
+			             String time = data[4];
+			             Double lat = Double.parseDouble(data[5]);
+			             Double lng = Double.parseDouble(data[6]);
+			             
+			             ContentValues cityCv = new ContentValues();
+			             cityCv.put(CitiesColumns.lat, lat);
+			             cityCv.put(CitiesColumns.lng , lng);
+			             cityCv.put(CitiesColumns.name_he, he_name);
+			             cityCv.put(CitiesColumns.name_en , en_name);
+			             cityCv.put(CitiesColumns.oref_id, oref_idx);
+			             cityCv.put(CitiesColumns.time, time);
+			            
+							
+						mCon.getContentResolver().insert(
+									AlertProvider.CITIES_CONTENT_URI, cityCv);
 						
-					mCon.getContentResolver().insert(
-								AlertProvider.CITIES_CONTENT_URI, cityCv);
-					
-					//Avoid duplicates of pikud areas   
-					oref_loc.add(oref_loc_str);
-						
-		            
-		        }
-		        for(String curr : oref_loc) {
-		        	
-		        	ContentValues orefCv = new ContentValues();
-		        	Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
-		            Matcher matcher = pattern.matcher(curr.trim());
+						//Avoid duplicates of pikud areas   
+						oref_loc.add(oref_loc_str);
+							
+			            
+			        }
+			        for(String curr : oref_loc) {
+			        	
+			        	ContentValues orefCv = new ContentValues();
+			        	Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
+			            Matcher matcher = pattern.matcher(curr.trim());
 
-		            String area = "";
-		            String num = "";
+			            String area = "";
+			            String num = "";
 
-		            while (matcher.find()) {
-		            	area = matcher.group(1);
-			            num = matcher.group(2);
-		            }
-		            
+			            while (matcher.find()) {
+			            	area = matcher.group(1);
+				            num = matcher.group(2);
+			            }
+			            
 
-		             int oref_idx= Integer.parseInt(num);
-		             
-		        	orefCv.put(OrefColumns.index, oref_idx);
-		        	orefCv.put(OrefColumns.name, area);
-		        	
-		        	mCon.getContentResolver().insert(
-							AlertProvider.OREF_CONTENT_URI, orefCv);
-		        	   
-		        }
-		    }
-		    catch (IOException ex) {
-		        // handle exception
-		    }
-		    finally {
-		        try {
-		           reader.close();
-		           isr.close();
-		        }
-		        catch (IOException e) {
-		            // handle exception
-		        }
-		    }
-	}
+			             int oref_idx= Integer.parseInt(num);
+			             
+			        	orefCv.put(OrefColumns.index, oref_idx);
+			        	orefCv.put(OrefColumns.name, area);
+			        	
+			        	mCon.getContentResolver().insert(
+								AlertProvider.OREF_CONTENT_URI, orefCv);
+			        	   
+			        }
+			    }
+			    catch (IOException ex) {
+			        // handle exception
+			    }
+			    finally {
+			        try {
+			           reader.close();
+			           isr.close();
+			        }
+			        catch (IOException e) {
+			            // handle exception
+			        }
+			    }
+
+				
+			}
+		};
+		Thread t = new Thread(runnable);
+		t.run();
+		}
+	
 }
