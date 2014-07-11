@@ -11,19 +11,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.model.Alert;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.location.LocationClient;
 
 public class GcmIntentService extends IntentService
  {
