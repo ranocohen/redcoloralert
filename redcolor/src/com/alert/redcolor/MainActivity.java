@@ -58,16 +58,16 @@ public class MainActivity extends FragmentActivity implements
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
-	    
+
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
-	 
-	 GoogleCloudMessaging gcm;
-	 AtomicInteger msgId = new AtomicInteger();
+
+	GoogleCloudMessaging gcm;
+	AtomicInteger msgId = new AtomicInteger();
 	SharedPreferences prefs;
 	Context context;
 
-	    String regid;
+	String regid;
 	private GoogleMap mUIGoogleMap;
 
 	// Location related variables
@@ -92,25 +92,23 @@ public class MainActivity extends FragmentActivity implements
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		
-		
+
 		context = getApplicationContext();
 		initFirstData();
 		setContentView(R.layout.activity_main);
-		   // Check device for Play Services APK.
-	    if (checkPlayServices()) {
-	        gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(context);
+		// Check device for Play Services APK.
+		if (checkPlayServices()) {
+			gcm = GoogleCloudMessaging.getInstance(this);
+			regid = getRegistrationId(context);
 
-            if (regid.isEmpty()) {
-                registerInBackground();
-            }
-        } else {
-            Log.i(Utils.TAG, "No valid Google Play Services APK found.");
-        }
+			if (regid.isEmpty()) {
+				registerInBackground();
+			}
+		} else {
+			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
+		}
 
-		//check if location service is on
+		// check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
 				.getSystemService(Context.LOCATION_SERVICE);
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -121,11 +119,9 @@ public class MainActivity extends FragmentActivity implements
 					Toast.LENGTH_SHORT).show();
 		} else
 			locationEnabled = true;
-		
-
 
 		locationClient = new LocationClient(this, this, this);
-		
+
 		locationClient.connect();
 
 		locationRequest = new LocationRequest();
@@ -187,28 +183,30 @@ public class MainActivity extends FragmentActivity implements
 
 		actionBar.addTab(actionBar.newTab().setText("רשימת התראות")
 				.setTabListener(this));
-	    
+
 	}
 
 	/**
-	 * Check the device to make sure it has the Google Play Services APK. If
-	 * it doesn't, display a dialog that allows users to download the APK from
-	 * the Google Play Store or enable it in the device's system settings.
+	 * Check the device to make sure it has the Google Play Services APK. If it
+	 * doesn't, display a dialog that allows users to download the APK from the
+	 * Google Play Store or enable it in the device's system settings.
 	 */
 	private boolean checkPlayServices() {
-	    int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-	    if (resultCode != ConnectionResult.SUCCESS) {
-	        if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-	            GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-	                    PLAY_SERVICES_RESOLUTION_REQUEST).show();
-	        } else {
-	            Log.i(Utils.TAG, "This device is not supported.");
-	            finish();
-	        }
-	        return false;
-	    }
-	    return true;
+		int resultCode = GooglePlayServicesUtil
+				.isGooglePlayServicesAvailable(this);
+		if (resultCode != ConnectionResult.SUCCESS) {
+			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+				GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+						PLAY_SERVICES_RESOLUTION_REQUEST).show();
+			} else {
+				Log.i(Utils.TAG, "This device is not supported.");
+				finish();
+			}
+			return false;
+		}
+		return true;
 	}
+
 	@Override
 	public void onTabUnselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
@@ -309,16 +307,16 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	//check if the client already has the last location
+	// check if the client already has the last location
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Location location = locationClient.getLastLocation();
 		if (location == null)
 			locationClient.connect();
-			locationClient.requestLocationUpdates(locationRequest, this);
+		locationClient.requestLocationUpdates(locationRequest, this);
 
 		if (location != null) {
-			//animate to last location
+			// animate to last location
 			if (mUIGoogleMap != null) {
 
 				LatLng latLng = new LatLng(location.getLatitude(),
@@ -326,10 +324,9 @@ public class MainActivity extends FragmentActivity implements
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
 						latLng, 11);
 				mUIGoogleMap.animateCamera(cameraUpdate);
-				
+
 				drawAlertHotzone(latLng);
-				
-				
+
 				// else
 				/*
 				 * Toast.makeText( getActivity(), "Location: " +
@@ -341,89 +338,102 @@ public class MainActivity extends FragmentActivity implements
 			locationClient.requestLocationUpdates(locationRequest, this);
 		}
 
-
-
 	}
-	
-	//maps circle "hotzone" overlay
-/*	private void updateMarkerWithCircle(LatLng position) {
-	    mCircle.setCenter(position);
-	    mMarker.setPosition(position);
-	}*/
-	
-	
-	/**
-	 * gets location for code red alert and mark the area as a 'hot zone' which would slowly faded
-	 * after 10 minutes according to home front command guidance 
-	 * @param position - where the code red alert was 'fired'
+
+	// maps circle "hotzone" overlay
+	/*
+	 * private void updateMarkerWithCircle(LatLng position) {
+	 * mCircle.setCenter(position); mMarker.setPosition(position); }
 	 */
-	private void drawAlertHotzone(LatLng position){
-	    
+
+	/**
+	 * gets location for code red alert and mark the area as a 'hot zone' which
+	 * would slowly faded after 10 minutes according to home front command
+	 * guidance
+	 * 
+	 * @param position
+	 *            - where the code red alert was 'fired'
+	 */
+	private void drawAlertHotzone(LatLng position) {
+
 		double radiusInMeters = 10000.0;
-	    int fillColor = Color.argb(150, 255, 0, 00);
-	    int strokeColor = Color.argb(240, 255, 0, 0);
-	    
-	    final LatLng positionc = position;
-	    Location l = new Location("");
-	    l.setLatitude(position.latitude);
-	    l.setLatitude(position.longitude);
-	    
-	    Location l2 = new Location("");
-	    l.setLatitude(position.latitude);
-	    l.setLatitude(position.longitude);
-	    
-	    CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(fillColor).strokeColor(strokeColor).strokeWidth(8);
-	    mCircle = mUIGoogleMap.addCircle(circleOptions);
+		int fillColor = Color.argb(150, 255, 0, 00);
+		int strokeColor = Color.argb(240, 255, 0, 0);
 
-	    MarkerOptions markerOptions = new MarkerOptions().position(position);
-	    mMarker = mUIGoogleMap.addMarker(markerOptions);
+		final LatLng positionc = position;
+		Location l = new Location("");
+		l.setLatitude(position.latitude);
+		l.setLatitude(position.longitude);
 
-	    final long cooldownTime = 1*10*1000; //10 seconds 
-	    final long intervalTime = 1*1000; //1 second interval
-	    final int coolTime = 10;
-	    
-	    //TODO change DEBUG Values
-/*	    final long cooldownTime = 10*60*1000; //10 minutes
-	    final long intervalTime = 1*60*1000; //1 minute interval
-	    final int coolTime = 10; */
-	    
+		Location l2 = new Location("");
+		l.setLatitude(position.latitude);
+		l.setLatitude(position.longitude);
 
+		CircleOptions circleOptions = new CircleOptions().center(position)
+				.radius(radiusInMeters).fillColor(fillColor)
+				.strokeColor(strokeColor).strokeWidth(8);
+		mCircle = mUIGoogleMap.addCircle(circleOptions);
 
+		MarkerOptions markerOptions = new MarkerOptions().position(position);
+		mMarker = mUIGoogleMap.addMarker(markerOptions);
 
-	    	    new CountDownTimer(cooldownTime, intervalTime) {
-	    	
-/*		    int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by time in seconds
-		    int strockInterval = (int) (240 / (cooldownTime/2/1000));*/
-		    
-		    int fillInterval = 150 / coolTime; //divide by time in seconds
-		    int strockInterval = 240 / coolTime;
+		final long cooldownTime = 1 * 10 * 1000; // 10 seconds
+		final long intervalTime = 1 * 1000; // 1 second interval
+		final int coolTime = 10;
 
-	        public void onTick(long millisUntilFinished) {
-	        	
-	        	//filling alpha reduction
-	        	int currFillColor = mCircle.getFillColor();
-	            int a = Color.alpha(currFillColor);
-	            
-	            a = a - fillInterval;
-	            
-	        	mCircle.setFillColor(Color.argb(a, 255, 0, 0));
-	        	
-	        	//stock alpha reduction
-	            int currStrokeColor = mCircle.getStrokeColor();
-	            int a1 = Color.alpha(currStrokeColor);
-	            
-	            a1 = a1 - strockInterval;
-	            
-	            mCircle.setStrokeColor(Color.argb(a1, 255, 0, 0));
+		// TODO change DEBUG Values
+		/*
+		 * final long cooldownTime = 10*60*1000; //10 minutes final long
+		 * intervalTime = 1*60*1000; //1 minute interval final int coolTime =
+		 * 10;
+		 */
 
-	        }
+		new CountDownTimer(cooldownTime, intervalTime) {
 
-	        public void onFinish() {
-	            //mTextField.setText("done!");
-	        }
-	     }.start();
+			/*
+			 * int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
+			 * time in seconds int strockInterval = (int) (240 /
+			 * (cooldownTime/2/1000));
+			 */
+
+			int fillInterval = 150 / coolTime; // divide by time in seconds
+			int strockInterval = 240 / coolTime;
+
+			public void onTick(long millisUntilFinished) {
+				
+				
+
+				// filling alpha reduction
+				int currFillColor = mCircle.getFillColor();
+				int a = Color.alpha(currFillColor);
+
+				a = a - fillInterval;
+
+				mCircle.setFillColor(Color.argb(a, 255, 0, 0));
+
+				// stock alpha reduction
+				int currStrokeColor = mCircle.getStrokeColor();
+				int a1 = Color.alpha(currStrokeColor);
+
+				a1 = a1 - strockInterval;
+
+				mCircle.setStrokeColor(Color.argb(a1, 255, 0, 0));
+
+				//inform the user how much time left to stay in safe place
+				int timeLeft = (int) (millisUntilFinished/1000);
+				String msgFormat = getResources().getString(R.string.safe_place_timer);
+				String strMsg = String.format(msgFormat, timeLeft);
+
+				Toast.makeText(getApplicationContext(), strMsg, Toast.LENGTH_SHORT)
+				.show();
+			}
+
+			public void onFinish() {
+				// mTextField.setText("done!");
+			}
+		}.start();
 	}
-	
+
 	private Circle mCircle;
 	private Marker mMarker;
 
@@ -432,61 +442,67 @@ public class MainActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	// You need to do the Play Services APK check here too.
 	@Override
 	protected void onResume() {
-	    super.onResume();
-	    checkPlayServices();
+		super.onResume();
+		checkPlayServices();
 	}
+
 	/**
 	 * Gets the current registration ID for application on GCM service.
 	 * <p>
 	 * If result is empty, the app needs to register.
-	 *
+	 * 
 	 * @return registration ID, or empty string if there is no existing
 	 *         registration ID.
 	 */
 	private String getRegistrationId(Context context) {
-	    final SharedPreferences prefs = getGCMPreferences(context);
-	    String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-	    if (registrationId.isEmpty()) {
-	        Log.i(Utils.TAG, "Registration not found.");
-	        return "";
-	    }
-	    // Check if app was updated; if so, it must clear the registration ID
-	    // since the existing regID is not guaranteed to work with the new
-	    // app version.
-	    int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-	    int currentVersion = getAppVersion(context);
-	    if (registeredVersion != currentVersion) {
-	        Log.i(Utils.TAG, "App version changed.");
-	        return "";
-	    }
-	    return registrationId;
+		final SharedPreferences prefs = getGCMPreferences(context);
+		String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+		if (registrationId.isEmpty()) {
+			Log.i(Utils.TAG, "Registration not found.");
+			return "";
+		}
+		// Check if app was updated; if so, it must clear the registration ID
+		// since the existing regID is not guaranteed to work with the new
+		// app version.
+		int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION,
+				Integer.MIN_VALUE);
+		int currentVersion = getAppVersion(context);
+		if (registeredVersion != currentVersion) {
+			Log.i(Utils.TAG, "App version changed.");
+			return "";
+		}
+		return registrationId;
 	}
+
 	/**
 	 * @return Application's {@code SharedPreferences}.
 	 */
 	private SharedPreferences getGCMPreferences(Context context) {
-	    // This sample app persists the registration ID in shared preferences, but
-	    // how you store the regID in your app is up to you.
-	    return getSharedPreferences(MainActivity.class.getSimpleName(),
-	            Context.MODE_PRIVATE);
+		// This sample app persists the registration ID in shared preferences,
+		// but
+		// how you store the regID in your app is up to you.
+		return getSharedPreferences(MainActivity.class.getSimpleName(),
+				Context.MODE_PRIVATE);
 	}
+
 	/**
 	 * @return Application's version code from the {@code PackageManager}.
 	 */
 	private static int getAppVersion(Context context) {
-	    try {
-	        PackageInfo packageInfo = context.getPackageManager()
-	                .getPackageInfo(context.getPackageName(), 0);
-	        return packageInfo.versionCode;
-	    } catch (NameNotFoundException e) {
-	        // should never happen
-	        throw new RuntimeException("Could not get package name: " + e);
-	    }
+		try {
+			PackageInfo packageInfo = context.getPackageManager()
+					.getPackageInfo(context.getPackageName(), 0);
+			return packageInfo.versionCode;
+		} catch (NameNotFoundException e) {
+			// should never happen
+			throw new RuntimeException("Could not get package name: " + e);
+		}
 	}
+
 	/**
 	 * Registers the application with GCM servers asynchronously.
 	 * <p>
@@ -496,108 +512,112 @@ public class MainActivity extends FragmentActivity implements
 	private void registerInBackground() {
 
 		new AsyncTask<Void, Void, String>() {
-			 
-            protected String doInBackground(Void... params) {
-            	 String msg = "";
-                 try {
-                     if (gcm == null) {
-                         gcm = GoogleCloudMessaging.getInstance(context);
-                     }
-                     regid = gcm.register(SENDER_ID);
-                     msg = "Device registered, registration ID=" + regid;
 
-                     // You should send the registration ID to your server over HTTP,
-                     // so it can use GCM/HTTP or CCS to send messages to your app.
-                     // The request to your server should be authenticated if your app
-                     // is using accounts.
-                     sendRegistrationIdToBackend(regid);
+			protected String doInBackground(Void... params) {
+				String msg = "";
+				try {
+					if (gcm == null) {
+						gcm = GoogleCloudMessaging.getInstance(context);
+					}
+					regid = gcm.register(SENDER_ID);
+					msg = "Device registered, registration ID=" + regid;
 
-                     // For this demo: we don't need to send it because the device
-                     // will send upstream messages to a server that echo back the
-                     // message using the 'from' address in the message.
+					// You should send the registration ID to your server over
+					// HTTP,
+					// so it can use GCM/HTTP or CCS to send messages to your
+					// app.
+					// The request to your server should be authenticated if
+					// your app
+					// is using accounts.
+					sendRegistrationIdToBackend(regid);
 
-                     // Persist the regID - no need to register again.
-                     storeRegistrationId(context, regid);
-                 } catch (IOException ex) {
-                     msg = "Error :" + ex.getMessage();
-                     // If there is an error, don't just keep trying to register.
-                     // Require the user to click a button again, or perform
-                     // exponential back-off.
-                 }
-                 return msg;
-             }
+					// For this demo: we don't need to send it because the
+					// device
+					// will send upstream messages to a server that echo back
+					// the
+					// message using the 'from' address in the message.
 
-             @Override
-             protected void onPostExecute(String msg) {
-                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-             }
-         }.execute(null, null, null);
-	    
-		
+					// Persist the regID - no need to register again.
+					storeRegistrationId(context, regid);
+				} catch (IOException ex) {
+					msg = "Error :" + ex.getMessage();
+					// If there is an error, don't just keep trying to register.
+					// Require the user to click a button again, or perform
+					// exponential back-off.
+				}
+				return msg;
+			}
+
+			@Override
+			protected void onPostExecute(String msg) {
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();
+			}
+		}.execute(null, null, null);
+
 	}
 
-		
-	
 	/**
 	 * Stores the registration ID and app versionCode in the application's
 	 * {@code SharedPreferences}.
-	 *
-	 * @param context application's context.
-	 * @param regId registration ID
+	 * 
+	 * @param context
+	 *            application's context.
+	 * @param regId
+	 *            registration ID
 	 */
 	private void storeRegistrationId(Context context, String regId) {
-	    final SharedPreferences prefs = getGCMPreferences(context);
-	    int appVersion = getAppVersion(context);
-	    Log.i(Utils.TAG, "Saving regId on app version " + appVersion);
-	    SharedPreferences.Editor editor = prefs.edit();
-	    editor.putString(PROPERTY_REG_ID, regId);
-	    editor.putInt(PROPERTY_APP_VERSION, appVersion);
-	    editor.commit();
+		final SharedPreferences prefs = getGCMPreferences(context);
+		int appVersion = getAppVersion(context);
+		Log.i(Utils.TAG, "Saving regId on app version " + appVersion);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(PROPERTY_REG_ID, regId);
+		editor.putInt(PROPERTY_APP_VERSION, appVersion);
+		editor.commit();
 	}
-	
+
 	/**
-	 * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
-	 * or CCS to send messages to your app. Not needed for this demo since the
-	 * device sends upstream messages to a server that echoes back the message
-	 * using the 'from' address in the message.
+	 * Sends the registration ID to your server over HTTP, so it can use
+	 * GCM/HTTP or CCS to send messages to your app. Not needed for this demo
+	 * since the device sends upstream messages to a server that echoes back the
+	 * message using the 'from' address in the message.
 	 */
 	private void sendRegistrationIdToBackend(String regId) {
-	      String serverUrl = Utils.SERVER_URL;
-	        Map<String, String> params = new HashMap<String, String>();
-	        params.put("_id", regId);
-	        params.put("name", "idan");
+		String serverUrl = Utils.SERVER_URL;
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("_id", regId);
+		params.put("name", "idan");
 
-	   try {
-		ServerUtils.post(serverUrl, params);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+		try {
+			ServerUtils.post(serverUrl, params);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onMapReady(GoogleMap map) {
 		mUIGoogleMap = map;
-		
+
 		mUIGoogleMap.setMyLocationEnabled(true);
 		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
-
 	}
+
 	/* Inserting the data from csv to database only in the first launch */
 	private void initFirstData() {
-		  
-		  SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		  boolean firstInit = preferences.getBoolean("firstInit", false);
-		  if(!firstInit)
-		  {
-			  SharedPreferences.Editor editor = preferences.edit();
-			  editor.putBoolean("firstInit",true);
-			  editor.apply();  
-			  RedColordb.initData(getApplicationContext());
-		  }
-		  
-		
+
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		boolean firstInit = preferences.getBoolean("firstInit", false);
+		if (!firstInit) {
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putBoolean("firstInit", true);
+			editor.apply();
+			RedColordb.initData(getApplicationContext());
+		}
+
 	}
 }
