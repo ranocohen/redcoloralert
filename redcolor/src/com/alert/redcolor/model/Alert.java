@@ -12,21 +12,21 @@ public class Alert {
 
 	private long id;
 	private String location;
-	private double x,y;
+	private double lng,lat;
 	private DateTime time;
-	public Alert(long id, String loc , double x, double y , DateTime time) {
+	public Alert(long id, String loc , double lng, double lat , DateTime time) {
 		this.id = id;
 		this.location = loc;
-		this.x = x;
-		this.y = y;
+		this.lat = lat;
+		this.lng = lng;
 		this.time = time;
 	}
 	public Alert(Cursor cursor) {
-		this.id = cursor.getLong(cursor.getColumnIndex(RedColordb.Columns.ID));
-		this.location = cursor.getString(cursor.getColumnIndex(RedColordb.Columns.location));
-		this.x = cursor.getDouble(cursor.getColumnIndex(RedColordb.Columns.xCord));
-		this.y = cursor.getDouble(cursor.getColumnIndex(RedColordb.Columns.yCord));
-		this.time = new DateTime(cursor.getLong(cursor.getColumnIndex(RedColordb.Columns.yCord)));
+		this.id = cursor.getLong(cursor.getColumnIndex(RedColordb.AlertColumns.ID));
+		this.location = cursor.getString(cursor.getColumnIndex(RedColordb.AlertColumns.location));
+		this.lat = cursor.getDouble(cursor.getColumnIndex(RedColordb.AlertColumns.lat));
+		this.lng = cursor.getDouble(cursor.getColumnIndex(RedColordb.AlertColumns.lng));
+		this.time = new DateTime(cursor.getString(cursor.getColumnIndex(RedColordb.AlertColumns.time)));
 		
 	}
 	public Alert(JSONArray obj , DateTime time) {
@@ -34,8 +34,8 @@ public class Alert {
 		
 		try {
 			this.location = obj.getString(0);
-			x = obj.getDouble(1);
-			y = obj.getDouble(2);
+			lat = obj.getDouble(1);
+			lng = obj.getDouble(2);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,17 +54,17 @@ public class Alert {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public double getX() {
-		return x;
+	public double getLat() {
+		return lat;
 	}
-	public void setX(double x) {
-		this.x = x;
+	public void setLat(double lat) {
+		this.lat = lat;
 	}
-	public double getY() {
-		return y;
+	public double getLng() {
+		return lng;
 	}
-	public void setY(double y) {
-		this.y = y;
+	public void setLng(double lng) {
+		this.lng = lng;
 	}
 	public DateTime getTime() {
 		return this.time;

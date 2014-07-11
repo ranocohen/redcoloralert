@@ -2,9 +2,20 @@ package com.alert.redcolor.db;
 
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.alert.redcolor.R;
+import com.alert.redcolor.Utils;
 
 
 
@@ -12,14 +23,15 @@ public class RedColordb extends SQLiteOpenHelper {
 	// DATABASE Name
 	public static final String DATABASE_NAME = "alerts.db";
 
-	
-	// Table name
-	public static final String TABLE_NAME = "alerts";
-	
-	
-	// Context
-	private Context con;
 
+	
+	public interface Tables {
+
+		public static final String ALERTS = "alerts";
+		public static final String OREF_LOCATIONS = "oref";
+		public static final String CITIES = "cities";
+
+	}
 	// Current Version
 	private static final int DATABASE_VERSION = 1;
 
@@ -28,14 +40,29 @@ public class RedColordb extends SQLiteOpenHelper {
 	 * {@link #getInstance(android.content.Context ctx) } method.
 	 */
 	private static RedColordb mInstance = null;
+	private Context mCon;
 
 
-
-	public interface Columns {
+	public interface AlertColumns {
 		public static final String ID = "_id";
-		public static final String xCord = "x";
-		public static final String yCord = "y";
+		public static final String lat = "lat";
+		public static final String lng = "lng";
 		public static final String location = "location";
+		public static final String time = "time";
+	}
+	public interface OrefColumns {
+		public static final String ID = "_id";
+		public static final String name = "name";
+		public static final String index = "idx";
+		
+	}
+	public interface CitiesColumns {
+		public static final String ID = "_id";
+		public static final String oref_id = "oref_id";
+		public static final String name_he = "name_he";
+		public static final String name_en = "name_en";
+		public static final String lat = "lat";
+		public static final String lng = "lng";
 		public static final String time = "time";
 		
 	}
@@ -49,7 +76,7 @@ public class RedColordb extends SQLiteOpenHelper {
 		// See this article for more information: http://bit.ly/6LRzfx
 		if (mInstance == null) {
 			mInstance = new RedColordb(ctx.getApplicationContext());
-			mInstance.con = ctx;
+			mInstance.mCon = ctx;
 		}
 		return mInstance;
 	}
@@ -62,13 +89,31 @@ public class RedColordb extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE " + TABLE_NAME + " ("
-				+ Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ Columns.xCord + " INTEGER, "
-				+ Columns.yCord + " INTEGER, "
-				+ Columns.location + " TEXT, "
-				+ Columns.time + " TEXT);");
-				
+		
+		/* Creating tables */
+		db.execSQL("CREATE TABLE " + Tables.ALERTS + " ("
+				+ AlertColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ AlertColumns.lat + " REAL, "
+				+ AlertColumns.lng + " REAL, "
+				+ AlertColumns.location + " TEXT, "
+				+ AlertColumns.time + " TEXT);");
+		
+		
+		db.execSQL("CREATE TABLE " + Tables.OREF_LOCATIONS + " ("
+				+ OrefColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ OrefColumns.index + " INTEGER, "				
+				+ OrefColumns.name + " TEXT);");
+		
+		
+		db.execSQL("CREATE TABLE " + Tables.CITIES + " ("
+				+ CitiesColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ CitiesColumns.lat + " REAL, "
+				+ CitiesColumns.lng + " REAL, "
+				+ CitiesColumns.name_en + " TEXT, "
+				+ CitiesColumns.name_he + " TEXT, "
+				+ CitiesColumns.oref_id + " INTEGER, "
+				+ CitiesColumns.time + " TEXT);");
+		
 	}
 
 	@Override
@@ -77,5 +122,73 @@ public class RedColordb extends SQLiteOpenHelper {
 		
 	}
 	
-	
+	public static void initData(Context mCon) {
+/* Inserting data to oref and cities tables from lidan's json file*/
+		
+		InputStreamReader isr = new InputStreamReader(
+					mCon.getResources().openRawResource(R.raw.redalert_en));
+		BufferedReader reader = new BufferedReader(isr);
+		SortedSet<String> oref_loc = new TreeSet<String>();
+		    try {
+		        String line;
+		        while ((line = reader.readLine()) != null) {
+		             String[] data = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+		             
+		             String he_name = data[1];
+		             String en_name = data[2];
+		          
+		           
+		             String oref_loc_str = data[3];
+		             
+		             String idxStr = oref_loc_str.substring(oref_loc_str.lastIndexOf(' ') + 1);
+		             Integer oref_idx = Integer.parseInt(idxStr);
+		             String time = data[4];
+		             Double lat = Double.parseDouble(data[5]);
+		             Double lng = Double.parseDouble(data[6]);
+		             
+		             ContentValues cityCv = new ContentValues();
+		             cityCv.put(CitiesColumns.lat, lat);
+		             cityCv.put(CitiesColumns.lng , lng);
+		             cityCv.put(CitiesColumns.name_he, he_name);
+		             cityCv.put(CitiesColumns.name_en , en_name);
+		             cityCv.put(CitiesColumns.oref_id, oref_idx);
+		             cityCv.put(CitiesColumns.time, time);
+		            
+						
+					mCon.getContentResolver().insert(
+								AlertProvider.CITIES_CONTENT_URI, cityCv);
+					
+					//Avoid duplicates of pikud areas   
+					oref_loc.add(oref_loc_str);
+						
+		            
+		        }
+		        for(String curr : oref_loc) {
+		        	
+		        	ContentValues orefCv = new ContentValues();
+		        	
+		        	String name = curr.substring(0,curr.lastIndexOf(' '));
+		        	String idxStr = curr.substring(curr.lastIndexOf(' ') + 1);
+		            Integer oref_idx = Integer.parseInt(idxStr);
+		        	orefCv.put(OrefColumns.index, oref_idx);
+		        	orefCv.put(OrefColumns.name, name);
+		        	
+		        	mCon.getContentResolver().insert(
+							AlertProvider.OREF_CONTENT_URI, orefCv);
+		        	   
+		        }
+		    }
+		    catch (IOException ex) {
+		        // handle exception
+		    }
+		    finally {
+		        try {
+		           reader.close();
+		           isr.close();
+		        }
+		        catch (IOException e) {
+		            // handle exception
+		        }
+		    }
+	}
 }

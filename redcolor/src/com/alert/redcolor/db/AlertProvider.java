@@ -1,5 +1,10 @@
 package com.alert.redcolor.db;
 
+import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.db.RedColordb.CitiesColumns;
+import com.alert.redcolor.db.RedColordb.OrefColumns;
+import com.alert.redcolor.db.RedColordb.Tables;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -8,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.SyncStateContract.Columns;
 import android.text.TextUtils;
 
 
@@ -23,10 +29,22 @@ public class AlertProvider extends ContentProvider {
     //Alerts table Content URI
     public static final Uri ALERTS_CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/alerts");
+    
+    //Alerts table Content URI
+    public static final Uri OREF_CONTENT_URI =
+            Uri.parse("content://" + AUTHORITY + "/orefs");
+    
+    //Alerts table Content URI
+    public static final Uri CITIES_CONTENT_URI =
+            Uri.parse("content://" + AUTHORITY + "/cities");
 
     //Alerts table
     private static final int ALERTS = 1;
     private static final int SINGLE_ALERT = 2;
+    private static final int CITIES = 3;
+    private static final int SINGLE_CITY = 4;
+    private static final int OREFS = 5;
+    private static final int SINGLE_OREF = 6;
     // system calls onCreate() when it starts up the provider.
     @Override
     public boolean onCreate() {
@@ -44,7 +62,11 @@ public class AlertProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, "alerts", ALERTS);
         uriMatcher.addURI(AUTHORITY, "alerts/#", SINGLE_ALERT);
-
+        uriMatcher.addURI(AUTHORITY, "cities", CITIES);
+        uriMatcher.addURI(AUTHORITY, "cities/#", SINGLE_CITY);
+        uriMatcher.addURI(AUTHORITY, "orefs", OREFS);
+        uriMatcher.addURI(AUTHORITY, "orefs/#", SINGLE_OREF);
+        
     }
 
     //Return the MIME type corresponding to a content URI
@@ -56,6 +78,14 @@ public class AlertProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/vnd.com.alert.redcolor.provider.alerts";
             case SINGLE_ALERT:
                 return "vnd.android.cursor.item/vnd.com.alert.redcolor.provider.alerts";
+            case CITIES:
+                return "vnd.android.cursor.dir/vnd.com.alert.redcolor.provider.cities";
+            case SINGLE_CITY:
+                return "vnd.android.cursor.item/vnd.com.alert.redcolor.provider.cities";
+            case OREFS:
+                return "vnd.android.cursor.dir/vnd.com.alert.redcolor.provider.orefs";
+            case SINGLE_OREF:
+                return "vnd.android.cursor.item/vnd.com.alert.redcolor.provider.orefs";
                         default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -73,6 +103,12 @@ public class AlertProvider extends ContentProvider {
             case ALERTS:
                 id = insertAlert(values);
                 break;
+            case CITIES:
+                id = insertCity(values);
+                break;
+            case OREFS:
+                id = insertOref(values);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -89,10 +125,21 @@ public class AlertProvider extends ContentProvider {
     private long insertAlert(ContentValues values) {
         long id;
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        id = db.insert(RedColordb.TABLE_NAME, null, values);
+        id = db.insert(Tables.ALERTS, null,values);
         return id;
     }
-
+    private long insertCity(ContentValues values) {
+        long id;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        id = db.insert(Tables.CITIES, null,values);
+        return id;
+    }
+    private long insertOref(ContentValues values) {
+        long id;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        id = db.insert(Tables.OREF_LOCATIONS, null,values);
+        return id;
+    }
 
 
    
@@ -113,14 +160,29 @@ public class AlertProvider extends ContentProvider {
 
             
             case ALERTS:
-                qb.setTables(RedColordb.TABLE_NAME);
+                qb.setTables(Tables.ALERTS);
                 break;
             case SINGLE_ALERT:
-                qb.setTables(RedColordb.TABLE_NAME);
+                qb.setTables(Tables.ALERTS);
                 id = uri.getLastPathSegment();
-                qb.appendWhere(RedColordb.Columns.ID + "=" + id);
+                qb.appendWhere(AlertColumns.ID + "=" + id);
                 break;
-                
+            case CITIES:
+                qb.setTables(Tables.CITIES);
+                break;
+            case SINGLE_CITY:
+                qb.setTables(Tables.CITIES);
+                id = uri.getLastPathSegment();
+                qb.appendWhere(CitiesColumns.ID + "=" + id);
+                break;
+            case OREFS:
+                qb.setTables(Tables.OREF_LOCATIONS);
+                break;
+            case SINGLE_OREF:
+                qb.setTables(Tables.OREF_LOCATIONS);
+                id = uri.getLastPathSegment();
+                qb.appendWhere(OrefColumns.ID + "=" + id);
+                break;
                 default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -152,10 +214,10 @@ public class AlertProvider extends ContentProvider {
                 break;
             case SINGLE_ALERT:
                 id = uri.getPathSegments().get(1);
-                selection = RedColordb.Columns.ID+ "=" + id
+                selection = AlertColumns.ID+ "=" + id
                         + (!TextUtils.isEmpty(selection) ?
                         " AND (" + selection + ')' : "");
-                deleteCount = db.delete(RedColordb.TABLE_NAME, selection, selectionArgs);
+                deleteCount = db.delete(Tables.ALERTS, selection, selectionArgs);
                 
         		
                 break;
@@ -189,10 +251,10 @@ public class AlertProvider extends ContentProvider {
                 break;
             case SINGLE_ALERT:
                 id = uri.getPathSegments().get(1);
-                selection = RedColordb.Columns.ID+ "=" + id
+                selection = RedColordb.AlertColumns.ID+ "=" + id
                         + (!TextUtils.isEmpty(selection) ?
                         " AND (" + selection + ')' : "");
-                updateCount = db.update(RedColordb.TABLE_NAME, values, selection, selectionArgs);
+                updateCount = db.update(Tables.ALERTS, values, selection, selectionArgs);
                 
                 break;
                         default:

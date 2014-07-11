@@ -1,5 +1,8 @@
 package com.alert.redcolor;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -35,6 +38,26 @@ public class Utils {
 	        Intent intent = new Intent(DISPLAY_MESSAGE_ACTION);
 	        intent.putExtra(EXTRA_MESSAGE, message);
 	        context.sendBroadcast(intent);
+	    }
+	    
+	    /* Parsing the raw file to string */
+	    public static String parseFile(int rawId, Context context) {
+	    	String json = null;
+		    try {
+
+		        InputStream is = context.getResources().openRawResource(rawId);
+		        int size = is.available();
+		        byte[] buffer = new byte[size];
+		        is.read(buffer);
+		        is.close();
+		        json = new String(buffer, "UTF-8");
+
+
+		    } catch (IOException ex) {
+		        ex.printStackTrace();
+		        return null;
+		    }
+		    return json;	
 	    }
 	
 }
