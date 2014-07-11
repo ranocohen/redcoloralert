@@ -320,7 +320,7 @@ public class MainActivity extends FragmentActivity implements
 				LatLng latLng = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-						latLng, 17);
+						latLng, 11);
 				mUIGoogleMap.animateCamera(cameraUpdate);
 				
 				drawAlertHotzone(latLng);
@@ -354,11 +354,10 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position - where the code red alert was 'fired'
 	 */
 	private void drawAlertHotzone(LatLng position){
-	    double radiusInMeters = 100.0;
-	    int strokeColor = 0xffff0000; //red outline
-	    //int shadeColor = 0xffff0000; //opaque red fill
 	    
-	    int shadeColor = Color.argb(255, 255, 0, 00);
+		double radiusInMeters = 10000.0;
+	    int fillColor = Color.argb(150, 255, 0, 00);
+	    int strokeColor = Color.argb(240, 255, 0, 0);
 	    
 	    final LatLng positionc = position;
 	    Location l = new Location("");
@@ -369,38 +368,50 @@ public class MainActivity extends FragmentActivity implements
 	    l.setLatitude(position.latitude);
 	    l.setLatitude(position.longitude);
 	    
-	    
-	    
-	    CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
+	    CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(fillColor).strokeColor(strokeColor).strokeWidth(8);
 	    mCircle = mUIGoogleMap.addCircle(circleOptions);
 
 	    MarkerOptions markerOptions = new MarkerOptions().position(position);
 	    mMarker = mUIGoogleMap.addMarker(markerOptions);
-	    
-	    final long cooldownTime=10000;
-	    new CountDownTimer(cooldownTime, 1000) {
-	    	
-	    	int start = 0;
-		    int shadeColor = Color.argb(255, 255, 0, 00);
-		    int strokeColor = 0xffff0000; //red outline
 
-		    int interval = 255 / 10; //divide by time in seconds
+	    final long cooldownTime = 1*10*1000; //10 seconds 
+	    final long intervalTime = 1*1000; //1 second interval
+	    final int coolTime = 10;
+	    
+	    //TODO change DEBUG Values
+/*	    final long cooldownTime = 10*60*1000; //10 minutes
+	    final long intervalTime = 1*60*1000; //1 minute interval
+	    final int coolTime = 10; */
+	    
+
+
+
+	    	    new CountDownTimer(cooldownTime, intervalTime) {
+	    	
+/*		    int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by time in seconds
+		    int strockInterval = (int) (240 / (cooldownTime/2/1000));*/
+		    
+		    int fillInterval = 150 / coolTime; //divide by time in seconds
+		    int strockInterval = 240 / coolTime;
 
 	        public void onTick(long millisUntilFinished) {
 	        	
-	        	start = start - interval;
-	        	
-	        	int currColor = mCircle.getFillColor();
-	            int r = Color.red(currColor);
-	            int g = Color.green(currColor);
-	            int b = Color.blue(currColor);
-	            int a = Color.alpha(currColor);
+	        	//filling alpha reduction
+	        	int currFillColor = mCircle.getFillColor();
+	            int a = Color.alpha(currFillColor);
 	            
-	            a = a- interval;
+	            a = a - fillInterval;
 	            
-	        	shadeColor = Color.argb(a, 255, 0, 00);
+	        	mCircle.setFillColor(Color.argb(a, 255, 0, 0));
 	        	
-	        	mCircle.setFillColor(shadeColor);
+	        	//stock alpha reduction
+	            int currStrokeColor = mCircle.getStrokeColor();
+	            int a1 = Color.alpha(currStrokeColor);
+	            
+	            a1 = a1 - strockInterval;
+	            
+	            mCircle.setStrokeColor(Color.argb(a1, 255, 0, 0));
+
 	        }
 
 	        public void onFinish() {
