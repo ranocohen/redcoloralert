@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -91,6 +92,9 @@ public class MainActivity extends FragmentActivity implements
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+		
 		context = getApplicationContext();
 		initFirstData();
 		setContentView(R.layout.activity_main);
