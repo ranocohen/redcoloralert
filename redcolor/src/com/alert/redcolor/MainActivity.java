@@ -454,8 +454,9 @@ public class MainActivity extends FragmentActivity implements
 			
 			@Override
 			public void onFinish() {
-				// TODO Auto-generated method stub
-				
+
+				Toast.makeText(getApplicationContext(), "אפשר לצאת ממרחב מוגן", Toast.LENGTH_SHORT)
+				.show();				
 			}
 		};
 		
