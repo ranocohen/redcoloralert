@@ -3,7 +3,6 @@ package com.alert.redcolor;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
-import org.joda.time.Minutes;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -16,8 +15,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
@@ -138,23 +139,29 @@ public class GcmIntentService extends IntentService
   					e.printStackTrace();
   				}
               	  
+              		
               		boolean toNotify = false;
+              		
+              		String alertType = PreferencesUtils.getAlertsType(getApplicationContext());
+              		if(alertType.equals(PreferencesUtils.PREF_ALL_ALERTS))
+              			toNotify = true;
               		
               		loop:
 					for(int j =0;j<cities.size();j++){
 						contentBuilder.append(cities.get(j).getHebName());
 						if(j != cities.size()-1)
 							contentBuilder.append(", ");
-						if(lastKnownLocation != null)
+						
+						if(lastKnownLocation != null && alertType.equals(PreferencesUtils.PREF_LOCAL_ALERTS))
 						{
 								double distance = cities.get(j).distanceTo(lastKnownLocation);
 								if(distance <= radiusDistance) {
-									
 									toNotify = true;
 									break loop;
 								}
 						}
 					}
+              		
 					if(toNotify)
 						sendNotification(titleBuilder.toString() , contentBuilder.toString() , notificationsNums);
 					
@@ -184,12 +191,16 @@ public class GcmIntentService extends IntentService
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
+        
+        
+        
         NotificationCompat.Builder mBuilder =
         	    new NotificationCompat.Builder(this)
-        	    .setSmallIcon(R.drawable.ic_plusone_medium_off_client)
+        	    .setSmallIcon(R.drawable.ic_launcher)
         	    .setContentTitle(title)
         	    .setNumber(counter)
-        	    .setDefaults(Notification.DEFAULT_SOUND)
+        	    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+        	    .setSound(Uri.parse("android.resource://" + getPackageName() + "/"+ R.raw.short_alert))
         	    .setContentText(content)
         	    .setStyle(new NotificationCompat.BigTextStyle()
         	    .bigText(content));

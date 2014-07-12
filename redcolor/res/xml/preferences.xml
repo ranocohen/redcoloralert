@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+
+        android:key="pref_alertsType"
+        android:title="@string/pref_alert_type_title"
+        android:dialogTitle="@string/pref_alert_type_title"
+        android:entries="@array/pref_alert_type_enteries"
+        android:entryValues="@array/pref_alert_type_values"
+        android:defaultValue="@string/pref_alert_type_default" />
+</PreferenceScreen>

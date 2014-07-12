@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alert.redcolor.analytics.AnalyticsApp;
+import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -16,7 +20,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 public class GoogleMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>{
 
     private static final String SUPPORT_MAP_BUNDLE_KEY = "MapOptions";
-
+    public String TAG = "Map";
     public static interface OnGoogleMapFragmentListener {
         void onMapReady(GoogleMap map);
     }
@@ -77,5 +81,19 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 	public void onLoaderReset(Loader<Cursor> loader) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		  // Get tracker.
+        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
+            TrackerName.APP_TRACKER);
+
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName(TAG);
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+		super.onActivityCreated(savedInstanceState);
 	}
 }

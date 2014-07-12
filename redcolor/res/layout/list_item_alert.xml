@@ -10,8 +10,8 @@
         android:id="@+id/location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingRight="9dp"
+        android:gravity="start"
+        android:paddingStart="9dp"
         android:textSize="28sp"
         android:textStyle="bold"
         android:typeface="monospace" />
@@ -28,8 +28,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="left"
-            android:paddingLeft="9dp"
+            android:gravity="start"
+            android:paddingStart="9dp"
             android:textSize="18sp" />
         
         <TextView
@@ -37,17 +37,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="right"
-            android:paddingRight="9dp"
+            android:gravity="end"
+            android:paddingEnd="9dp"
             android:textSize="18sp" />
     </LinearLayout>
     <TextView
         android:id="@+id/cities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingRight="15dp"
-        android:paddingLeft="15dp"
+        android:gravity="start"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
         android:textSize="14sp"
 
         />

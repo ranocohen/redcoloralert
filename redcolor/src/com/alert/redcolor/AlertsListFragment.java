@@ -1,9 +1,7 @@
 package com.alert.redcolor;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -15,18 +13,22 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.alert.redcolor.analytics.AnalyticsApp;
+import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.model.Alert;
 import com.alert.redcolor.model.Area;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 
 public class AlertsListFragment extends ListFragment implements
 		LoaderCallbacks<Cursor> {
 
 	
-	public final static String TAG = "Alerts";
+	public final static String TAG = "AlertsList";
 	
 
 	private AlertsAdapter mAdapter;
@@ -66,6 +68,18 @@ public class AlertsListFragment extends ListFragment implements
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
 
+		
+		  // Get tracker.
+        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
+            TrackerName.APP_TRACKER);
+
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName(TAG);
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+        
 		super.onCreate(savedInstanceState);
 		super.onActivityCreated(savedInstanceState);
 	}
