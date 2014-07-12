@@ -1,6 +1,9 @@
 package com.alert.redcolor;
 
 import android.app.Activity;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +12,8 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 
-public class GoogleMapFragment extends SupportMapFragment {
+public class GoogleMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>{
 
     private static final String SUPPORT_MAP_BUNDLE_KEY = "MapOptions";
 
@@ -58,4 +60,22 @@ public class GoogleMapFragment extends SupportMapFragment {
     }
 
     private OnGoogleMapFragmentListener mCallback;
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// TODO Auto-generated method stub
+		
+	}
 }

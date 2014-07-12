@@ -1,10 +1,14 @@
 package com.alert.redcolor;
 
+import java.util.ArrayList;
+
 import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -13,16 +17,14 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.model.Area;
+import com.alert.redcolor.model.City;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.internal.bg;
 
 public class GcmIntentService extends IntentService
  {
@@ -31,7 +33,8 @@ public class GcmIntentService extends IntentService
     private NotificationCompat.Builder builder;
     //Distance to get notification is 5km
     private int radiusDistance = 5*1000; 
-
+    private int notificationsNums  = 0;
+    
     /*
     boolean mBound = false;
 
@@ -93,6 +96,10 @@ public class GcmIntentService extends IntentService
 					LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 					Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
 					
+					StringBuilder titleBuilder = new StringBuilder();
+					StringBuilder contentBuilder = new StringBuilder();
+					ArrayList<City> cities = new ArrayList<City>();
+					ProviderQueries pq = new ProviderQueries(getApplicationContext());
               	try {
   					JSONArray json = new JSONArray(jsonStr);
   					for(int i =0;i<json.length();i++) {
@@ -109,12 +116,20 @@ public class GcmIntentService extends IntentService
   								AlertProvider.ALERTS_CONTENT_URI, cv);
   						
   					
-  						sendNotification(id);
+  						
   						/* Check location */
   						
-
-  					
+  						Area a = pq.areaById(id);
   						
+  						titleBuilder.append(a.getName());
+  						if(i != json.length()-1)
+  							titleBuilder.append(", ");
+  					
+  					
+  				        cities.addAll(pq.getCities(id));
+  				    	
+  						
+  						notificationsNums++;
   						
   						
   					}
@@ -123,14 +138,31 @@ public class GcmIntentService extends IntentService
   					e.printStackTrace();
   				}
               	  
-              	  
+              		boolean toNotify = false;
+              		
+              		loop:
+					for(int j =0;j<cities.size();j++){
+						contentBuilder.append(cities.get(j).getHebName());
+						if(j != cities.size()-1)
+							contentBuilder.append(", ");
+						if(lastKnownLocation != null)
+						{
+								double distance = cities.get(j).distanceTo(lastKnownLocation);
+								if(distance <= radiusDistance) {
+									
+									toNotify = true;
+									break loop;
+								}
+						}
+					}
+					if(toNotify)
+						sendNotification(titleBuilder.toString() , contentBuilder.toString() , notificationsNums);
+					
+              	
               	/*Intent intent1 = new Intent(this, BackgroundLocationService.class);
               	bindService(intent1, mConnection, Context.BIND_AUTO_CREATE);
               	  */
-                  Log.i(Utils.TAG, "Completed work @ " + SystemClock.elapsedRealtime());
-                  // Post notification of received message.
-                 
-                  Log.i(Utils.TAG, "Received: " + extras.toString());
+
                   
               }
           }
@@ -141,35 +173,27 @@ public class GcmIntentService extends IntentService
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(long areaId) {
+    private void sendNotification(String title , String content , int counter) {
     	
     	
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        ProviderQueries pq = new ProviderQueries(getApplicationContext());
-        String []cities = pq.getCities(areaId);
-    	
-		
-		Area a = pq.areaById(areaId);
-		
-		StringBuilder builder = new StringBuilder();
-		for(int i =0;i<cities.length;i++){
-			builder.append(cities[i]);
-			if(i!=cities.length-1)
-				builder.append(", ");
-		}
+        
         
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-        .setContentTitle(getResources().getString(R.string.red_light) + a.getName())
-        .setSmallIcon(R.drawable.ic_launcher)
-        .setStyle(new NotificationCompat.BigTextStyle())
-        .setContentText(builder.toString());
-
+        	    new NotificationCompat.Builder(this)
+        	    .setSmallIcon(R.drawable.ic_plusone_medium_off_client)
+        	    .setContentTitle(title)
+        	    .setNumber(counter)
+        	    .setDefaults(Notification.DEFAULT_SOUND)
+        	    .setContentText(content)
+        	    .setStyle(new NotificationCompat.BigTextStyle()
+        	    .bigText(content));
+        
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }

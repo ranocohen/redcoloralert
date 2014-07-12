@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -130,13 +131,9 @@ public class MainActivity extends FragmentActivity implements
 
 		locationClient.connect();
 
-		locationRequest = new LocationRequest();
+		locationRequest = LocationRequest.create();
 		// Use high accuracy
-		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		// Set the update interval to 5 seconds
-		locationRequest.setInterval(5000);
-		// Set the fastest update interval to 1 second
-		locationRequest.setFastestInterval(1000);
+		
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections
@@ -309,16 +306,16 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-		// TODO Auto-generated method stub
-
+		Toast.makeText(getApplicationContext(), "Please make sure you have connection enabled", Toast.LENGTH_LONG).show();
+		finish();
 	}
 
 	// check if the client already has the last location
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Location location = locationClient.getLastLocation();
-		if (location == null)
-			locationClient.connect();
+		/*if (location == null)
+			locationClient.connect();*/
 		locationClient.requestLocationUpdates(locationRequest, this);
 
 		if (location != null) {

@@ -1,5 +1,8 @@
 package com.alert.redcolor.model;
 
+import com.alert.redcolor.db.RedColordb.CitiesColumns;
+
+import android.database.Cursor;
 import android.location.Location;
 
 public class City {
@@ -8,8 +11,18 @@ public class City {
 	private String engName;
 	private long id;
 	private double lat,lng;
+	private String time;
 	private long areaId;
-	
+	public City(Cursor cursor) {
+		this.id = cursor.getLong(cursor.getColumnIndex(CitiesColumns.ID));
+		this.areaId = cursor.getLong(cursor.getColumnIndex(CitiesColumns.oref_id));
+		this.time = cursor.getString(cursor.getColumnIndex(CitiesColumns.time));
+		this.hebName = cursor.getString(cursor.getColumnIndex(CitiesColumns.name_he));
+		this.engName = cursor.getString(cursor.getColumnIndex(CitiesColumns.name_en));
+		this.lat = cursor.getDouble(cursor.getColumnIndex(CitiesColumns.lat));
+		this.lng = cursor.getDouble(cursor.getColumnIndex(CitiesColumns.lng));
+		
+	}
 	public Location getLocation()
 	{
 		Location loc = new Location("");
@@ -17,7 +30,7 @@ public class City {
 		loc.setLongitude(lng);
 		return loc;
 	}
-	public double metersTo(Location other) {
+	public double distanceTo(Location other) {
 		return getLocation().distanceTo(other);
 	}
 	public String getHebName() {

@@ -122,7 +122,7 @@ public class AlertsListFragment extends ListFragment implements
 			Area a = pq.areaById(alert.getAreaId());
 			holder.name.setText(a.getName() + " "+ a.getAreaNum());
 			
-			String [] cities = pq.getCities(a.getId()); 
+			String [] cities = pq.getCitiesNames(a.getId()); 
 			StringBuilder builder = new StringBuilder();
 			for(int i =0;i<cities.length;i++){
 				builder.append(cities[i]);
