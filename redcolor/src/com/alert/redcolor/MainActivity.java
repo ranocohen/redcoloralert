@@ -324,12 +324,12 @@ public class MainActivity extends FragmentActivity implements
 			// animate to last location
 			if (mUIGoogleMap != null) {
 
-				LatLng latLng = new LatLng(location.getLatitude(),
+				/*LatLng latLng = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
 						latLng, 11);
 				mUIGoogleMap.animateCamera(cameraUpdate);
-
+*/
 				//drawAlertHotzone(latLng);
 
 				// else
@@ -636,6 +636,20 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.setMyLocationEnabled(true);
 		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+		
+		//Animate map to ideal location
+		//Tel aviv location
+		double lat = 32.055168;
+		double lng = 34.799744;
+		
+		Location location = new Location("");
+		location.setLatitude(lat);
+		location.setLongitude(lng);
+		LatLng latLng = new LatLng(location.getLatitude(),
+				location.getLongitude());
+		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+				latLng, 8);
+		mUIGoogleMap.animateCamera(cameraUpdate);
 
 	}
 	@Override
