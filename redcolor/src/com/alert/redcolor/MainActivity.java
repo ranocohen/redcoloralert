@@ -481,6 +481,13 @@ public class MainActivity extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 		checkPlayServices();
+		if(mUIGoogleMap!=null) {
+			LatLng latLng = new LatLng(31.3684417,
+					35.228071);
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+					latLng, 11);
+			mUIGoogleMap.animateCamera(cameraUpdate);
+		}
 	}
 
 	/**
