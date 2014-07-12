@@ -637,7 +637,11 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
 	}
-
+	@Override
+	protected void onPause() {
+		mUIGoogleMap.clear();
+		super.onPause();
+	}
 	/* Inserting the data from csv to database only in the first launch */
 	private void initFirstData() {
 
