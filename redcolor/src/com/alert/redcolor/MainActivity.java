@@ -184,9 +184,9 @@ public class MainActivity extends FragmentActivity implements
 		 */
 		// TODO add stings :)
 		actionBar
-				.addTab(actionBar.newTab().setText("מפה").setTabListener(this));
+				.addTab(actionBar.newTab().setText(getString(R.string.map)).setTabListener(this));
 
-		actionBar.addTab(actionBar.newTab().setText("רשימת התראות")
+		actionBar.addTab(actionBar.newTab().setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 
 	}

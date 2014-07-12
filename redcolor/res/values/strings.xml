@@ -7,7 +7,9 @@
     <string name="title_section3">Section 3</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">הגדרות</string>
+    <string name="latest_alerts">התראות אחרונות</string>
     <string name="no_alerts">אין התראות</string>
+    <string name="map">מפה</string>
     <string name="safe_place_timer">%1$d</string>
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
     <string name="demo_external_activity">Demo External Activity</string>
