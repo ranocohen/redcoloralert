@@ -7,32 +7,31 @@ import org.json.JSONException;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.alert.redcolor.db.AlertProvider;
-import com.alert.redcolor.db.RedColordb;
-import com.alert.redcolor.model.Alert;
-import com.alert.redcolor.services.BackgroundLocationService;
-import com.alert.redcolor.services.BackgroundLocationService.LocalBinder;
+import com.alert.redcolor.db.ProviderQueries;
+import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.model.Area;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.internal.bg;
 
 public class GcmIntentService extends IntentService
  {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder builder;
+    //Distance to get notification is 5km
+    private int radiusDistance = 5*1000; 
+
     /*
     boolean mBound = false;
 
@@ -77,11 +76,10 @@ public class GcmIntentService extends IntentService
                */
               if (GoogleCloudMessaging.
                       MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                  sendNotification("Send error: " + extras.toString());
+                
               } else if (GoogleCloudMessaging.
                       MESSAGE_TYPE_DELETED.equals(messageType)) {
-                  sendNotification("Deleted messages on server: " +
-                          extras.toString());
+                 
               // If it's a regular GCM message, do some work.
               } else if (GoogleCloudMessaging.
                       MESSAGE_TYPE_MESSAGE.equals(messageType)) {
@@ -98,21 +96,23 @@ public class GcmIntentService extends IntentService
               	try {
   					JSONArray json = new JSONArray(jsonStr);
   					for(int i =0;i<json.length();i++) {
-  						JSONArray obj = json.getJSONArray(i);
-  						Alert alert = new Alert(obj , dt);
   						
+  						long id = json.getLong(i);
+  					
   						
+  						/* Adding the alert to db */
   						ContentValues cv = new ContentValues();
-  						cv.put(RedColordb.AlertColumns.lat, alert.getLat());
-  						cv.put(RedColordb.AlertColumns.lng , alert.getLng());
-  						cv.put(RedColordb.AlertColumns.location , alert.getLocation());
-  						cv.put(RedColordb.AlertColumns.time , alert.getTime().toString());
-  						
+  						cv.put(AlertColumns.AreaId, id);
+  						cv.put(AlertColumns.time , dt.toString());
+  					
   						getContentResolver().insert(
   								AlertProvider.ALERTS_CONTENT_URI, cv);
   						
   					
-  					
+  						sendNotification(id);
+  						/* Check location */
+  						
+
   					
   						
   						
@@ -122,7 +122,7 @@ public class GcmIntentService extends IntentService
   					// TODO Auto-generated catch block
   					e.printStackTrace();
   				}
-              	  sendNotification("Received: " + extras.toString());
+              	  
               	  
               	/*Intent intent1 = new Intent(this, BackgroundLocationService.class);
               	bindService(intent1, mConnection, Context.BIND_AUTO_CREATE);
@@ -141,25 +141,39 @@ public class GcmIntentService extends IntentService
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(long areaId) {
+    	
+    	
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        ProviderQueries pq = new ProviderQueries(getApplicationContext());
+        String []cities = pq.getCities(areaId);
+    	
+		
+		Area a = pq.areaById(areaId);
+		
+		StringBuilder builder = new StringBuilder();
+		for(int i =0;i<cities.length;i++){
+			builder.append(cities[i]);
+			if(i!=cities.length-1)
+				builder.append(", ");
+		}
+        
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-        .setContentTitle("GCM Notification")
+        .setContentTitle(getResources().getString(R.string.red_light) + a.getName())
         .setSmallIcon(R.drawable.ic_launcher)
-        .setStyle(new NotificationCompat.BigTextStyle()
-        .bigText(msg))
-        .setContentText(msg);
+        .setStyle(new NotificationCompat.BigTextStyle())
+        .setContentText(builder.toString());
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-
+    
 	
 }

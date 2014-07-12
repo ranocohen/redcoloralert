@@ -1,33 +1,25 @@
 package com.alert.redcolor;
 
-import com.alert.redcolor.db.AlertProvider;
-import com.alert.redcolor.model.Alert;
-
-import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Checkable;
 import android.widget.CursorAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.alert.redcolor.db.AlertProvider;
+import com.alert.redcolor.db.ProviderQueries;
+import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.model.Alert;
+import com.alert.redcolor.model.Area;
 
 
 public class AlertsListFragment extends ListFragment implements
@@ -85,7 +77,7 @@ public class AlertsListFragment extends ListFragment implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 		CursorLoader cursorLoader = new CursorLoader(getActivity(),
-				AlertProvider.ALERTS_CONTENT_URI, null, null, null, null);
+				AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("+AlertColumns.time+") DESC");
 		return cursorLoader;
 	}
 
@@ -123,8 +115,22 @@ public class AlertsListFragment extends ListFragment implements
 
 			ViewHolder holder = (ViewHolder) view.getTag();
 			Alert alert = new Alert(cursor);
-			holder.location.setText(alert.getLocation());
-			holder.time.setText(alert.getTime().toString());
+
+			holder.time.setText(alert.getTime().toString("HH:mm:ss"));
+			holder.date.setText(alert.getTime().toString("dd-MM-yy"));
+			ProviderQueries pq = new ProviderQueries(getActivity());
+			Area a = pq.areaById(alert.getAreaId());
+			holder.name.setText(a.getName() + " "+ a.getAreaNum());
+			
+			String [] cities = pq.getCities(a.getId()); 
+			StringBuilder builder = new StringBuilder();
+			for(int i =0;i<cities.length;i++){
+				builder.append(cities[i]);
+				if(i!=cities.length-1)
+					builder.append(", ");
+			}
+			
+			holder.cities.setText(builder.toString());
 			
 
 
@@ -135,8 +141,10 @@ public class AlertsListFragment extends ListFragment implements
 			View view = layoutInflater.inflate(R.layout.list_item_alert, null);
 
 			ViewHolder holder = new ViewHolder();
-			holder.location = (TextView) view.findViewById(R.id.location);
+			holder.name= (TextView) view.findViewById(R.id.location);
 			holder.time = (TextView) view.findViewById(R.id.time);
+			holder.date = (TextView) view.findViewById(R.id.date);
+			holder.cities = (TextView) view.findViewById(R.id.cities);
 			view.setTag(holder);
 			return view;
 		}
@@ -144,8 +152,10 @@ public class AlertsListFragment extends ListFragment implements
 
 	// static class for holding references to views optimizing listview recycles
 	private static class ViewHolder {
-		TextView location;
+		TextView name;
 		TextView time;
+		TextView date;
+		TextView cities;
 		
 
 	}

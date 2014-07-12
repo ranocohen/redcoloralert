@@ -5,8 +5,8 @@ package com.alert.redcolor.db;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,9 +45,7 @@ public class RedColordb extends SQLiteOpenHelper {
 
 	public interface AlertColumns {
 		public static final String ID = "_id";
-		public static final String lat = "lat";
-		public static final String lng = "lng";
-		public static final String location = "location";
+		public static final String AreaId = "area_id";
 		public static final String time = "time";
 	}
 	public interface OrefColumns {
@@ -93,9 +91,7 @@ public class RedColordb extends SQLiteOpenHelper {
 		/* Creating tables */
 		db.execSQL("CREATE TABLE " + Tables.ALERTS + " ("
 				+ AlertColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ AlertColumns.lat + " REAL, "
-				+ AlertColumns.lng + " REAL, "
-				+ AlertColumns.location + " TEXT, "
+				+ AlertColumns.AreaId + " INTEGER, "
 				+ AlertColumns.time + " TEXT);");
 		
 		
@@ -133,36 +129,29 @@ public class RedColordb extends SQLiteOpenHelper {
 				InputStreamReader isr = new InputStreamReader(
 						mCon.getResources().openRawResource(R.raw.redalert_en));
 			BufferedReader reader = new BufferedReader(isr);
-			SortedSet<String> oref_loc = new TreeSet<String>();
+			HashMap<Long,String> orefMap = new HashMap<Long,String>();
 			    try {
 			        String line;
 			        while ((line = reader.readLine()) != null ) {
 			        	
+			        	
+			        	//EOF is ="-1" , just a temp check
 			        	if(line.length()<=3)
 			        		break;
 			        		
+			        	/* Split line with , delimeter (ignoring commas in quotes) */
 			             String[] data = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-			             
+			             long oref_id = Long.parseLong(data[0]);
 			             String he_name = data[1];
 			             String en_name = data[2];
 			          
 			           
 			             String oref_loc_str = data[3];
-			             Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
 			             
-				         Matcher matcher = pattern.matcher(oref_loc_str.trim());
+			             
 				         
-				            
-				            String num = "";
-				           
-				            while (matcher.find()) 
-				                num = matcher.group(2);
-				         int oref_idx=0;   
 				         
-				         if(num.equals(""))   
-				        	 oref_idx = 1;
-				         else
-				         oref_idx = Integer.parseInt(num);
+				         
 			             String time = data[4];
 			             Double lat = Double.parseDouble(data[5]);
 			             Double lng = Double.parseDouble(data[6]);
@@ -172,7 +161,8 @@ public class RedColordb extends SQLiteOpenHelper {
 			             cityCv.put(CitiesColumns.lng , lng);
 			             cityCv.put(CitiesColumns.name_he, he_name);
 			             cityCv.put(CitiesColumns.name_en , en_name);
-			             cityCv.put(CitiesColumns.oref_id, oref_idx);
+			             cityCv.put(CitiesColumns.name_en , en_name);
+			             cityCv.put(CitiesColumns.oref_id, oref_id);
 			             cityCv.put(CitiesColumns.time, time);
 			            
 							
@@ -180,15 +170,18 @@ public class RedColordb extends SQLiteOpenHelper {
 									AlertProvider.CITIES_CONTENT_URI, cityCv);
 						
 						//Avoid duplicates of pikud areas   
-						oref_loc.add(oref_loc_str);
+						orefMap.put(Long.valueOf(oref_id) , oref_loc_str);
 							
 			            
 			        }
-			        for(String curr : oref_loc) {
+			        for(Entry<Long, String> e : orefMap.entrySet()) {
+			            Long key = e.getKey();
+			            String value = e.getValue();
+			        
 			        	
 			        	ContentValues orefCv = new ContentValues();
 			        	Pattern pattern = Pattern.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
-			            Matcher matcher = pattern.matcher(curr.trim());
+			            Matcher matcher = pattern.matcher(value.trim());
 
 			            String area = "";
 			            String num = "";
@@ -199,9 +192,9 @@ public class RedColordb extends SQLiteOpenHelper {
 			            }
 			            
 
-			             int oref_idx= Integer.parseInt(num);
-			             
-			        	orefCv.put(OrefColumns.index, oref_idx);
+			            
+			            orefCv.put(OrefColumns.ID, key); 
+			        	orefCv.put(OrefColumns.index, num);
 			        	orefCv.put(OrefColumns.name, area);
 			        	
 			        	mCon.getContentResolver().insert(
@@ -226,7 +219,7 @@ public class RedColordb extends SQLiteOpenHelper {
 			}
 		};
 		Thread t = new Thread(runnable);
-		t.run();
+		t.start();
 		}
 	
 }
