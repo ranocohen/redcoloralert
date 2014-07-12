@@ -359,7 +359,7 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position
 	 *            - where the code red alert was 'fired'
 	 */
-	private void drawAlertHotzone(LatLng position) {
+	public void drawAlertHotzone(LatLng position) {
 
 		double radiusInMeters = 10000.0;
 		int fillColor = Color.argb(150, 255, 0, 00);

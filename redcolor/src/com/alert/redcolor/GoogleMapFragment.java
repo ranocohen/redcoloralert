@@ -1,21 +1,31 @@
 package com.alert.redcolor;
 
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+
 import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
+import com.alert.redcolor.db.AlertProvider;
+import com.alert.redcolor.db.ProviderQueries;
+import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.model.Alert;
+import com.alert.redcolor.model.City;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 public class GoogleMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>{
 
@@ -66,23 +76,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
     private OnGoogleMapFragmentListener mCallback;
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		  // Get tracker.
         Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
@@ -94,6 +87,41 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 
         // Send a screen view.
         t.send(new HitBuilders.AppViewBuilder().build());
+    	// Prepare the loader. Either re-connect with an existing one,
+		// or start a new one.
+		getLoaderManager().initLoader(0, null, this);
+
 		super.onActivityCreated(savedInstanceState);
+	}
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+		CursorLoader cursorLoader = new CursorLoader(getActivity(),
+				AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("+AlertColumns.time+") DESC");
+		return cursorLoader;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		ProviderQueries pq = new ProviderQueries(getActivity());
+		DateTime now = DateTime.now();
+		while(data.moveToNext())
+		{
+			Alert a = new Alert(data);
+			Minutes diff = Minutes.minutesBetween(a.getTime(), now);
+			int minutes = diff.getMinutes();
+			if(minutes <= 1)
+			{
+				City city = pq.getCities(a.getAreaId()).get(0);
+				MainActivity activity = (MainActivity)getActivity();
+				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()));
+			}
+
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+
 	}
 }
