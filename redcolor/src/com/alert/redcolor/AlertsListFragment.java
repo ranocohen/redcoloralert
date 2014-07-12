@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
@@ -23,17 +25,13 @@ import com.alert.redcolor.model.Area;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-
 public class AlertsListFragment extends ListFragment implements
 		LoaderCallbacks<Cursor> {
 
-	
 	public final static String TAG = "AlertsList";
-	
 
 	private AlertsAdapter mAdapter;
-	
-	
+
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
 		Bundle args = new Bundle();
@@ -42,7 +40,6 @@ public class AlertsListFragment extends ListFragment implements
 		return fragment;
 	}
 
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,42 +53,40 @@ public class AlertsListFragment extends ListFragment implements
 		// Start out with a progress indicator.
 		setListShown(false);
 
-		getListView().setDivider(getResources().getDrawable(R.drawable.fade_divider));
+		getListView().setDivider(
+				getResources().getDrawable(R.drawable.fade_divider));
 		getListView().setDividerHeight(1);
 		getListView().setVerticalScrollBarEnabled(false);
 
-		
 		mAdapter = new AlertsAdapter(getActivity(), null, 0);
 		setListAdapter(mAdapter);
-		
+
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
 
-		
-		  // Get tracker.
-        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
-            TrackerName.APP_TRACKER);
+		// analytics
+		// Get tracker.
+		Tracker t = ((AnalyticsApp) getActivity().getApplication())
+				.getTracker(TrackerName.APP_TRACKER);
 
-        // Set screen name.
-        // Where path is a String representing the screen name.
-        t.setScreenName(TAG);
+		// Set screen name.
+		// Where path is a String representing the screen name.
+		t.setScreenName(TAG);
 
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
-        
+		// Send a screen view.
+		t.send(new HitBuilders.AppViewBuilder().build());
+
 		super.onCreate(savedInstanceState);
 		super.onActivityCreated(savedInstanceState);
 	}
 
-	
-
-	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 		CursorLoader cursorLoader = new CursorLoader(getActivity(),
-				AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("+AlertColumns.time+") DESC");
+				AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("
+						+ AlertColumns.time + ") DESC");
 		return cursorLoader;
 	}
 
@@ -112,7 +107,6 @@ public class AlertsListFragment extends ListFragment implements
 
 	}
 
-	
 	public class AlertsAdapter extends CursorAdapter {
 		LayoutInflater layoutInflater;
 
@@ -134,19 +128,16 @@ public class AlertsListFragment extends ListFragment implements
 			holder.date.setText(alert.getTime().toString("dd-MM-yy"));
 			ProviderQueries pq = new ProviderQueries(getActivity());
 			Area a = pq.areaById(alert.getAreaId());
-			holder.name.setText(a.getName() + " "+ a.getAreaNum());
-			
-			String [] cities = pq.getCitiesNames(a.getId()); 
+			holder.name.setText(a.getName() + " " + a.getAreaNum());
+
+			String[] cities = pq.getCitiesNames(a.getId());
 			StringBuilder builder = new StringBuilder();
-			for(int i =0;i<cities.length;i++){
+			for (int i = 0; i < cities.length; i++) {
 				builder.append(cities[i]);
-				if(i!=cities.length-1)
+				if (i != cities.length - 1)
 					builder.append(", ");
 			}
-			
 			holder.cities.setText(builder.toString());
-			
-
 
 		}
 
@@ -155,7 +146,7 @@ public class AlertsListFragment extends ListFragment implements
 			View view = layoutInflater.inflate(R.layout.list_item_alert, null);
 
 			ViewHolder holder = new ViewHolder();
-			holder.name= (TextView) view.findViewById(R.id.location);
+			holder.name = (TextView) view.findViewById(R.id.location);
 			holder.time = (TextView) view.findViewById(R.id.time);
 			holder.date = (TextView) view.findViewById(R.id.date);
 			holder.cities = (TextView) view.findViewById(R.id.cities);
@@ -163,6 +154,13 @@ public class AlertsListFragment extends ListFragment implements
 			return view;
 		}
 	}
+	
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        // TODO Auto-generated method stub
+        super.onListItemClick(l, v, position, id);
+
+    }
 
 	// static class for holding references to views optimizing listview recycles
 	private static class ViewHolder {
@@ -170,10 +168,7 @@ public class AlertsListFragment extends ListFragment implements
 		TextView time;
 		TextView date;
 		TextView cities;
-		
 
 	}
-
-
 
 }
