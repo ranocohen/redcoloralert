@@ -330,7 +330,7 @@ public class MainActivity extends FragmentActivity implements
 						latLng, 11);
 				mUIGoogleMap.animateCamera(cameraUpdate);
 
-				drawAlertHotzone(latLng);
+				//drawAlertHotzone(latLng);
 
 				// else
 				/*
@@ -362,7 +362,7 @@ public class MainActivity extends FragmentActivity implements
 	public void drawAlertHotzone(LatLng position) {
 
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(150, 255, 0, 00);
+		int fillColor = Color.argb(40, 255, 0, 00);
 		int strokeColor = Color.argb(240, 255, 0, 0);
 
 		final LatLng positionc = position;
@@ -392,14 +392,14 @@ public class MainActivity extends FragmentActivity implements
 		 * intervalTime = 1*60*1000; //1 minute interval final int coolTime =
 		 * 10;
 		 */
-
+/*
 		new CountDownTimer(cooldownTime, intervalTime) {
 
-			/*
+			
 			 * int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
 			 * time in seconds int strockInterval = (int) (240 /
 			 * (cooldownTime/2/1000));
-			 */
+			 
 
 			int fillInterval = 150 / coolTime; // divide by time in seconds
 			int strockInterval = 240 / coolTime;
@@ -428,7 +428,7 @@ public class MainActivity extends FragmentActivity implements
 				// mTextField.setText("done!");
 			}
 		}.start();
-	}
+*/	}
 
 	public void stayInSafePlaceTimer() {
 
@@ -466,6 +466,7 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
+	
 	private Circle mCircle;
 	private Marker mMarker;
 
