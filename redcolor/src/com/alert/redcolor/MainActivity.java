@@ -583,8 +583,8 @@ public class MainActivity extends FragmentActivity implements
 
 			@Override
 			protected void onPostExecute(String msg) {
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-						.show();
+/*				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();*/
 			}
 		}.execute(null, null, null);
 
