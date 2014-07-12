@@ -1,6 +1,7 @@
 package com.alert.redcolor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,6 +66,7 @@ public class MainActivity extends FragmentActivity implements
 
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
+	
 
 	GoogleCloudMessaging gcm;
 	AtomicInteger msgId = new AtomicInteger();
@@ -73,7 +75,10 @@ public class MainActivity extends FragmentActivity implements
 
 	String regid;
 	private GoogleMap mUIGoogleMap;
-
+	
+	HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
+	
+	
 	// Location related variables
 	LocationRequest locationRequest;
 	LocationClient locationClient;
@@ -359,13 +364,12 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position
 	 *            - where the code red alert was 'fired'
 	 */
-	public void drawAlertHotzone(LatLng position) {
+	public void drawAlertHotzone(final LatLng position) {
 
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(40, 255, 0, 00);
-		int strokeColor = Color.argb(240, 255, 0, 0);
+		int fillColor = Color.argb(150, 255, 0, 00);
+		int strokeColor = Color.argb(200, 255, 0, 0);
 
-		final LatLng positionc = position;
 		Location l = new Location("");
 		l.setLatitude(position.latitude);
 		l.setLatitude(position.longitude);
@@ -377,10 +381,14 @@ public class MainActivity extends FragmentActivity implements
 		CircleOptions circleOptions = new CircleOptions().center(position)
 				.radius(radiusInMeters).fillColor(fillColor)
 				.strokeColor(strokeColor).strokeWidth(8);
-		mCircle = mUIGoogleMap.addCircle(circleOptions);
-
+		
+		//add to hashmap as well
+		circles.put(position, mUIGoogleMap.addCircle(circleOptions));
+		
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
+		
+		
 
 		final long cooldownTime = 1 * 10 * 1000; // 10 seconds
 		final long intervalTime = 1 * 1000; // 1 second interval
@@ -392,14 +400,15 @@ public class MainActivity extends FragmentActivity implements
 		 * intervalTime = 1*60*1000; //1 minute interval final int coolTime =
 		 * 10;
 		 */
-/*
+
 		new CountDownTimer(cooldownTime, intervalTime) {
 
 			
-			 * int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
-			 * time in seconds int strockInterval = (int) (240 /
-			 * (cooldownTime/2/1000));
+			 //int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
+			 //time in seconds int strockInterval = (int) (240 / (cooldownTime/2/1000));
 			 
+			final LatLng positionc = position;
+
 
 			int fillInterval = 150 / coolTime; // divide by time in seconds
 			int strockInterval = 240 / coolTime;
@@ -407,28 +416,31 @@ public class MainActivity extends FragmentActivity implements
 			public void onTick(long millisUntilFinished) {
 
 				// filling alpha reduction
-				int currFillColor = mCircle.getFillColor();
+				int currFillColor = circles.get(positionc).getFillColor();
 				int a = Color.alpha(currFillColor);
 
 				a = a - fillInterval;
+				
+				circles.get(positionc).setFillColor(Color.argb(a, 255, 0, 0));
 
-				mCircle.setFillColor(Color.argb(a, 255, 0, 0));
+				//mCircle.setFillColor(Color.argb(a, 255, 0, 0));
 
 				// stock alpha reduction
-				int currStrokeColor = mCircle.getStrokeColor();
+				
+/*				int currStrokeColor = circles.get(positionc).getStrokeColor();
 				int a1 = Color.alpha(currStrokeColor);
 
 				a1 = a1 - strockInterval;
 
-				mCircle.setStrokeColor(Color.argb(a1, 255, 0, 0));
-
+				circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0, 0));
+*/
 			}
 
 			public void onFinish() {
 				// mTextField.setText("done!");
 			}
 		}.start();
-*/	}
+	}
 
 	public void stayInSafePlaceTimer() {
 
@@ -655,6 +667,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onPause() {
 		mUIGoogleMap.clear();
+		if(circles.size()!=0)
+			circles.clear();
 		super.onPause();
 	}
 	/* Inserting the data from csv to database only in the first launch */
