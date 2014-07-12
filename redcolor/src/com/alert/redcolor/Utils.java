@@ -10,7 +10,7 @@ public class Utils {
 
 	     
 	    // give your server registration url here
-	    static final String SERVER_URL = "http://redalert-il.herokuapp.com/register_v1"; 
+	    static final String SERVER_URL = "http://redalert-il.herokuapp.com/android_register_v1"; 
 	 
 	    // Google project id
 	    static final String SENDER_ID = "903913289319"; 
