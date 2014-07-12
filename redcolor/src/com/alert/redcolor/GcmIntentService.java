@@ -101,6 +101,7 @@ public class GcmIntentService extends IntentService
 					StringBuilder contentBuilder = new StringBuilder();
 					ArrayList<City> cities = new ArrayList<City>();
 					ProviderQueries pq = new ProviderQueries(getApplicationContext());
+					
               	try {
   					JSONArray json = new JSONArray(jsonStr);
   					for(int i =0;i<json.length();i++) {
@@ -122,7 +123,7 @@ public class GcmIntentService extends IntentService
   						
   						Area a = pq.areaById(id);
   						
-  						titleBuilder.append(a.getName());
+  						titleBuilder.append(a.getName()).append(" ").append(a.getAreaNum());
   						if(i != json.length()-1)
   							titleBuilder.append(", ");
   					
