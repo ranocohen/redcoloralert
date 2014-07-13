@@ -52,7 +52,6 @@ public class ServerUtils {
 	            }
 	        }
 	        String body = bodyBuilder.toString();
-	        Log.v(Utils.TAG, "Posting '" + body + "' to " + url);
 	        byte[] bytes = body.getBytes();
 	        HttpURLConnection conn = null;
 	        try {

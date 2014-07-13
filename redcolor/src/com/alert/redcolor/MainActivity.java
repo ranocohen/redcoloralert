@@ -1,5 +1,6 @@
 package com.alert.redcolor;
 
+import com.crashlytics.android.Crashlytics;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,20 +110,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 
 		
-		
-		
-//	backup();
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		Crashlytics.start(this);
 		// run location service
 		Intent intent = new Intent(this, BackgroundLocationService.class);
 		startService(intent);
@@ -524,7 +512,7 @@ public class MainActivity extends FragmentActivity implements
 			@Override
 			public void onFinish() {
 
-				Toast.makeText(getApplicationContext(), "אפשר לצאת ממרחב מוגן",
+				Toast.makeText(getApplicationContext(), "???? ???? ????? ????",
 						Toast.LENGTH_SHORT).show();
 			}
 		};

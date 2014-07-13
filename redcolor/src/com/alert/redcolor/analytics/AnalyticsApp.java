@@ -16,13 +16,12 @@
 
 package com.alert.redcolor.analytics;
 
-import com.google.android.gms.analytics.Logger;
-import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.analytics.GoogleAnalytics;
+import java.util.HashMap;
 
 import android.app.Application;
 
-import java.util.HashMap;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 public class AnalyticsApp extends Application {
 
@@ -45,7 +44,6 @@ public class AnalyticsApp extends Application {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             Tracker t = analytics.newTracker(PROPERTY_ID);
                     
             t.enableAdvertisingIdCollection(true);
