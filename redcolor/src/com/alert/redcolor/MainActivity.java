@@ -1,19 +1,22 @@
 package com.alert.redcolor;
 
-import com.crashlytics.android.Crashlytics;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.joda.time.DateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,14 +42,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
+import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
+import com.alert.redcolor.db.RedColordb.CitiesColumns;
+import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.services.BackgroundLocationService;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
@@ -108,6 +116,7 @@ public class MainActivity extends FragmentActivity implements
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		//backup();
 		Crashlytics.start(this);
@@ -116,16 +125,18 @@ public class MainActivity extends FragmentActivity implements
 		startService(intent);
 
 		context = getApplicationContext();
-		initFirstData();
+		
 		setContentView(R.layout.activity_main);
+		initFirstData();
 		// Check device for Play Services APK.
 		if (checkPlayServices()) {
 			gcm = GoogleCloudMessaging.getInstance(this);
 			regid = getRegistrationId(context);
-
+			
 			if (regid.isEmpty()) {
 				registerInBackground();
 			}
+			Crashlytics.setUserIdentifier(regid);
 		} else {
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
@@ -673,9 +684,7 @@ public class MainActivity extends FragmentActivity implements
 		String serverUrl = Utils.SERVER_URL;
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("regid", regId);
-		Long tsLong = System.currentTimeMillis();
 		
-		params.put("timestamp", tsLong);
 		try {
 			String versionName = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionName;
@@ -732,10 +741,11 @@ public class MainActivity extends FragmentActivity implements
 				.getDefaultSharedPreferences(this);
 		boolean firstInit = preferences.getBoolean("firstInit", false);
 		if (!firstInit) {
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("firstInit", true);
-			editor.apply();
-			RedColordb.initData(getApplicationContext());
+			setProgressBarIndeterminateVisibility(true);
+			setProgressBarVisibility(true);
+			initData init = new initData(this);
+			init.execute();
+			
 		}
 
 	}
@@ -775,5 +785,111 @@ public class MainActivity extends FragmentActivity implements
 				10);
 		mUIGoogleMap.animateCamera(cameraUpdate);
 	}
+	private class initData extends AsyncTask<Void, Void, Void> {
+		private Context context;
+		public initData(Context context) {  // can take other params if needed
+		    this.context = context;
+		}
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			
+		}
 
+		@Override
+		protected Void doInBackground(Void... params) {
+			InputStreamReader isr = new InputStreamReader(getResources().openRawResource(R.raw.redalert_en));
+			BufferedReader reader = new BufferedReader(isr);
+			HashMap<Long, String> orefMap = new HashMap<Long, String>();
+			try {
+				String line;
+				while ((line = reader.readLine()) != null) {
+
+					// EOF is ="-1" , just a temp check
+					if (line.length() <= 3)
+						break;
+
+					/*
+					 * Split line with , delimeter (ignoring commas in
+					 * quotes)
+					 */
+					String[] data = line
+							.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+					long oref_id = Long.parseLong(data[0]);
+					String he_name = data[1];
+					String en_name = data[2];
+
+					String oref_loc_str = data[3];
+
+					String time = data[4];
+					Double lat = Double.parseDouble(data[5]);
+					Double lng = Double.parseDouble(data[6]);
+
+					ContentValues cityCv = new ContentValues();
+					cityCv.put(CitiesColumns.lat, lat);
+					cityCv.put(CitiesColumns.lng, lng);
+					cityCv.put(CitiesColumns.name_he, he_name);
+					cityCv.put(CitiesColumns.name_en, en_name);
+					cityCv.put(CitiesColumns.name_en, en_name);
+					cityCv.put(CitiesColumns.oref_id, oref_id);
+					cityCv.put(CitiesColumns.time, time);
+
+					getContentResolver().insert(
+							AlertProvider.CITIES_CONTENT_URI, cityCv);
+
+					// Avoid duplicates of pikud areas
+					orefMap.put(Long.valueOf(oref_id), oref_loc_str);
+
+				}
+				for (Entry<Long, String> e : orefMap.entrySet()) {
+					Long key = e.getKey();
+					String value = e.getValue();
+
+					ContentValues orefCv = new ContentValues();
+					Pattern pattern = Pattern
+							.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
+					Matcher matcher = pattern.matcher(value.trim());
+
+					String area = "";
+					String num = "";
+
+					while (matcher.find()) {
+						area = matcher.group(1);
+						num = matcher.group(2);
+					}
+
+					orefCv.put(OrefColumns.ID, key);
+					orefCv.put(OrefColumns.index, num);
+					orefCv.put(OrefColumns.name, area);
+
+					getContentResolver().insert(
+							AlertProvider.OREF_CONTENT_URI, orefCv);
+
+				}
+			} catch (IOException ex) {
+				// handle exception
+			} finally {
+				try {
+					reader.close();
+					isr.close();
+				} catch (IOException e) {
+					// handle exception
+				}
+			}
+
+		
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			 setProgressBarIndeterminateVisibility(false);
+			 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			 SharedPreferences.Editor editor = preferences.edit();
+			 editor.putBoolean("firstInit",true);
+			 editor.apply();
+			
+		}
+
+	}
 }

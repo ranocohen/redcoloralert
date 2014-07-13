@@ -62,6 +62,13 @@ public class GcmIntentService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		
+		
+		/* Make sure database is ready */
+		if(!doneFirstInit())
+		{
+			return;
+		}
 		Bundle extras = intent.getExtras();
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 		// The getMessageType() intent parameter must be the intent you received
@@ -178,6 +185,14 @@ public class GcmIntentService extends IntentService {
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
+	}
+
+	private boolean doneFirstInit() {
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		boolean firstInit = preferences.getBoolean("firstInit", false);
+		
+		return firstInit;
 	}
 
 	// Put the message into a notification and post it.
