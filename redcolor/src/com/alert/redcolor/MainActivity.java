@@ -631,8 +631,18 @@ public class MainActivity extends FragmentActivity implements
 		String serverUrl = Utils.SERVER_URL;
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("regid", regId);
-		params.put("name", "ran");
-
+		Long tsLong = System.currentTimeMillis();
+		String ts = tsLong.toString();
+		params.put("timestamp",ts);
+		try {
+			String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+			params.put("version",versionName);
+		} catch (NameNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		try {
 			ServerUtils.post(serverUrl, params);
 		} catch (IOException e) {
