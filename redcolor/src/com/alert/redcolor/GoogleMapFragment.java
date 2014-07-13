@@ -4,7 +4,10 @@ import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -28,7 +31,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 public class GoogleMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>{
-
+	
     private static final String SUPPORT_MAP_BUNDLE_KEY = "MapOptions";
     public String TAG = "Map";
     public static interface OnGoogleMapFragmentListener {
@@ -110,14 +113,41 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 			Alert a = new Alert(data);
 			Minutes diff = Minutes.minutesBetween(a.getTime(), now);
 			int minutes = diff.getMinutes();
-			if(minutes <= 1)
+			if(minutes <= 1 && !a.isPainted())
 			{
+				
+				//get random city in this area
 				City city = pq.getCities(a.getAreaId()).get(0);
+				
+				//Update on db that this area is painted
+				setPainted(a.getId());			
+				
+				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
 				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()));
+				
+				
+				
 			}
 
 		}
+	}
+	/**
+	 * 
+	 * @param id the alert id
+	 * Sets on database painted column to 1
+	 */
+	private void setPainted(long id) {
+		ContentValues updatedValues = new ContentValues();
+		updatedValues.put(AlertColumns.painted, 1);
+		getActivity().getContentResolver().update(
+				ContentUris.withAppendedId(AlertProvider.ALERTS_CONTENT_URI, id),   // the user dictionary content URI
+			    updatedValues ,                      // the columns to update
+			    null,         // the column to select on
+			    null // the value to compare to
+			);
+
+		
 	}
 
 	@Override

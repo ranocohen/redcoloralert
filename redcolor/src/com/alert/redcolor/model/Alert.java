@@ -15,6 +15,7 @@ public class Alert {
 	private long id;
 	private long areaId;
 	private DateTime time;
+	private boolean painted;
 	public Alert(long areaId , DateTime time) {
 		this.areaId = areaId;
 		this.time = time;
@@ -23,6 +24,7 @@ public class Alert {
 		this.id = cursor.getLong(cursor.getColumnIndex(RedColordb.AlertColumns.ID));
 		this.areaId = cursor.getLong(cursor.getColumnIndex(RedColordb.AlertColumns.AreaId));
 		this.time = new DateTime(cursor.getString(cursor.getColumnIndex(RedColordb.AlertColumns.time)));
+		this.painted = ((cursor.getInt(cursor.getColumnIndex(RedColordb.AlertColumns.painted))) > 0);
 	}
 	
 	public long getId() {
@@ -44,5 +46,8 @@ public class Alert {
 		Uri uri = ContentUris.withAppendedId(AlertProvider.OREF_CONTENT_URI, areaId);
 		Cursor c = con.getContentResolver().query(uri, null, null, null,null);
 		return new Area(c);
+	}
+	public boolean isPainted() {
+		return painted;
 	}
 }

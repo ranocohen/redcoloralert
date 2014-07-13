@@ -33,7 +33,7 @@ public class RedColordb extends SQLiteOpenHelper {
 
 	}
 	// Current Version
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	/**
 	 * private instance for the singleton pattern , See
@@ -47,6 +47,7 @@ public class RedColordb extends SQLiteOpenHelper {
 		public static final String ID = "_id";
 		public static final String AreaId = "area_id";
 		public static final String time = "time";
+		public static final String painted = "painted";
 	}
 	public interface OrefColumns {
 		public static final String ID = "_id";
@@ -114,7 +115,11 @@ public class RedColordb extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+		 // If you need to add a new column
+	    if (oldVersion < 2) {
+	        db.execSQL("ALTER TABLE "+Tables.ALERTS+" ADD COLUMN "+AlertColumns.painted+" INTEGER");
+	        db.execSQL("UPDATE "+Tables.ALERTS+" SET "+AlertColumns.painted+" = 1");
+	    }
 		
 	}
 	
