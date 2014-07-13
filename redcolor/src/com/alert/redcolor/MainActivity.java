@@ -419,7 +419,7 @@ public class MainActivity extends FragmentActivity implements
 	public void drawAlertHotzone(final LatLng position) {
 
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(150, 255, 0, 00);
+		int fillColor = Color.argb(50, 255, 0, 00);
 		int strokeColor = Color.argb(200, 255, 0, 0);
 
 		Location l = new Location("");
@@ -451,6 +451,7 @@ public class MainActivity extends FragmentActivity implements
 		 * 10;
 		 */
 
+		/*
 		new CountDownTimer(cooldownTime, intervalTime) {
 
 			// int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
@@ -476,7 +477,7 @@ public class MainActivity extends FragmentActivity implements
 
 				// stock alpha reduction
 
-				/*
+				
 				 * int currStrokeColor =
 				 * circles.get(positionc).getStrokeColor(); int a1 =
 				 * Color.alpha(currStrokeColor);
@@ -485,14 +486,14 @@ public class MainActivity extends FragmentActivity implements
 				 * 
 				 * circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0,
 				 * 0));
-				 */
+				 
 			}
 
 			public void onFinish() {
 				// mTextField.setText("done!");
 			}
 		}.start();
-	}
+*/	}
 
 	public void stayInSafePlaceTimer() {
 
