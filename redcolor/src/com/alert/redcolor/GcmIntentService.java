@@ -115,6 +115,7 @@ public class GcmIntentService extends IntentService {
 							ContentValues cv = new ContentValues();
 							cv.put(AlertColumns.AreaId, id);
 							cv.put(AlertColumns.time, dt.toString());
+							cv.put(AlertColumns.painted, 0);
 
 							getContentResolver().insert(
 									AlertProvider.ALERTS_CONTENT_URI, cv);
