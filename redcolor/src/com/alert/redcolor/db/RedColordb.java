@@ -93,6 +93,7 @@ public class RedColordb extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE " + Tables.ALERTS + " ("
 				+ AlertColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ AlertColumns.AreaId + " INTEGER, "
+				+ AlertColumns.painted + " INTEGER, "
 				+ AlertColumns.time + " TEXT);");
 		
 		
