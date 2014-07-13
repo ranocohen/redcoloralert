@@ -1,9 +1,15 @@
 package com.alert.redcolor;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.joda.time.DateTime;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -18,6 +24,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -101,6 +108,21 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		
+		
+		
+//	backup();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// run location service
 		Intent intent = new Intent(this, BackgroundLocationService.class);
 		startService(intent);
@@ -192,6 +214,35 @@ public class MainActivity extends FragmentActivity implements
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 
+	}
+
+	private void backup() {
+		File sd = Environment.getExternalStorageDirectory();
+
+		if (sd.canWrite()) {
+			File backupFile = null;
+			File backupDir = new File(sd, "RED//backup//");
+			if (!backupDir.exists())
+				backupDir.mkdirs();
+
+			String dbPath = getDatabasePath(RedColordb.DATABASE_NAME)
+					.toString();
+			String backupPath = "RED//backup//alerts.db";
+			File dbFile = new File(dbPath);
+			backupFile = new File(sd, backupPath);
+		
+			
+			try{
+			FileChannel src = new FileInputStream(dbFile).getChannel();
+			FileChannel dst = new FileOutputStream(backupFile)
+					.getChannel();
+			dst.transferFrom(src, 0, src.size());
+			src.close();
+			dst.close();}
+			catch(Exception e){
+				
+			}
+		}
 	}
 
 	/**
@@ -631,11 +682,11 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	private void sendRegistrationIdToBackend(String regId) {
 		String serverUrl = Utils.SERVER_URL;
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("regid", regId);
 		Long tsLong = System.currentTimeMillis();
-		String ts = tsLong.toString();
-		params.put("timestamp", ts);
+		
+		params.put("timestamp", tsLong);
 		try {
 			String versionName = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionName;

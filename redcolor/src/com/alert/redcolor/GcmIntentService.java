@@ -122,7 +122,7 @@ public class GcmIntentService extends IntentService {
 							/* Check location */
 
 							Area a = pq.areaById(id);
-
+							
 							titleBuilder.append(a.getName()).append(" ")
 									.append(a.getAreaNum());
 							if (i != json.length() - 1)

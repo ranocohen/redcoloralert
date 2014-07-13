@@ -30,7 +30,7 @@ public class ServerUtils {
 	     *
 	     * @throws IOException propagated from POST.
 	     */
-	    public static void post(String endpoint, Map<String, String> params)
+	    public static void post(String endpoint, Map<String, Object> params)
 	            throws IOException {    
 	         
 	        URL url;
@@ -40,10 +40,11 @@ public class ServerUtils {
 	            throw new IllegalArgumentException("invalid url: " + endpoint);
 	        }
 	        StringBuilder bodyBuilder = new StringBuilder();
-	        Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
+	        Iterator<Entry<String, Object>> iterator = params.entrySet().iterator();
 	        // constructs the POST body using the parameters
 	        while (iterator.hasNext()) {
-	            Entry<String, String> param = iterator.next();
+	            Entry<String, Object> param = iterator.next();
+	   
 	            bodyBuilder.append(param.getKey()).append('=')
 	                    .append(param.getValue());
 	            if (iterator.hasNext()) {
