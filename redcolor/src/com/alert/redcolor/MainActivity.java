@@ -122,10 +122,11 @@ public class MainActivity extends FragmentActivity implements
 		if (checkPlayServices()) {
 			gcm = GoogleCloudMessaging.getInstance(this);
 			regid = getRegistrationId(context);
-
+			
 			if (regid.isEmpty()) {
 				registerInBackground();
 			}
+			Crashlytics.setUserIdentifier(regid);
 		} else {
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
@@ -673,9 +674,7 @@ public class MainActivity extends FragmentActivity implements
 		String serverUrl = Utils.SERVER_URL;
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("regid", regId);
-		Long tsLong = System.currentTimeMillis();
 		
-		params.put("timestamp", tsLong);
 		try {
 			String versionName = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionName;
