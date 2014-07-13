@@ -109,7 +109,7 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		
+		//backup();
 		Crashlytics.start(this);
 		// run location service
 		Intent intent = new Intent(this, BackgroundLocationService.class);
