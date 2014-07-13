@@ -793,7 +793,7 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			
+			deleteDatabase(RedColordb.DATABASE_NAME);
 		}
 
 		@Override
@@ -888,6 +888,7 @@ public class MainActivity extends FragmentActivity implements
 			 SharedPreferences.Editor editor = preferences.edit();
 			 editor.putBoolean("firstInit",true);
 			 editor.apply();
+			 
 			
 		}
 
