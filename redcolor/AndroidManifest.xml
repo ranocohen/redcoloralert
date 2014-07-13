@@ -94,6 +94,8 @@
 
         <service android:name=".GcmIntentService" />
         <service android:name=".services.BackgroundLocationService" />
+        <meta-data android:name="com.crashlytics.ApiKey"
+             android:value="cfb37ac4e0c7ab59d7d9e3e321ca61a853817302"/>
     </application>
 
 </manifest>
