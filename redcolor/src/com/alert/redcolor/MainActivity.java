@@ -419,7 +419,7 @@ public class MainActivity extends FragmentActivity implements
 	public void drawAlertHotzone(final LatLng position) {
 
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(50, 255, 0, 00);
+		int fillColor = Color.argb(90, 255, 0, 00);
 		int strokeColor = Color.argb(200, 255, 0, 0);
 
 		Location l = new Location("");
