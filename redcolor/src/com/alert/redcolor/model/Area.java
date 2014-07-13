@@ -39,4 +39,5 @@ public class Area {
 	public void setAreaNum(int areaNum) {
 		this.areaNum = areaNum;
 	}
+	
 }

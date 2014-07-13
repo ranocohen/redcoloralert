@@ -1,7 +1,6 @@
 package com.alert.redcolor;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +34,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
+import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.services.BackgroundLocationService;
 import com.google.android.gms.common.ConnectionResult;
@@ -58,7 +59,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
-		LocationListener, OnGoogleMapFragmentListener {
+		LocationListener, OnGoogleMapFragmentListener, OnRedSelectListener {
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
@@ -66,7 +67,6 @@ public class MainActivity extends FragmentActivity implements
 
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
-	
 
 	GoogleCloudMessaging gcm;
 	AtomicInteger msgId = new AtomicInteger();
@@ -75,10 +75,9 @@ public class MainActivity extends FragmentActivity implements
 
 	String regid;
 	private GoogleMap mUIGoogleMap;
-	
+
 	HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
-	
-	
+
 	// Location related variables
 	LocationRequest locationRequest;
 	LocationClient locationClient;
@@ -133,14 +132,12 @@ public class MainActivity extends FragmentActivity implements
 		} else
 			locationEnabled = true;
 
-		
 		locationClient = new LocationClient(this, this, this);
 
 		locationClient.connect();
 
 		locationRequest = LocationRequest.create();
 		// Use high accuracy
-		
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections
@@ -188,10 +185,11 @@ public class MainActivity extends FragmentActivity implements
 		 * .setTabListener(this)); }
 		 */
 		// TODO add stings :)
-		actionBar
-				.addTab(actionBar.newTab().setText(getString(R.string.map)).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setText(getString(R.string.map))
+				.setTabListener(this));
 
-		actionBar.addTab(actionBar.newTab().setText(getString(R.string.latest_alerts))
+		actionBar.addTab(actionBar.newTab()
+				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 
 	}
@@ -313,7 +311,9 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-		Toast.makeText(getApplicationContext(), "Please make sure you have connection enabled", Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(),
+				"Please make sure you have connection enabled",
+				Toast.LENGTH_LONG).show();
 		finish();
 	}
 
@@ -321,21 +321,22 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Location location = locationClient.getLastLocation();
-		/*if (location == null)
-			locationClient.connect();*/
+		/*
+		 * if (location == null) locationClient.connect();
+		 */
 		locationClient.requestLocationUpdates(locationRequest, this);
 
 		if (location != null) {
 			// animate to last location
 			if (mUIGoogleMap != null) {
 
-				/*LatLng latLng = new LatLng(location.getLatitude(),
-						location.getLongitude());
-				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-						latLng, 11);
-				mUIGoogleMap.animateCamera(cameraUpdate);
-*/
-				//drawAlertHotzone(latLng);
+				/*
+				 * LatLng latLng = new LatLng(location.getLatitude(),
+				 * location.getLongitude()); CameraUpdate cameraUpdate =
+				 * CameraUpdateFactory.newLatLngZoom( latLng, 11);
+				 * mUIGoogleMap.animateCamera(cameraUpdate);
+				 */
+				// drawAlertHotzone(latLng);
 
 				// else
 				/*
@@ -381,14 +382,12 @@ public class MainActivity extends FragmentActivity implements
 		CircleOptions circleOptions = new CircleOptions().center(position)
 				.radius(radiusInMeters).fillColor(fillColor)
 				.strokeColor(strokeColor).strokeWidth(8);
-		
-		//add to hashmap as well
+
+		// add to hashmap as well
 		circles.put(position, mUIGoogleMap.addCircle(circleOptions));
-		
+
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
-		
-		
 
 		final long cooldownTime = 1 * 10 * 1000; // 10 seconds
 		final long intervalTime = 1 * 1000; // 1 second interval
@@ -403,12 +402,11 @@ public class MainActivity extends FragmentActivity implements
 
 		new CountDownTimer(cooldownTime, intervalTime) {
 
-			
-			 //int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
-			 //time in seconds int strockInterval = (int) (240 / (cooldownTime/2/1000));
-			 
-			final LatLng positionc = position;
+			// int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
+			// time in seconds int strockInterval = (int) (240 /
+			// (cooldownTime/2/1000));
 
+			final LatLng positionc = position;
 
 			int fillInterval = 150 / coolTime; // divide by time in seconds
 			int strockInterval = 240 / coolTime;
@@ -420,20 +418,23 @@ public class MainActivity extends FragmentActivity implements
 				int a = Color.alpha(currFillColor);
 
 				a = a - fillInterval;
-				
+
 				circles.get(positionc).setFillColor(Color.argb(a, 255, 0, 0));
 
-				//mCircle.setFillColor(Color.argb(a, 255, 0, 0));
+				// mCircle.setFillColor(Color.argb(a, 255, 0, 0));
 
 				// stock alpha reduction
-				
-/*				int currStrokeColor = circles.get(positionc).getStrokeColor();
-				int a1 = Color.alpha(currStrokeColor);
 
-				a1 = a1 - strockInterval;
-
-				circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0, 0));
-*/
+				/*
+				 * int currStrokeColor =
+				 * circles.get(positionc).getStrokeColor(); int a1 =
+				 * Color.alpha(currStrokeColor);
+				 * 
+				 * a1 = a1 - strockInterval;
+				 * 
+				 * circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0,
+				 * 0));
+				 */
 			}
 
 			public void onFinish() {
@@ -478,7 +479,6 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	
 	private Circle mCircle;
 	private Marker mMarker;
 
@@ -595,8 +595,10 @@ public class MainActivity extends FragmentActivity implements
 
 			@Override
 			protected void onPostExecute(String msg) {
-/*				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-						.show();*/
+				/*
+				 * Toast.makeText(getApplicationContext(), msg,
+				 * Toast.LENGTH_LONG) .show();
+				 */
 			}
 		}.execute(null, null, null);
 
@@ -633,16 +635,16 @@ public class MainActivity extends FragmentActivity implements
 		params.put("regid", regId);
 		Long tsLong = System.currentTimeMillis();
 		String ts = tsLong.toString();
-		params.put("timestamp",ts);
+		params.put("timestamp", ts);
 		try {
-			String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-			params.put("version",versionName);
+			String versionName = getPackageManager().getPackageInfo(
+					getPackageName(), 0).versionName;
+			params.put("version", versionName);
 		} catch (NameNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
+
 		try {
 			ServerUtils.post(serverUrl, params);
 		} catch (IOException e) {
@@ -658,29 +660,31 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.setMyLocationEnabled(true);
 		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-		
-		//Animate map to ideal location
-		//Tel aviv location
+
+		// Animate map to ideal location
+		// Tel aviv location
 		double lat = 32.055168;
 		double lng = 34.799744;
-		
+
 		Location location = new Location("");
 		location.setLatitude(lat);
 		location.setLongitude(lng);
 		LatLng latLng = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-				latLng, 8);
+		CameraUpdate cameraUpdate = CameraUpdateFactory
+				.newLatLngZoom(latLng, 8);
 		mUIGoogleMap.animateCamera(cameraUpdate);
 
 	}
+
 	@Override
 	protected void onPause() {
 		mUIGoogleMap.clear();
-		if(circles.size()!=0)
+		if (circles.size() != 0)
 			circles.clear();
 		super.onPause();
 	}
+
 	/* Inserting the data from csv to database only in the first launch */
 	private void initFirstData() {
 
@@ -695,21 +699,41 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
 	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.action_settings:
-	            startActivity(new Intent(this , SettingsActivity.class));
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
+
+	@Override
+	public void OnRedSelectedListener(long id) {
+		ProviderQueries pq = new ProviderQueries(getApplicationContext());
+		Location location = pq.getCities(id).get(0).getLocation();
+		setFocus(location);
+		mViewPager.setCurrentItem(0);
+
+	}
+
+	private void setFocus(Location location) {
+		LatLng latLng = new LatLng(location.getLatitude(),
+				location.getLongitude());
+		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,
+				10);
+		mUIGoogleMap.animateCamera(cameraUpdate);
+	}
+
 }

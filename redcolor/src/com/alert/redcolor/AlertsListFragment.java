@@ -1,5 +1,6 @@
 package com.alert.redcolor;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
@@ -29,7 +29,7 @@ public class AlertsListFragment extends ListFragment implements
 		LoaderCallbacks<Cursor> {
 
 	public final static String TAG = "AlertsList";
-
+	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
 
 	public static AlertsListFragment newInstance() {
@@ -57,6 +57,7 @@ public class AlertsListFragment extends ListFragment implements
 				getResources().getDrawable(R.drawable.fade_divider));
 		getListView().setDividerHeight(1);
 		getListView().setVerticalScrollBarEnabled(false);
+		
 
 		mAdapter = new AlertsAdapter(getActivity(), null, 0);
 		setListAdapter(mAdapter);
@@ -157,9 +158,12 @@ public class AlertsListFragment extends ListFragment implements
 	
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // TODO Auto-generated method stub
+        
         super.onListItemClick(l, v, position, id);
-
+        Cursor c = ((CursorAdapter)l.getAdapter()).getCursor();
+        c.moveToPosition(position);
+        Alert a = new Alert(c);
+        mCallback.OnRedSelectedListener(a.getAreaId());
     }
 
 	// static class for holding references to views optimizing listview recycles
@@ -171,4 +175,23 @@ public class AlertsListFragment extends ListFragment implements
 
 	}
 
+    // MainActivity Activity must implement this interface
+    public interface OnRedSelectListener {
+    	/**
+    	 * 
+    	 * @param id the database id of the RED(Alert)
+    	 */
+        public void OnRedSelectedListener(long id);
+    }
+    @Override
+    public void onAttach(Activity activity) {
+    	super.onAttach(activity);
+        try {
+            mCallback = (OnRedSelectListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    	
+    }
 }
