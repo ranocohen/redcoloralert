@@ -1,37 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android1="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ContactPicker" >
-
-    <Button
-        android1:id="@+id/btnDone"
-        android1:layout_width="wrap_content"
-        android1:layout_height="wrap_content"
-        android1:layout_alignParentBottom="true"
-        android1:layout_alignParentLeft="true"
-        android1:layout_alignParentRight="true"
-        android1:text="Done" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <EditText
-        android1:id="@+id/txt_searchContact"
-        android1:layout_width="match_parent"
-        android1:layout_height="wrap_content"
-        android1:layout_alignParentLeft="true"
-        android1:layout_alignParentTop="true"
-        android1:ems="10"
-        
-        android1:inputType="text" >
-    </EditText>
+        android:id="@+id/txt_searchContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:padding="5dp" />
+    
 
     <ListView
-        android1:id="@+id/list"
-        android1:layout_width="match_parent"
-        android1:layout_height="wrap_content"
-        android1:layout_above="@+id/btnDone"
-        android1:layout_alignParentLeft="true"
-        android1:layout_below="@+id/txt_searchContact" >
-    </ListView>
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
+    
 
-</RelativeLayout>
+</LinearLayout>
