@@ -54,23 +54,7 @@ public class SettingsActivity extends Activity {
 		}
 
 		public void populateTownsPreferenceList() {
-			mslp = (MultiSelectListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
-			ProviderQueries pq = new ProviderQueries(getActivity());
-			HashMap<Long, String> cities = pq.getCitiesMap();
-			List<String> enteries = new ArrayList<String>();
-			;
-			HashSet<String> values = new HashSet<String>();
-
-			cities = (HashMap<Long, String>) MapUtil.sortByValue(cities);
-
-			for (Long l : cities.keySet())
-				values.add(l.toString());
-
-			for (String s : cities.values())
-				enteries.add(s);
-
-			mslp.setEntries(enteries.toArray(new String[enteries.size()]));
-			mslp.setEntryValues(values.toArray(new String[values.size()]));
+		
 		}
 	}
 
