@@ -10,16 +10,8 @@ import android.preference.MultiSelectListPreference;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ListView;
 
 import com.alert.redcolor.R;
@@ -60,7 +52,7 @@ public class TownListPicker extends MultiSelectListPreference {
 		     
 		    @Override
 		    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-		        // When user changed the Text
+		       ((TownsAdapter)lv.getAdapter()).getFilter().filter(cs);
 
 		    }
 		     
@@ -76,71 +68,17 @@ public class TownListPicker extends MultiSelectListPreference {
 		        // TODO Auto-generated method stub                          
 		    }
 		});
-		lv.setAdapter(new ContactListAdapter(getContext()));
+		
+		ArrayList<String> values = new ArrayList<String>();
+		for(int i =0;i<getEntries().length;i++)
+			values.add(getEntries()[i].toString());
+		
+		lv.setAdapter(new TownsAdapter(getContext(),values));
 		
 		super.onBindDialogView(view);
 	}
 
-	class ContactListAdapter extends BaseAdapter  {
-		Context context;
-	    //Two data sources, the original data and filtered data
-	    private ArrayList<HashMap<String, String>> originalData;
-	    private ArrayList<HashMap<String, String>> filteredData;
-		public ContactListAdapter(Context context) {
-			super();
-			this.context = context;
+	
 
-		}
-
-		/* Custom View Generation(You may modify this to include other Views) */
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-			View view_row = inflater.inflate(R.layout.town_picker_list_item, parent,
-					false);
-
-			CheckBox chk_contact = (CheckBox) view_row
-					.findViewById(R.id.checkBox1);
-			chk_contact.setText(getItem(position));
-			// Code to get Selected Contacts.
-			chk_contact
-					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-						@Override
-						public void onCheckedChanged(CompoundButton arg0,
-								boolean arg1) {
-
-						}
-
-					});
-			return view_row;
-		}
-
-		public boolean alreadySelected() {
-			boolean ret = false;
-
-			ret = true;
-
-			return ret;
-		}
-
-		@Override
-		public int getCount() {
-			return getEntries().length;
-		}
-
-		@Override
-		public String getItem(int arg0) {
-			return getEntries()[arg0].toString();
-		}
-
-		@Override
-		public long getItemId(int arg0) {
-			return Long.parseLong(getEntryValues()[arg0].toString());
-		}
-
-	}
 
 }
