@@ -113,7 +113,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 			Alert a = new Alert(data);
 			Minutes diff = Minutes.minutesBetween(a.getTime(), now);
 			int minutes = diff.getMinutes();
-			if(minutes <= 1 && !a.isPainted())
+			if(minutes <= 10 && !a.isPainted())
 			{
 				
 				//get random city in this area

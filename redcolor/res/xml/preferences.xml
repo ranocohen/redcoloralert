@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <ListPreference
+    <PreferenceCategory
+        android:key="pref_alerts_settings"
+        android:title="@string/alerts" >
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_enable_alerts"
+            android:title="@string/alerts" />
 
-        android:key="pref_alertsType"
-        android:title="@string/pref_alert_type_title"
-        android:dialogTitle="@string/pref_alert_type_title"
-        android:entries="@array/pref_alert_type_enteries"
-        android:entryValues="@array/pref_alert_type_values"
-        android:defaultValue="@string/pref_alert_type_default" />
+        <ListPreference
+            android:defaultValue="@string/pref_alert_type_default"
+            android:dependency="pref_enable_alerts"
+            android:dialogTitle="@string/pref_alert_type_title"
+            android:entries="@array/pref_alert_type_enteries"
+            android:entryValues="@array/pref_alert_type_values"
+            android:key="pref_alertsType"
+            android:title="@string/pref_alert_type_title" />
+
+        <com.alert.redcolor.ui.TownListPicker
+            android:dependency="pref_enable_alerts"
+            android:dialogTitle="@string/towns_list"
+            android:key="pref_towns_select"
+            android:summary="@string/alert_areas_summery"
+            android:defaultValue="@array/empty_array"
+            android:title="@string/alert_areas" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

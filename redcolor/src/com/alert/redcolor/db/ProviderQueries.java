@@ -1,6 +1,7 @@
 package com.alert.redcolor.db;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -46,6 +47,30 @@ public class ProviderQueries {
 			while (c.moveToNext()) {
 				ans[i] = c.getString(0);
 				i++;
+			}
+		} finally {
+			if (c != null)
+				c.close();
+		}
+		return ans;
+	}
+	
+	/**
+	 * 
+	 * @return HashMap of all cities in database , key = id , value = city name(heb)
+	 */
+	public HashMap<Long,String> getCitiesMap() {
+		HashMap<Long,String> ans = new HashMap<Long, String>();
+		Cursor c = null;
+		try {
+			c = mCon.getContentResolver().query(
+					AlertProvider.CITIES_CONTENT_URI,
+					new String[] { CitiesColumns.ID,CitiesColumns.name_he },
+					null, null, CitiesColumns.name_he +" DESC");
+			while (c.moveToNext()) {
+				Long id = c.getLong(0);
+				String val = c.getString(1);
+				ans.put(id,val);
 			}
 		} finally {
 			if (c != null)

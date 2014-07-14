@@ -14,7 +14,7 @@
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
     <string name="demo_external_activity">Demo External Activity</string>
     <string name="demo_collection">Demo Collection</string>
- <string name="error_config">Please set the %1$s constant and recompile the app.</string>
+    <string name="error_config">Please set the %1$s constant and recompile the app.</string>
     <string name="already_registered">Device is already registered on server.</string>
     <string name="gcm_registered">From GCM: device successfully registered!</string>
     <string name="gcm_unregistered">From GCM: device successfully unregistered!</string>
@@ -31,18 +31,29 @@
     <string name="options_unregister">Unregister</string>
     <string name="red_alert">צבע אדום</string>
     <string name="options_clear">Clear</string>
+    <string name="pref_local_alerts_key">pref_local_alerts</string>
+    <string name="pref_alert_type_title">התרעות</string>
+    <string name="alert_areas">אזורי התרעות</string>
+    <string name="towns_list"> רשימת יישובים</string>
+    <string name="alert_areas_summery">בחר יישובים להתרעות</string>
+    <string name="alerts">התרעות</string>
+    <string name="pref_alert_type_default">all</string>
 
-	<string name="pref_alert_type_title">התרעות</string>
-	
-	<string name="pref_alert_type_default">all</string>
-
-	
-  <string-array name="pref_alert_type_enteries">
+    <string-array name="pref_alert_type_enteries">
         <item>כל ההתרעות</item>
         <item>רק באזור שלי</item>
     </string-array>
-      <string-array name="pref_alert_type_values">
+    <string-array name="pref_alert_type_values">
         <item>all</item>
         <item>local</item>
     </string-array>
+    
+    <string-array name="def">
+    <item >1</item>
+</string-array>
+    <string-array name="def2">
+    <item >1</item>
+     <item >2</item>
+</string-array>
+<string-array name="empty_array"/>
 </resources>

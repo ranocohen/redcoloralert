@@ -728,7 +728,8 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	protected void onPause() {
-		mUIGoogleMap.clear();
+		if(mUIGoogleMap != null)
+			mUIGoogleMap.clear();
 		if (circles.size() != 0)
 			circles.clear();
 		super.onPause();
