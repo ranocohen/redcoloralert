@@ -38,18 +38,11 @@
     <string name="alert_areas_summery">בחר יישובים להתרעות</string>
     <string name="alerts">התרעות</string>
     <string name="pref_alert_type_default">all</string>
+    <string name="pref_alert_type_title">התרעות</string>
+    <string name="pref_alert_type_default">all</string>
 
-<<<<<<< HEAD
+    <string-array name="pref_alert_type_enteries"></string-array>
     <string-array name="pref_alert_type_enteries">
-=======
-	<string name="pref_alert_type_title">התרעות</string>
-	
-	
-	<string name="pref_alert_type_default">all</string>
-
-	
-  <string-array name="pref_alert_type_enteries">
->>>>>>> branch 'master' of https://github.com/ranocohen/redcoloralert
         <item>כל ההתרעות</item>
         <item>רק באזור שלי</item>
     </string-array>
@@ -57,18 +50,15 @@
         <item>all</item>
         <item>local</item>
     </string-array>
-<<<<<<< HEAD
-    
     <string-array name="def">
-    <item >1</item>
-</string-array>
+        <item>1</item>
+    </string-array>
     <string-array name="def2">
-    <item >1</item>
-     <item >2</item>
-</string-array>
-<string-array name="empty_array"/>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="empty_array" />
+
+    <string name="ringtone_settings">צליל התרעה</string>
+
 </resources>
-=======
-      <string name="ringtone_settings">צליל התרעה</string>
-</resources>
->>>>>>> branch 'master' of https://github.com/ranocohen/redcoloralert

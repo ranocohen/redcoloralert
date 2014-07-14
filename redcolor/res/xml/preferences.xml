@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<<<<<<< HEAD
     <PreferenceCategory
         android:key="pref_alerts_settings"
         android:title="@string/alerts" >
@@ -27,7 +26,7 @@
             android:defaultValue="@array/empty_array"
             android:title="@string/alert_areas" />
     </PreferenceCategory>
-=======
+
     <ListPreference
         android:defaultValue="@string/pref_alert_type_default"
         android:dialogTitle="@string/pref_alert_type_title"
@@ -41,6 +40,5 @@
         android:ringtoneType="notification"
         android:showDefault="true"
         android:title="@string/ringtone_settings" />
->>>>>>> branch 'master' of https://github.com/ranocohen/redcoloralert
 
 </PreferenceScreen>
