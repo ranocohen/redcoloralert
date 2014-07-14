@@ -204,6 +204,12 @@ public class GcmIntentService extends IntentService {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				new Intent(this, MainActivity.class), 0);
 
+		Uri notificationType = PreferencesUtils.getRingtone(getApplicationContext());
+		//(instead of):
+		/*.setSound(
+				Uri.parse("android.resource://" + getPackageName()
+						+ "/" + R.raw.short_alert))*/
+
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this)
 				.setSmallIcon(R.drawable.ic_launcher)
@@ -212,9 +218,7 @@ public class GcmIntentService extends IntentService {
 				.setDefaults(
 						Notification.DEFAULT_LIGHTS
 								| Notification.DEFAULT_VIBRATE)
-				.setSound(
-						Uri.parse("android.resource://" + getPackageName()
-								+ "/" + R.raw.short_alert))
+				.setSound(notificationType)
 				.setContentText(content)
 				.setStyle(
 						new NotificationCompat.BigTextStyle().bigText(content));
