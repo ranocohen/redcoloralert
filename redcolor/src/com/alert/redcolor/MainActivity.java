@@ -73,6 +73,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -100,7 +101,6 @@ public class MainActivity extends FragmentActivity implements
 
 	String regid;
 	private GoogleMap mUIGoogleMap;
-
 	HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
 
 	// Location related variables
@@ -713,6 +713,8 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.setMyLocationEnabled(true);
 		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+		
+		//lastLatLng = mUIGoogleMap.getCameraPosition().target;
 
 		// Animate map to ideal location
 		// Tel aviv location
@@ -728,15 +730,6 @@ public class MainActivity extends FragmentActivity implements
 				.newLatLngZoom(latLng, 8);
 		mUIGoogleMap.animateCamera(cameraUpdate);
 		
-		
-		mUIGoogleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
-		    @Override
-		    public void onCameraChange(CameraPosition cameraPosition) {
-		        // Make a web call for the locations
-		    	int i=0;
-		    }
-		});
-
 	}
 
 	@Override
@@ -802,16 +795,45 @@ public class MainActivity extends FragmentActivity implements
 		Toast.makeText(getApplicationContext(), strTimeMessage, 
 				   Toast.LENGTH_SHORT).show();
 		
-		
 
 	}
+	
+	Marker testMarker;
 
 	private void setFocus(Location location) {
-		LatLng latLng = new LatLng(location.getLatitude(),
-				location.getLongitude());
-		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,
+		
+		final LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+		
+		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latlng,
 				10);
-		mUIGoogleMap.animateCamera(cameraUpdate);
+		mUIGoogleMap.animateCamera(cameraUpdate,new CancelableCallback()
+        {
+
+            @Override
+            public void onFinish()
+            {
+        		MarkerOptions markerOptions = new MarkerOptions().position(latlng);
+        		final Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
+        		int i=0;
+
+        		new CountDownTimer(10000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        //mTextField.setText("Seconds remaining: " + millisUntilFinished / 1000);
+                    }
+
+                    public void onFinish() {
+                    	tempMarker.remove();
+                    }
+                }.start();
+            }
+
+            @Override
+            public void onCancel()
+            {
+               // _googleMap.getUiSettings().setAllGesturesEnabled(true);
+
+            }
+        });
 	}
 
 	private class initData extends AsyncTask<Void, Void, Void> {
