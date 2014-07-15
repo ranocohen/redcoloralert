@@ -28,7 +28,7 @@ import com.alert.redcolor.SettingsActivity.MapUtil;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.ui.TownsAdapter.TownItem;
 
-public class TownListPicker extends DialogPreference {
+public class TownListPreference extends DialogPreference {
 
 	private CharSequence[] mEntries;
 	private CharSequence[] mEntryValues;
@@ -36,7 +36,7 @@ public class TownListPicker extends DialogPreference {
 	private Set<String> mNewValues = new HashSet<String>();
 	private ListView lv;
 
-	public TownListPicker(Context context, AttributeSet attrs) {
+	public TownListPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setPositiveButtonText(android.R.string.ok);
 		setNegativeButtonText(android.R.string.cancel);

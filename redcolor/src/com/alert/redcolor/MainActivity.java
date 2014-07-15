@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -119,8 +120,8 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 	    
-	    JsonRequest jr = new JsonRequest();
-	    jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
+	 //   JsonRequest jr = new JsonRequest();
+	//    jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
 
 		//backup();
 		Crashlytics.start(this);
@@ -792,12 +793,14 @@ public class MainActivity extends FragmentActivity implements
 	}
 	private class initData extends AsyncTask<Void, Void, Void> {
 		private Context context;
+		private long start;
 		public initData(Context context) {  // can take other params if needed
 		    this.context = context;
 		}
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			start = System.currentTimeMillis();
 			deleteDatabase(RedColordb.DATABASE_NAME);
 		}
 
@@ -888,6 +891,8 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		protected void onPostExecute(Void result) {
+			long end = System.currentTimeMillis();
+			Toast.makeText(getApplicationContext(), ""+(end - start), Toast.LENGTH_LONG).show();
 			 setProgressBarIndeterminateVisibility(false);
 			 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			 SharedPreferences.Editor editor = preferences.edit();

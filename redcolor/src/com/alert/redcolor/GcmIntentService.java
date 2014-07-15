@@ -148,7 +148,7 @@ public class GcmIntentService extends IntentService {
 
 					String alertType = PreferencesUtils
 							.getAlertsType(getApplicationContext());
-					if (alertType.equals(PreferencesUtils.PREF_ALL_ALERTS))
+					if (alertType.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
 						toNotify = true;
 
 					loop: for (int j = 0; j < cities.size(); j++) {
@@ -158,7 +158,7 @@ public class GcmIntentService extends IntentService {
 
 						if (lastKnownLocation != null
 								&& alertType
-										.equals(PreferencesUtils.PREF_LOCAL_ALERTS)) {
+										.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE)) {
 							double distance = cities.get(j).distanceTo(
 									lastKnownLocation);
 							if (distance <= radiusDistance) {

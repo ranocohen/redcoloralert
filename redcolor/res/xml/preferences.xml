@@ -18,24 +18,17 @@
             android:key="pref_alertsType"
             android:title="@string/pref_alert_type_title" />
 
-        <com.alert.redcolor.ui.TownListPicker
+        <com.alert.redcolor.ui.TownListPreference
+            android:defaultValue="@array/empty_array"
             android:dependency="pref_enable_alerts"
             android:dialogTitle="@string/towns_list"
             android:key="pref_towns_select"
             android:summary="@string/alert_areas_summery"
-            android:defaultValue="@array/empty_array"
             android:title="@string/alert_areas" />
     </PreferenceCategory>
 
-    <ListPreference
-        android:defaultValue="@string/pref_alert_type_default"
-        android:dialogTitle="@string/pref_alert_type_title"
-        android:entries="@array/pref_alert_type_enteries"
-        android:entryValues="@array/pref_alert_type_values"
-        android:key="pref_alertsType"
-        android:title="@string/pref_alert_type_title" />
-
     <RingtonePreference
+        android:dependency="pref_enable_alerts"
         android:key="ringtonePref"
         android:ringtoneType="notification"
         android:showDefault="true"

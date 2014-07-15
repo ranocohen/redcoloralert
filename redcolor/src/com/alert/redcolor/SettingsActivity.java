@@ -6,12 +6,15 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import com.alert.redcolor.ui.TownListPreference;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
@@ -27,8 +30,7 @@ public class SettingsActivity extends Activity {
 	}
 
 	public static class SettingsFragment extends PreferenceFragment {
-		private MultiSelectListPreference mslp;
-
+		private TownListPreference townListPref;
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
@@ -38,15 +40,22 @@ public class SettingsActivity extends Activity {
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
 
-			
-			populateTownsPreferenceList();
-			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, null);
-			
-		}
+			ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
+			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
+			alertsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
-		public void populateTownsPreferenceList() {
-		
+						@Override
+						public boolean onPreferenceChange(
+								Preference preference, Object newValue) {
+							String val = (String) newValue;
+							if (val.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
+								townListPref.setEnabled(false);
+							else
+								townListPref.setEnabled(true);
+							return true;
+						}
+					});
+
 		}
 	}
 
