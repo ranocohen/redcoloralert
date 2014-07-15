@@ -46,10 +46,12 @@
     <string-array name="pref_alert_type_enteries">
         <item>כל ההתרעות</item>
         <item>רק באזור שלי</item>
+        <item>בחר אזורים</item>
     </string-array>
     <string-array name="pref_alert_type_values">
         <item>all</item>
         <item>local</item>
+        <item>custom</item>
     </string-array>
     <string-array name="def">
         <item>1</item>
