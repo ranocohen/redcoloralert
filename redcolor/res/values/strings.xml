@@ -44,10 +44,12 @@
     <string-array name="pref_alert_type_enteries">
         <item>All alerts</item>
         <item>Only in my area</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="pref_alert_type_values">
         <item>all</item>
         <item>local</item>
+        <item>custom</item>
     </string-array>
     <string-array name="def">
         <item>1</item>

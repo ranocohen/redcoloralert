@@ -10,6 +10,7 @@ public class PreferencesUtils {
 	public static final String ALERTS_TYPE_KEY = "pref_alertsType";
 	public static final String PREF_ALL_ALERTS_VALUE = "all";
 	public static final String PREF_LOCAL_ALERTS_VALUE = "local";
+	public static final String PREF_CUSTOM_ALERT_VALUE = "custom";
 	public static final String ALERTS_TOWNS_SELECT = "pref_towns_select";
 
 	public static String getAlertsType(Context con) {

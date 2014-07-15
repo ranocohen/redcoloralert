@@ -32,6 +32,7 @@
         android:key="ringtonePref"
         android:ringtoneType="notification"
         android:showDefault="true"
-        android:title="@string/ringtone_settings" android:defaultValue="@raw/short_alert"/>
+        android:title="@string/ringtone_settings" 
+        android:defaultValue="android.resource://com.alert.redcolor/R.raw.short_alert"/>
 
 </PreferenceScreen>

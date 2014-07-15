@@ -37,7 +37,7 @@ public class GcmIntentService extends IntentService {
 	private int radiusDistance = 5 * 1000;
 	private int notificationsNums = 0;
 
-	/*
+	/* 
 	 * boolean mBound = false;
 	 * 
 	 * BackgroundLocationService mService; private ServiceConnection mConnection

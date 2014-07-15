@@ -42,16 +42,17 @@ public class SettingsActivity extends Activity {
 
 			ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
 			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
+			townListPref.setEnabled(false);
 			alertsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
 						@Override
 						public boolean onPreferenceChange(
 								Preference preference, Object newValue) {
 							String val = (String) newValue;
-							if (val.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
-								townListPref.setEnabled(false);
-							else
+							if (val.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE))
 								townListPref.setEnabled(true);
+							else
+								townListPref.setEnabled(false);
 							return true;
 						}
 					});
