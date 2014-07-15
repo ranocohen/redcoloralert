@@ -1,5 +1,7 @@
 package com.alert.redcolor.volley;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,24 +61,39 @@ public class JsonRequest {
 			for (int i = 0; i < data.length(); i++) {
 				JSONObject alert = data.getJSONObject(i);
 				JSONArray areas = alert.getJSONArray("areas");
+				String time = alert.getString("time");
+				//TODO call your method below if needed in datetime format (for db)
+				DateTime dt = parseDateTime(time);
+				
 				//area's shit:
 				for (int j = 0; j < areas.length(); j++) {
 					JSONObject area = areas.getJSONObject(j);
 					String area_name = area.getString("area_name"); //TODO IDAN DB
+					int area_id = area.getInt("area_id");//TODO IDAN DB
+					
 					JSONArray locations = area.getJSONArray("locations");
-					for (int k = 0; k < locations.length(); k++) {
+					
+					//no need for this but we'll keep it just in case
+					
+/*					for (int k = 0; k < locations.length(); k++) {
 						JSONObject location = locations.getJSONObject(k);
 						String location_name = location.getString("name_he");
 						double lat = location.getDouble("lat");
 						double lng = location.getDouble("lng");
 						//TODO WHATEVER YOU WANT TO (DB)
-					}
+					}*/
 				}
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static DateTime parseDateTime(String input){
+	     String pattern = "yyyy-MM-dd HH:mm:ss 'UTC";
+	     DateTime dateTime  = DateTime.parse(input, DateTimeFormat.forPattern(pattern));
+	     return dateTime;
 	}
 
 	public void requestJsonObject(String url, Context con) {
