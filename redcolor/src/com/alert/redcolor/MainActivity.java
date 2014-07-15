@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +22,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -49,13 +50,12 @@ import android.widget.Toast;
 
 import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
-import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
+import com.alert.redcolor.db.RedColordb.Tables;
 import com.alert.redcolor.services.BackgroundLocationService;
-import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -118,26 +118,26 @@ public class MainActivity extends FragmentActivity implements
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-	    
-	 //   JsonRequest jr = new JsonRequest();
-	//    jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		//backup();
+		// JsonRequest jr = new JsonRequest();
+		// jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
+
+		// backup();
 		Crashlytics.start(this);
 		// run location service
 		Intent intent = new Intent(this, BackgroundLocationService.class);
 		startService(intent);
 
 		context = getApplicationContext();
-		
+
 		setContentView(R.layout.activity_main);
 		initFirstData();
 		// Check device for Play Services APK.
 		if (checkPlayServices()) {
 			gcm = GoogleCloudMessaging.getInstance(this);
 			regid = getRegistrationId(context);
-			
+
 			if (regid.isEmpty()) {
 				registerInBackground();
 			}
@@ -234,17 +234,15 @@ public class MainActivity extends FragmentActivity implements
 			String backupPath = "RED//backup//alerts.db";
 			File dbFile = new File(dbPath);
 			backupFile = new File(sd, backupPath);
-		
-			
-			try{
-			FileChannel src = new FileInputStream(dbFile).getChannel();
-			FileChannel dst = new FileOutputStream(backupFile)
-					.getChannel();
-			dst.transferFrom(src, 0, src.size());
-			src.close();
-			dst.close();}
-			catch(Exception e){
-				
+
+			try {
+				FileChannel src = new FileInputStream(dbFile).getChannel();
+				FileChannel dst = new FileOutputStream(backupFile).getChannel();
+				dst.transferFrom(src, 0, src.size());
+				src.close();
+				dst.close();
+			} catch (Exception e) {
+
 			}
 		}
 	}
@@ -456,48 +454,43 @@ public class MainActivity extends FragmentActivity implements
 		 */
 
 		/*
-		new CountDownTimer(cooldownTime, intervalTime) {
-
-			// int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
-			// time in seconds int strockInterval = (int) (240 /
-			// (cooldownTime/2/1000));
-
-			final LatLng positionc = position;
-
-			int fillInterval = 150 / coolTime; // divide by time in seconds
-			int strockInterval = 240 / coolTime;
-
-			public void onTick(long millisUntilFinished) {
-
-				// filling alpha reduction
-				int currFillColor = circles.get(positionc).getFillColor();
-				int a = Color.alpha(currFillColor);
-
-				a = a - fillInterval;
-
-				circles.get(positionc).setFillColor(Color.argb(a, 255, 0, 0));
-
-				// mCircle.setFillColor(Color.argb(a, 255, 0, 0));
-
-				// stock alpha reduction
-
-				
-				 * int currStrokeColor =
-				 * circles.get(positionc).getStrokeColor(); int a1 =
-				 * Color.alpha(currStrokeColor);
-				 * 
-				 * a1 = a1 - strockInterval;
-				 * 
-				 * circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0,
-				 * 0));
-				 
-			}
-
-			public void onFinish() {
-				// mTextField.setText("done!");
-			}
-		}.start();
-*/	}
+		 * new CountDownTimer(cooldownTime, intervalTime) {
+		 * 
+		 * // int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
+		 * // time in seconds int strockInterval = (int) (240 / //
+		 * (cooldownTime/2/1000));
+		 * 
+		 * final LatLng positionc = position;
+		 * 
+		 * int fillInterval = 150 / coolTime; // divide by time in seconds int
+		 * strockInterval = 240 / coolTime;
+		 * 
+		 * public void onTick(long millisUntilFinished) {
+		 * 
+		 * // filling alpha reduction int currFillColor =
+		 * circles.get(positionc).getFillColor(); int a =
+		 * Color.alpha(currFillColor);
+		 * 
+		 * a = a - fillInterval;
+		 * 
+		 * circles.get(positionc).setFillColor(Color.argb(a, 255, 0, 0));
+		 * 
+		 * // mCircle.setFillColor(Color.argb(a, 255, 0, 0));
+		 * 
+		 * // stock alpha reduction
+		 * 
+		 * 
+		 * int currStrokeColor = circles.get(positionc).getStrokeColor(); int a1
+		 * = Color.alpha(currStrokeColor);
+		 * 
+		 * a1 = a1 - strockInterval;
+		 * 
+		 * circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0, 0));
+		 * 
+		 * }
+		 * 
+		 * public void onFinish() { // mTextField.setText("done!"); } }.start();
+		 */}
 
 	public void stayInSafePlaceTimer() {
 
@@ -689,7 +682,7 @@ public class MainActivity extends FragmentActivity implements
 		String serverUrl = Utils.SERVER_URL;
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("regid", regId);
-		
+
 		try {
 			String versionName = getPackageManager().getPackageInfo(
 					getPackageName(), 0).versionName;
@@ -733,7 +726,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	protected void onPause() {
-		if(mUIGoogleMap != null)
+		if (mUIGoogleMap != null)
 			mUIGoogleMap.clear();
 		if (circles.size() != 0)
 			circles.clear();
@@ -751,7 +744,7 @@ public class MainActivity extends FragmentActivity implements
 			setProgressBarVisibility(true);
 			initData init = new initData(this);
 			init.execute();
-			
+
 		}
 
 	}
@@ -791,12 +784,15 @@ public class MainActivity extends FragmentActivity implements
 				10);
 		mUIGoogleMap.animateCamera(cameraUpdate);
 	}
+
 	private class initData extends AsyncTask<Void, Void, Void> {
 		private Context context;
 		private long start;
-		public initData(Context context) {  // can take other params if needed
-		    this.context = context;
+
+		public initData(Context context) { // can take other params if needed
+			this.context = context;
 		}
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -804,22 +800,39 @@ public class MainActivity extends FragmentActivity implements
 			deleteDatabase(RedColordb.DATABASE_NAME);
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected Void doInBackground(Void... params) {
-			InputStreamReader isr = new InputStreamReader(getResources().openRawResource(R.raw.redalert_en));
+			InputStreamReader isr = new InputStreamReader(getResources()
+					.openRawResource(R.raw.redalert_en));
 			BufferedReader reader = new BufferedReader(isr);
 			HashMap<Long, String> orefMap = new HashMap<Long, String>();
+			SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
+					.getWritableDatabase();
+
+			DatabaseUtils.InsertHelper inserter = new DatabaseUtils.InsertHelper(
+					db, Tables.CITIES);
+
+			DatabaseUtils.InsertHelper inserter2 = new DatabaseUtils.InsertHelper(db,
+					Tables.OREF_LOCATIONS);
+			int latCol = inserter.getColumnIndex(CitiesColumns.lat);
+			int lngCol = inserter.getColumnIndex(CitiesColumns.lng);
+			int nameHeCol = inserter.getColumnIndex(CitiesColumns.name_he);
+			int nameEnCol = inserter.getColumnIndex(CitiesColumns.name_en);
+			int orefIdCol = inserter.getColumnIndex(CitiesColumns.oref_id);
+			int timeCol = inserter.getColumnIndex(CitiesColumns.time);
+
 			try {
+				db.beginTransaction();
 				String line;
 				while ((line = reader.readLine()) != null) {
-
+					inserter.prepareForInsert();
 					// EOF is ="-1" , just a temp check
 					if (line.length() <= 3)
 						break;
 
 					/*
-					 * Split line with , delimeter (ignoring commas in
-					 * quotes)
+					 * Split line with , delimeter (ignoring commas in quotes)
 					 */
 					String[] data = line
 							.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -833,27 +846,34 @@ public class MainActivity extends FragmentActivity implements
 					Double lat = Double.parseDouble(data[5]);
 					Double lng = Double.parseDouble(data[6]);
 
-					ContentValues cityCv = new ContentValues();
-					cityCv.put(CitiesColumns.lat, lat);
-					cityCv.put(CitiesColumns.lng, lng);
-					cityCv.put(CitiesColumns.name_he, he_name);
-					cityCv.put(CitiesColumns.name_en, en_name);
-					cityCv.put(CitiesColumns.name_en, en_name);
-					cityCv.put(CitiesColumns.oref_id, oref_id);
-					cityCv.put(CitiesColumns.time, time);
-
-					getContentResolver().insert(
-							AlertProvider.CITIES_CONTENT_URI, cityCv);
-
+					inserter.bind(latCol, lat);
+					inserter.bind(lngCol, lng);
+					inserter.bind(nameHeCol, he_name);
+					inserter.bind(nameEnCol, en_name);
+					inserter.bind(timeCol, time);
+					inserter.bind(orefIdCol, oref_id);
+					inserter.execute();
+					/*
+					 * getContentResolver().insert(
+					 * AlertProvider.CITIES_CONTENT_URI, cityCv);
+					 */
 					// Avoid duplicates of pikud areas
 					orefMap.put(Long.valueOf(oref_id), oref_loc_str);
 
 				}
+
+
+			
+
+				int indexCol = inserter2.getColumnIndex(OrefColumns.index);
+				int nameCol = inserter2.getColumnIndex(OrefColumns.name);
+				int idCol = inserter2.getColumnIndex(OrefColumns.ID);
+
 				for (Entry<Long, String> e : orefMap.entrySet()) {
+					inserter2.prepareForInsert();
 					Long key = e.getKey();
 					String value = e.getValue();
 
-					ContentValues orefCv = new ContentValues();
 					Pattern pattern = Pattern
 							.compile("^(.*)\\s(\\d*)(\\s(.*))?$");
 					Matcher matcher = pattern.matcher(value.trim());
@@ -866,18 +886,20 @@ public class MainActivity extends FragmentActivity implements
 						num = matcher.group(2);
 					}
 
-					orefCv.put(OrefColumns.ID, key);
-					orefCv.put(OrefColumns.index, num);
-					orefCv.put(OrefColumns.name, area);
-
-					getContentResolver().insert(
-							AlertProvider.OREF_CONTENT_URI, orefCv);
+					inserter2.bind(idCol, key);
+					inserter2.bind(nameCol, area);
+					inserter2.bind(indexCol,num);
+					inserter2.execute();
 
 				}
+				db.setTransactionSuccessful();
 			} catch (IOException ex) {
 				// handle exception
 			} finally {
 				try {
+					db.endTransaction();
+					inserter.close();
+					inserter2.close();
 					reader.close();
 					isr.close();
 				} catch (IOException e) {
@@ -885,21 +907,25 @@ public class MainActivity extends FragmentActivity implements
 				}
 			}
 
-		
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
+			ProviderQueries pq = new ProviderQueries(getApplicationContext());
+			int num = pq.getCitiesMap().size();
+			Toast.makeText(getBaseContext(), "" + num, Toast.LENGTH_SHORT)
+					.show();
 			long end = System.currentTimeMillis();
-			Toast.makeText(getApplicationContext(), ""+(end - start), Toast.LENGTH_LONG).show();
-			 setProgressBarIndeterminateVisibility(false);
-			 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-			 SharedPreferences.Editor editor = preferences.edit();
-			 editor.putBoolean("firstInit",true);
-			 editor.apply();
-			 
-			
+			Toast.makeText(getApplicationContext(), "" + (end - start),
+					Toast.LENGTH_LONG).show();
+			setProgressBarIndeterminateVisibility(false);
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putBoolean("firstInit", true);
+			editor.apply();
+
 		}
 
 	}
