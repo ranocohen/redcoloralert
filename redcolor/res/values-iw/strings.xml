@@ -63,5 +63,6 @@
     <string-array name="empty_array" />
 
     <string name="ringtone_settings">צליל התרעה</string>
+    <string name="time_fired">נורה בשעה: %1$s</string>
 
 </resources>

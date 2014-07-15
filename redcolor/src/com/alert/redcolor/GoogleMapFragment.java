@@ -78,6 +78,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 
     private OnGoogleMapFragmentListener mCallback;
 
+    
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		  // Get tracker.

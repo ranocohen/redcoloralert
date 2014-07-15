@@ -39,6 +39,8 @@
     <string name="pref_alert_type_default">all</string>
     <string name="pref_alert_type_title">Alert Type</string>
     <string name="pref_alert_type_default">all</string>
+    
+    
 
     <string-array name="pref_alert_type_enteries"></string-array>
     <string-array name="pref_alert_type_enteries">
@@ -61,5 +63,6 @@
     <string-array name="empty_array" />
 
     <string name="ringtone_settings">Alert sound</string>
+    <string name="time_fired">time fired: %1$s</string>
 
 </resources>

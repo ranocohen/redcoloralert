@@ -1,5 +1,7 @@
 package com.alert.redcolor;
 
+import org.joda.time.DateTime;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -163,7 +165,7 @@ public class AlertsListFragment extends ListFragment implements
         Cursor c = ((CursorAdapter)l.getAdapter()).getCursor();
         c.moveToPosition(position);
         Alert a = new Alert(c);
-        mCallback.OnRedSelectedListener(a.getAreaId());
+        mCallback.OnRedSelectedListener(a.getAreaId(),a.getTime());
     }
 
 	// static class for holding references to views optimizing listview recycles
@@ -180,8 +182,9 @@ public class AlertsListFragment extends ListFragment implements
     	/**
     	 * 
     	 * @param id the database id of the RED(Alert)
+    	 * @param dateTime 
     	 */
-        public void OnRedSelectedListener(long id);
+        public void OnRedSelectedListener(long id, DateTime dateTime);
     }
     @Override
     public void onAttach(Activity activity) {

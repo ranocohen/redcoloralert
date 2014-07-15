@@ -14,6 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
@@ -69,7 +73,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -143,6 +149,8 @@ public class MainActivity extends FragmentActivity implements
 		} else {
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
+		
+		
 
 		// check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
@@ -719,6 +727,15 @@ public class MainActivity extends FragmentActivity implements
 		CameraUpdate cameraUpdate = CameraUpdateFactory
 				.newLatLngZoom(latLng, 8);
 		mUIGoogleMap.animateCamera(cameraUpdate);
+		
+		
+		mUIGoogleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+		    @Override
+		    public void onCameraChange(CameraPosition cameraPosition) {
+		        // Make a web call for the locations
+		    	int i=0;
+		    }
+		});
 
 	}
 
@@ -767,11 +784,25 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void OnRedSelectedListener(long id) {
+	public void OnRedSelectedListener(long id,DateTime time) {
 		ProviderQueries pq = new ProviderQueries(getApplicationContext());
 		Location location = pq.getCities(id).get(0).getLocation();
 		setFocus(location);
 		mViewPager.setCurrentItem(0);
+		
+		
+		DateTimeFormatter parser2 =
+			    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+		
+		
+		String strFormat = getResources().getString(R.string.time_fired);
+		String strTimeMessage = String.format(strFormat, time.toString(parser2));
+
+		
+		Toast.makeText(getApplicationContext(), strTimeMessage, 
+				   Toast.LENGTH_SHORT).show();
+		
+		
 
 	}
 
