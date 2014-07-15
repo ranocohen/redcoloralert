@@ -54,6 +54,7 @@ import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.services.BackgroundLocationService;
+import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -117,6 +118,9 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+	    
+	    JsonRequest jr = new JsonRequest();
+	    jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
 
 		//backup();
 		Crashlytics.start(this);

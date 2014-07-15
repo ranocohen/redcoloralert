@@ -19,12 +19,58 @@ package com.alert.redcolor.analytics;
 import java.util.HashMap;
 
 import android.app.Application;
+import android.text.TextUtils;
 
+import com.alert.redcolor.volley.AppController;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 public class AnalyticsApp extends Application {
 
+	public static final String TAG = AppController.class
+            .getSimpleName();
+	private RequestQueue mRequestQueue;
+    private ImageLoader mImageLoader;
+    
+    private static AnalyticsApp mInstance;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mInstance = this;
+    }
+ 
+    public static synchronized AnalyticsApp getInstance() {
+        return mInstance;
+    }
+    
+    public RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+ 
+        return mRequestQueue;
+    }
+    
+    public <T> void addToRequestQueue(Request<T> req, String tag) {
+        // set the default tag if tag is empty
+        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+        getRequestQueue().add(req);
+    }
+ 
+    public <T> void addToRequestQueue(Request<T> req) {
+        req.setTag(TAG);
+        getRequestQueue().add(req);
+    }
+ 
+    public void cancelPendingRequests(Object tag) {
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(tag);
+        }
+    }
     // The following line should be changed to include the correct property id.
     private static final String PROPERTY_ID = "UA-52777317-1";
 
