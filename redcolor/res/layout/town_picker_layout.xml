@@ -10,12 +10,18 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:padding="5dp" />
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:hint="@string/town_name"
+        />
     
 
     <ListView
         android:id="@+id/list"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
+        android:scrollbarStyle="outsideOverlay"
+        android:fastScrollEnabled="true"
         android:layout_height="300dp" />
     
 

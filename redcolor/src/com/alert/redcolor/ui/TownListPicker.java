@@ -23,6 +23,7 @@ import android.widget.ListView;
 import com.alert.redcolor.R;
 import com.alert.redcolor.SettingsActivity.MapUtil;
 import com.alert.redcolor.db.ProviderQueries;
+import com.alert.redcolor.ui.TownsAdapter.TownItem;
 
 public class TownListPicker extends DialogPreference {
 
@@ -30,7 +31,7 @@ public class TownListPicker extends DialogPreference {
 	private CharSequence[] mEntryValues;
 	private Set<String> mValues = new HashSet<String>();
 	private Set<String> mNewValues = new HashSet<String>();
-	private boolean mPreferenceChanged;
+	private ListView lv;
 
 	public TownListPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -59,7 +60,7 @@ public class TownListPicker extends DialogPreference {
 
 	@Override
 	protected void onBindDialogView(View view) {
-		final ListView lv = (ListView) view.findViewById(R.id.list);
+		lv = (ListView) view.findViewById(R.id.list);
 		EditText search = (EditText) view.findViewById(R.id.txt_searchContact);
 		search.addTextChangedListener(new TextWatcher() {
 
@@ -73,22 +74,27 @@ public class TownListPicker extends DialogPreference {
 			@Override
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub
 			}
 		});
-
-		ArrayList<String> values = new ArrayList<String>();
+		boolean [] checkedItems = getSelectedItems();
+		ArrayList<TownItem> values = new ArrayList<TownItem>();
 		for (int i = 0; i < getEntries().length; i++)
-			values.add(getEntries()[i].toString());
-
-		lv.setAdapter(new TownsAdapter(getContext(), values));
-
+		{
+			
+			long id = Long.parseLong(getEntryValues()[i].toString());
+			String name = getEntries()[i].toString();
+			boolean isChecked = checkedItems[i];
+			
+			values.add(new TownItem(id,name,isChecked,i));
+		}
+			
+		
+		lv.setAdapter(new TownsAdapter(getContext(),values ));
 		super.onBindDialogView(view);
 	}
 
@@ -161,6 +167,7 @@ public class TownListPicker extends DialogPreference {
     public void setValues(Set<String> values) {
         mValues.clear();
         mValues.addAll(values);
+        getSharedPreferences().edit().remove(getKey());
         Set<String> s = getSharedPreferences().getStringSet(getKey(), new HashSet<String>());
         s.clear();
         s.addAll(values);
@@ -168,6 +175,9 @@ public class TownListPicker extends DialogPreference {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putStringSet(getKey(), s);
         editor.commit();
+        
+        s = getSharedPreferences().getStringSet(getKey(), new HashSet<String>());
+        s.size();
     }
     
     /**
@@ -194,30 +204,6 @@ public class TownListPicker extends DialogPreference {
         return -1;
     }
     
-    @Override
-    protected void onPrepareDialogBuilder(Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        
-     /*   if (mEntries == null || mEntryValues == null) {
-            throw new IllegalStateException(
-                    "MultiSelectListPreference requires an entries array and " +
-                    "an entryValues array.");
-        }
-        
-        boolean[] checkedItems = getSelectedItems();
-        builder.setMultiChoiceItems(mEntries, checkedItems,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        if (isChecked) {
-                            mPreferenceChanged |= mNewValues.add(mEntryValues[which].toString());
-                        } else {
-                            mPreferenceChanged |= mNewValues.remove(mEntryValues[which].toString());
-                        }
-                    }
-                });
-        mNewValues.clear();
-        mNewValues.addAll(mValues);*/
-    }
     
     private boolean[] getSelectedItems() {
         final CharSequence[] entries = mEntryValues;
@@ -235,14 +221,20 @@ public class TownListPicker extends DialogPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
+        boolean [] checkedItems = ((TownsAdapter)lv.getAdapter()).getCheckedItems();
         
-        if (positiveResult && mPreferenceChanged) {
+        if (positiveResult) {
             final Set<String> values = mNewValues;
             if (callChangeListener(values)) {
+            	values.clear();
+            	for(int i =0;i<checkedItems.length;i++)
+                {
+            		if(checkedItems[i])
+            			values.add(getEntryValues()[i].toString());
+                }
                 setValues(values);
             }
         }
-        mPreferenceChanged = false;
     }
     
     @Override

@@ -30,6 +30,7 @@
     <string name="options_register">Register</string>
     <string name="options_unregister">Unregister</string>
     <string name="red_alert">צבע אדום</string>
+    <string name="town_name">שם יישוב</string>
     <string name="options_clear">Clear</string>
     <string name="pref_local_alerts_key">pref_local_alerts</string>
     <string name="pref_alert_type_title">התרעות</string>
