@@ -218,6 +218,7 @@ public class TownListPicker extends DialogPreference {
         return result;
     }
     
+    
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
@@ -252,7 +253,17 @@ public class TownListPicker extends DialogPreference {
     
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
+    	
     }
+    
+    
+    @Override
+    protected void onPrepareDialogBuilder(Builder builder) {
+        super.onPrepareDialogBuilder(builder);
+       ((TownsAdapter)lv.getAdapter()).setCheckedItems(getSelectedItems());
+        
+    }
+
     
     @Override
     protected Parcelable onSaveInstanceState() {
