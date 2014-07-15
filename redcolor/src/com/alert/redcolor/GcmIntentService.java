@@ -93,6 +93,9 @@ public class GcmIntentService extends IntentService {
 				String jsonStr = extras.getString("alerts");
 				String time = extras.getString("timestamp");
 				int type = Integer.parseInt(extras.getString("type"));
+				if (type == 2) {
+					int COEV_LI_HACUS=0;
+				}
 				if (type == 1) {
 
 					Long l = Long.parseLong(time);

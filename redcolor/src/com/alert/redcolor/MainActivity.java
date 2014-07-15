@@ -83,6 +83,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
 		LocationListener, OnGoogleMapFragmentListener, OnRedSelectListener {
@@ -126,6 +128,8 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		
+
 
 		// backup();
 		Crashlytics.start(this);
@@ -150,6 +154,11 @@ public class MainActivity extends FragmentActivity implements
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
 		
+		
+		sendAliveTest();
+/*		 JsonRequest jr = new JsonRequest();
+			jr.pushWithParams("http://213.57.173.69:4567/android_test", getRegistrationId(context));
+		*/
 		
 
 		// check if location service is on
@@ -658,6 +667,55 @@ public class MainActivity extends FragmentActivity implements
 		}.execute(null, null, null);
 
 	}
+	
+	private void sendAliveTest() {
+		new AsyncTask<Void, Void, String>() {
+
+			protected String doInBackground(Void... params) {
+				String msg = "";
+				try {
+					if (gcm == null) {
+						gcm = GoogleCloudMessaging.getInstance(context);
+					}
+					regid = gcm.register(SENDER_ID);
+					msg = "Device registered, registration ID=" + regid;
+
+					// You should send the registration ID to your server over
+					// HTTP,
+					// so it can use GCM/HTTP or CCS to send messages to your
+					// app.
+					// The request to your server should be authenticated if
+					// your app
+					// is using accounts.
+					sendTestIdToBackend(regid);
+
+					// For this demo: we don't need to send it because the
+					// device
+					// will send upstream messages to a server that echo back
+					// the
+					// message using the 'from' address in the message.
+
+					// Persist the regID - no need to register again.
+					storeRegistrationId(context, regid);
+				} catch (IOException ex) {
+					msg = "Error :" + ex.getMessage();
+					// If there is an error, don't just keep trying to register.
+					// Require the user to click a button again, or perform
+					// exponential back-off.
+				}
+				return msg;
+			}
+
+			@Override
+			protected void onPostExecute(String msg) {
+				/*
+				 * Toast.makeText(getApplicationContext(), msg,
+				 * Toast.LENGTH_LONG) .show();
+				 */
+			}
+		}.execute(null, null, null);
+
+	}
 
 	/**
 	 * Stores the registration ID and app versionCode in the application's
@@ -697,6 +755,19 @@ public class MainActivity extends FragmentActivity implements
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
+		try {
+			ServerUtils.post(serverUrl, params);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendTestIdToBackend(String regId) {
+		String serverUrl = Utils.SERVER+"/android_test";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("regid", regId);
 
 		try {
 			ServerUtils.post(serverUrl, params);
@@ -971,8 +1042,11 @@ public class MainActivity extends FragmentActivity implements
 			editor.putBoolean("firstInit", true);
 			editor.apply();
 
+			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
 			 JsonRequest jr = new JsonRequest();
 			 jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/50", getApplicationContext());
+			 
+
 
 			
 		}
