@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.alert.redcolor.PreferencesUtils;
 import com.alert.redcolor.R;
@@ -170,12 +171,18 @@ public class TownListPicker extends DialogPreference {
     	
         mValues.clear();
         mValues.addAll(values);
-        getSharedPreferences().edit().remove(getKey());
-        Set<String> s = getSharedPreferences().getStringSet(getKey(), new HashSet<String>());
+        
+        
+        Toast.makeText(getContext(), "SETTINGS VLAUES  "+values.toString() + " SIZE = "+values.size(), Toast.LENGTH_SHORT).show();
+        
+        
+        Set<String> s = PreferenceManager.getDefaultSharedPreferences(getContext())
+        	.getStringSet(getKey(), new HashSet<String>());
+        s = new HashSet<String>(s);
         s.clear();
         s.addAll(values);
-
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
         editor.putStringSet(getKey(), s);
         editor.commit();
        
@@ -256,7 +263,9 @@ public class TownListPicker extends DialogPreference {
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
     	SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, new HashSet<String>());
-		setValues(selections);
+		Set<String> selectionsCopy = new HashSet<String>(selections);
+		Toast.makeText(getContext(), ""+selectionsCopy.toString() + " SIZE = "+selectionsCopy.size(), Toast.LENGTH_SHORT).show();
+		setValues(selectionsCopy);
     }
     
     
