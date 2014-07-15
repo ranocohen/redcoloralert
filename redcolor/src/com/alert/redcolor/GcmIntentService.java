@@ -209,6 +209,9 @@ public class GcmIntentService extends IntentService {
 		/*.setSound(
 				Uri.parse("android.resource://" + getPackageName()
 						+ "/" + R.raw.short_alert))*/
+		
+		String test = "android.resource://" + getPackageName()
+				+ "/" + R.raw.short_alert;
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this)
