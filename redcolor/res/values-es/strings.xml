@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RED</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="latest_alerts">Latest Alerts</string>
+    <string name="no_alerts">No alerts</string>
+    <string name="map">Map</string>
+    <string name="safe_place_timer">%1$d</string>
+    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+    <string name="demo_external_activity">Demo External Activity</string>
+    <string name="demo_collection">Demo Collection</string>
+    <string name="error_config">Please set the %1$s constant and recompile the app.</string>
+    <string name="already_registered">Device is already registered on server.</string>
+    <string name="gcm_registered">From GCM: device successfully registered!</string>
+    <string name="gcm_unregistered">From GCM: device successfully unregistered!</string>
+    <string name="gcm_message">From GCM: you got message!</string>
+    <string name="gcm_error">From GCM: error (%1$s).</string>
+    <string name="gcm_recoverable_error">From GCM: recoverable error (%1$s).</string>
+    <string name="gcm_deleted">From GCM: server deleted %1$d pending messages!</string>
+    <string name="server_registering">Trying (attempt %1$d/%2$d) to register device on Demo Server.</string>
+    <string name="server_registered">From Demo Server: successfully added device!</string>
+    <string name="server_unregistered">From Demo Server: successfully removed device!</string>
+    <string name="server_register_error">Could not register device on Demo Server after %1$d attempts.</string>
+    <string name="server_unregister_error">Could not unregister device on Demo Server (%1$s).</string>
+    <string name="options_register">Register</string>
+    <string name="options_unregister">Unregister</string>
+    <string name="red_alert">Alert</string>
+    <string name="options_clear">Clear</string>
+    <string name="pref_local_alerts_key">pref_local_alerts</string>
+    <string name="alert_areas">Alert zones</string>
+    <string name="towns_list">City List</string>
+    <string name="alert_areas_summery">Select alert areas</string>
+    <string name="alerts">Alerts</string>
+    <string name="pref_alert_type_default">all</string>
+    <string name="pref_alert_type_title">Alert Type</string>
+    <string name="pref_alert_type_default">all</string>
+
+    <string-array name="pref_alert_type_enteries"></string-array>
+    <string-array name="pref_alert_type_enteries">
+        <item>All alerts</item>
+        <item>Only in my area</item>
+    </string-array>
+    <string-array name="pref_alert_type_values">
+        <item>all</item>
+        <item>local</item>
+    </string-array>
+    <string-array name="def">
+        <item>1</item>
+    </string-array>
+    <string-array name="def2">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="empty_array" />
+
+    <string name="ringtone_settings">Alert sound</string>
+
+</resources>
