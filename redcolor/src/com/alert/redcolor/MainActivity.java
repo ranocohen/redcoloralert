@@ -119,9 +119,9 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 	    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 	    
-	   /* JsonRequest jr = new JsonRequest();
+	    JsonRequest jr = new JsonRequest();
 	    jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
-*/
+
 		//backup();
 		Crashlytics.start(this);
 		// run location service
