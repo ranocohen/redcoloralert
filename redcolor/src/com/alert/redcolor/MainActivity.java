@@ -56,6 +56,7 @@ import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
 import com.alert.redcolor.services.BackgroundLocationService;
+import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -119,9 +120,6 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
-		// JsonRequest jr = new JsonRequest();
-		// jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/2", this);
 
 		// backup();
 		Crashlytics.start(this);
@@ -912,13 +910,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		protected void onPostExecute(Void result) {
-			ProviderQueries pq = new ProviderQueries(getApplicationContext());
-			int num = pq.getCitiesMap().size();
-			Toast.makeText(getBaseContext(), "" + num, Toast.LENGTH_SHORT)
-					.show();
-			long end = System.currentTimeMillis();
-			Toast.makeText(getApplicationContext(), "" + (end - start),
-					Toast.LENGTH_LONG).show();
+
 			setProgressBarIndeterminateVisibility(false);
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
@@ -926,6 +918,10 @@ public class MainActivity extends FragmentActivity implements
 			editor.putBoolean("firstInit", true);
 			editor.apply();
 
+			 JsonRequest jr = new JsonRequest();
+			 jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/50", getApplicationContext());
+
+			
 		}
 
 	}

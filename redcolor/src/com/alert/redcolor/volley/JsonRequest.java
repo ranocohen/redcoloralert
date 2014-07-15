@@ -111,10 +111,7 @@ public class JsonRequest {
 		// Tag used to cancel the request
 		String tag_json_obj = "json_obj_req";
 
-		final ProgressDialog pDialog = new ProgressDialog(con);
-		pDialog.setMessage("Loading...");
-		pDialog.show();
-
+	
 		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET, url,
 				null, new Response.Listener<JSONObject>() {
 
@@ -122,7 +119,6 @@ public class JsonRequest {
 					public void onResponse(JSONObject response) {
 						Log.d("VolleyJsonObjectOnResponse", response.toString());
 						analyzeAlertJson(response,con);
-						pDialog.hide();
 					}
 				}, new Response.ErrorListener() {
 
@@ -130,8 +126,6 @@ public class JsonRequest {
 					public void onErrorResponse(VolleyError error) {
 						VolleyLog.d("VolleyJsonObjectError",
 								"Error: " + error.getMessage());
-						// hide the progress dialog
-						pDialog.hide();
 					}
 				});
 
