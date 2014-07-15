@@ -1,10 +1,7 @@
 package com.alert.redcolor;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,9 +14,6 @@ import android.os.Bundle;
 import android.preference.MultiSelectListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
-
-import com.alert.redcolor.db.ProviderQueries;
 
 public class SettingsActivity extends Activity {
 
@@ -48,9 +42,7 @@ public class SettingsActivity extends Activity {
 			populateTownsPreferenceList();
 			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, null);
-			String[] selected = selections.toArray(new String[selections.size()]);
-			if(selected.length > 0)
-			Toast.makeText(getActivity(), selected[0], Toast.LENGTH_LONG).show();
+			
 		}
 
 		public void populateTownsPreferenceList() {

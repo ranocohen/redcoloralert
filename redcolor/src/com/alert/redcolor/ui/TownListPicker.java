@@ -13,6 +13,7 @@ import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.alert.redcolor.PreferencesUtils;
 import com.alert.redcolor.R;
 import com.alert.redcolor.SettingsActivity.MapUtil;
 import com.alert.redcolor.db.ProviderQueries;
@@ -175,9 +177,7 @@ public class TownListPicker extends DialogPreference {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putStringSet(getKey(), s);
         editor.commit();
-        
-        s = getSharedPreferences().getStringSet(getKey(), new HashSet<String>());
-        s.size();
+       
     }
     
     /**
@@ -253,7 +253,9 @@ public class TownListPicker extends DialogPreference {
     
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-    	
+    	SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, null);
+		setValues(selections);
     }
     
     
