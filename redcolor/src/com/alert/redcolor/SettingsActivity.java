@@ -39,10 +39,18 @@ public class SettingsActivity extends Activity {
 			addPreferencesFromResource(R.xml.preferences);
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
+			
 
 			ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
 			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
-			townListPref.setEnabled(false);
+
+			
+			String currValue = alertsPref.getValue();
+			if(currValue.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE))
+				townListPref.setEnabled(true);
+			else 
+				townListPref.setEnabled(false);
+			
 			alertsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
 						@Override
