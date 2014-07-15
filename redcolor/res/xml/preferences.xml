@@ -28,11 +28,17 @@
     </PreferenceCategory>
 
     <RingtonePreference
+        android:defaultValue="android.resource://com.alert.redcolor/R.raw.short_alert"
         android:dependency="pref_enable_alerts"
         android:key="ringtonePref"
         android:ringtoneType="notification"
         android:showDefault="true"
-        android:title="@string/ringtone_settings" 
-        android:defaultValue="android.resource://com.alert.redcolor/R.raw.short_alert"/>
+        android:title="@string/ringtone_settings" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="pref_enable_alerts"
+        android:key="@string/pref_alert_vibrate"
+        android:title="@string/vibrate" />
 
 </PreferenceScreen>

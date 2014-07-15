@@ -55,18 +55,18 @@
 
   
         <!-- RAN MAP DEBUG KEY -->
-         
+         	<!-- 
          <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD6aB8Ik1HLXf1zkx0ADCNPTCE4g5ndaD8" />
+            android:value="AIzaSyD6aB8Ik1HLXf1zkx0ADCNPTCE4g5ndaD8" /> -->
          
          
         <!-- IDAN MAP DEBUG KEY -->
-  	<!-- 
+  
          <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyACpdceFkGdmgiybsZXZQ4kF8cpIT5Txrw" />
-   	 -->
+   	
         
         <!-- PRODUCTION MAP KEY
        

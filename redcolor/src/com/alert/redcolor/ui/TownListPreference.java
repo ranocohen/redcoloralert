@@ -46,7 +46,7 @@ public class TownListPreference extends DialogPreference {
 		ProviderQueries pq = new ProviderQueries(context);
 		HashMap<Long, String> cities = pq.getCitiesMap();
 		List<String> enteries = new ArrayList<String>();
-		HashSet<String> values = new HashSet<String>();
+		List<String> values = new ArrayList<String>();
 
 		cities = (HashMap<Long, String>) MapUtil.sortByValue(cities);
 
