@@ -32,6 +32,6 @@
         android:key="ringtonePref"
         android:ringtoneType="notification"
         android:showDefault="true"
-        android:title="@string/ringtone_settings" />
+        android:title="@string/ringtone_settings" android:defaultValue="@raw/short_alert"/>
 
 </PreferenceScreen>
