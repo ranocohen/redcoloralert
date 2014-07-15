@@ -167,6 +167,7 @@ public class TownListPicker extends DialogPreference {
      * @param values The values to set for the key.
      */
     public void setValues(Set<String> values) {
+    	
         mValues.clear();
         mValues.addAll(values);
         getSharedPreferences().edit().remove(getKey());
@@ -254,7 +255,7 @@ public class TownListPicker extends DialogPreference {
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
     	SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, null);
+		Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, new HashSet<String>());
 		setValues(selections);
     }
     
