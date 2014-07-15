@@ -170,11 +170,7 @@ public class TownListPicker extends DialogPreference {
     public void setValues(Set<String> values) {
     	
         mValues.clear();
-        mValues.addAll(values);
-        
-        
-        Toast.makeText(getContext(), "SETTINGS VLAUES  "+values.toString() + " SIZE = "+values.size(), Toast.LENGTH_SHORT).show();
-        
+        mValues.addAll(values);        
         
         Set<String> s = PreferenceManager.getDefaultSharedPreferences(getContext())
         	.getStringSet(getKey(), new HashSet<String>());
@@ -264,7 +260,6 @@ public class TownListPicker extends DialogPreference {
     	SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		Set<String> selections = sharedPrefs.getStringSet(PreferencesUtils.ALERTS_TOWNS_SELECT, new HashSet<String>());
 		Set<String> selectionsCopy = new HashSet<String>(selections);
-		Toast.makeText(getContext(), ""+selectionsCopy.toString() + " SIZE = "+selectionsCopy.size(), Toast.LENGTH_SHORT).show();
 		setValues(selectionsCopy);
     }
     
