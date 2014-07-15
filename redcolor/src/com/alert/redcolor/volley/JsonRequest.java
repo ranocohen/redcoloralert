@@ -6,17 +6,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.util.Log;
+
 import com.alert.redcolor.analytics.AnalyticsApp;
+import com.alert.redcolor.db.AlertProvider;
+import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.util.Log;
 
 public class JsonRequest {
 
@@ -54,7 +57,7 @@ public class JsonRequest {
 		AnalyticsApp.getInstance().addToRequestQueue(req, tag_json_arry);
 	}
 	
-	public void analyzeAlertJson(JSONObject response) {
+	public void analyzeAlertJson(JSONObject response,Context context) {
 		try {
 			JSONArray data = response.getJSONArray("data");
 			//iterates on each alert
@@ -70,7 +73,15 @@ public class JsonRequest {
 					JSONObject area = areas.getJSONObject(j);
 					String area_name = area.getString("area_name"); //TODO IDAN DB
 					int area_id = area.getInt("area_id");//TODO IDAN DB
-					
+					/* Adding the alert to db */
+					ContentValues cv = new ContentValues();
+					cv.put(AlertColumns.AreaId, area_id);
+					cv.put(AlertColumns.time, dt.toString());
+					cv.put(AlertColumns.painted, 0);
+
+					context.getContentResolver().insert(
+							AlertProvider.ALERTS_CONTENT_URI, cv);
+
 					JSONArray locations = area.getJSONArray("locations");
 					
 					//no need for this but we'll keep it just in case
@@ -96,7 +107,7 @@ public class JsonRequest {
 	     return dateTime;
 	}
 
-	public void requestJsonObject(String url, Context con) {
+	public void requestJsonObject(String url, final Context con) {
 		// Tag used to cancel the request
 		String tag_json_obj = "json_obj_req";
 
@@ -110,7 +121,7 @@ public class JsonRequest {
 					@Override
 					public void onResponse(JSONObject response) {
 						Log.d("VolleyJsonObjectOnResponse", response.toString());
-						analyzeAlertJson(response);
+						analyzeAlertJson(response,con);
 						pDialog.hide();
 					}
 				}, new Response.ErrorListener() {
