@@ -41,8 +41,8 @@
         android:key="@string/pref_alert_vibrate"
         android:title="@string/vibrate" />
     
-    <Preference android:title="Acts like a button"
+    <Preference android:title="TEST connection"
                 android:key="button"
-                android:summary="This will act like a button"/>
+                android:summary="Test connection"/>
 
 </PreferenceScreen>

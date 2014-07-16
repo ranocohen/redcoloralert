@@ -67,5 +67,7 @@
 
     <string name="ringtone_settings">Alert sound</string>
     <string name="time_fired">time fired: %1$s</string>
+    <string name="test_connection">Test Connection</string>
+    <string name="test_response">Connected</string>
 
 </resources>

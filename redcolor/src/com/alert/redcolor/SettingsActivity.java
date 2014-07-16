@@ -1,16 +1,21 @@
 package com.alert.redcolor;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.alert.redcolor.ui.TownListPreference;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
@@ -26,7 +31,7 @@ public class SettingsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		con = getApplicationContext();
 		// Display the fragment as the main content.
 		getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, new SettingsFragment()).commit();
@@ -73,9 +78,47 @@ public class SettingsActivity extends Activity {
 			                @Override
 			                public boolean onPreferenceClick(Preference arg0) { 
 			                	
+			                	sendAliveTest();
 			                	return true;
 			                }
 			            });
+
+		}
+		
+		
+		private void sendTestIdToBackend(String regId) {
+			String serverUrl = Utils.SERVER+"/android_test";
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("regid", regId);
+
+			try {
+				ServerUtils.post(serverUrl, params);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		private void sendAliveTest() {
+			new AsyncTask<Void, Void, String>() {
+
+				protected String doInBackground(Void... params) {
+					String msg = "";
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+					// then you use
+					String regid = prefs.getString(MainActivity.PROPERTY_REG_ID, null);
+					sendTestIdToBackend(regid);
+					return msg;
+				}
+
+				@Override
+				protected void onPostExecute(String msg) {
+					/*
+					 * Toast.makeText(getApplicationContext(), msg,
+					 * Toast.LENGTH_LONG) .show();
+					 */
+				}
+			}.execute(null, null, null);
 
 		}
 	}
@@ -99,4 +142,6 @@ public class SettingsActivity extends Activity {
 			return result;
 		}
 	}
+	
+	
 }
