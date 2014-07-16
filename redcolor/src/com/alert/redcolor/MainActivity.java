@@ -83,8 +83,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
-
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
 		LocationListener, OnGoogleMapFragmentListener, OnRedSelectListener {
@@ -128,14 +126,13 @@ public class MainActivity extends FragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		
 
-		Utils.backup(getApplicationContext());
-		
+		//Utils.backup(getApplicationContext());
+
 		Crashlytics.start(this);
 		// run location service
-		//Intent intent = new Intent(this, BackgroundLocationService.class);
-		//startService(intent);
+		// Intent intent = new Intent(this, BackgroundLocationService.class);
+		// startService(intent);
 
 		context = getApplicationContext();
 
@@ -153,12 +150,12 @@ public class MainActivity extends FragmentActivity implements
 		} else {
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
-		
-		
-/*		 JsonRequest jr = new JsonRequest();
-			jr.pushWithParams("http://213.57.173.69:4567/android_test", getRegistrationId(context));
-		*/
-		
+
+		/*
+		 * JsonRequest jr = new JsonRequest();
+		 * jr.pushWithParams("http://213.57.173.69:4567/android_test",
+		 * getRegistrationId(context));
+		 */
 
 		// check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
@@ -233,8 +230,6 @@ public class MainActivity extends FragmentActivity implements
 				.setTabListener(this));
 
 	}
-
-	
 
 	/**
 	 * Check the device to make sure it has the Google Play Services APK. If it
@@ -641,7 +636,7 @@ public class MainActivity extends FragmentActivity implements
 		}.execute(null, null, null);
 
 	}
-	
+
 	/**
 	 * Stores the registration ID and app versionCode in the application's
 	 * {@code SharedPreferences}.
@@ -688,8 +683,6 @@ public class MainActivity extends FragmentActivity implements
 			e.printStackTrace();
 		}
 	}
-	
-
 
 	@Override
 	public void onMapReady(GoogleMap map) {
@@ -698,8 +691,8 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.setMyLocationEnabled(true);
 		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-		
-		//lastLatLng = mUIGoogleMap.getCameraPosition().target;
+
+		// lastLatLng = mUIGoogleMap.getCameraPosition().target;
 
 		// Animate map to ideal location
 		// Tel aviv location
@@ -714,7 +707,7 @@ public class MainActivity extends FragmentActivity implements
 		CameraUpdate cameraUpdate = CameraUpdateFactory
 				.newLatLngZoom(latLng, 8);
 		mUIGoogleMap.animateCamera(cameraUpdate);
-		
+
 	}
 
 	@Override
@@ -723,6 +716,11 @@ public class MainActivity extends FragmentActivity implements
 			mUIGoogleMap.clear();
 		if (circles.size() != 0)
 			circles.clear();
+
+		// Clean alerts table
+
+		RedColordb.getInstance(getApplicationContext()).getWritableDatabase()
+				.delete(Tables.ALERTS, null, null);
 		super.onPause();
 	}
 
@@ -737,8 +735,10 @@ public class MainActivity extends FragmentActivity implements
 			setProgressBarVisibility(true);
 			initData init = new initData(this);
 			init.execute();
-
+			return;
 		}
+		queryServer();
+			
 
 	}
 
@@ -762,63 +762,60 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void OnRedSelectedListener(long id,DateTime time) {
+	public void OnRedSelectedListener(long id, DateTime time) {
 		ProviderQueries pq = new ProviderQueries(getApplicationContext());
 		Location location = pq.getCities(id).get(0).getLocation();
 		setFocus(location);
 		mViewPager.setCurrentItem(0);
-		
-		
-		DateTimeFormatter parser2 =
-			    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
-		
-		
-		String strFormat = getResources().getString(R.string.time_fired);
-		String strTimeMessage = String.format(strFormat, time.toString(parser2));
 
-		
-		Toast.makeText(getApplicationContext(), strTimeMessage, 
-				   Toast.LENGTH_SHORT).show();
-		
+		DateTimeFormatter parser2 = DateTimeFormat
+				.forPattern("yyyy-MM-dd HH:mm");
+
+		String strFormat = getResources().getString(R.string.time_fired);
+		String strTimeMessage = String
+				.format(strFormat, time.toString(parser2));
+
+		Toast.makeText(getApplicationContext(), strTimeMessage,
+				Toast.LENGTH_SHORT).show();
 
 	}
-	
+
 	Marker testMarker;
 
 	private void setFocus(Location location) {
-		
-		final LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-		
+
+		final LatLng latlng = new LatLng(location.getLatitude(),
+				location.getLongitude());
+
 		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latlng,
 				10);
-		mUIGoogleMap.animateCamera(cameraUpdate,new CancelableCallback()
-        {
+		mUIGoogleMap.animateCamera(cameraUpdate, new CancelableCallback() {
 
-            @Override
-            public void onFinish()
-            {
-        		MarkerOptions markerOptions = new MarkerOptions().position(latlng);
-        		final Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
-        		int i=0;
+			@Override
+			public void onFinish() {
+				MarkerOptions markerOptions = new MarkerOptions()
+						.position(latlng);
+				final Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
+				int i = 0;
 
-        		new CountDownTimer(10000, 1000) {
-                    public void onTick(long millisUntilFinished) {
-                        //mTextField.setText("Seconds remaining: " + millisUntilFinished / 1000);
-                    }
+				new CountDownTimer(10000, 1000) {
+					public void onTick(long millisUntilFinished) {
+						// mTextField.setText("Seconds remaining: " +
+						// millisUntilFinished / 1000);
+					}
 
-                    public void onFinish() {
-                    	tempMarker.remove();
-                    }
-                }.start();
-            }
+					public void onFinish() {
+						tempMarker.remove();
+					}
+				}.start();
+			}
 
-            @Override
-            public void onCancel()
-            {
-               // _googleMap.getUiSettings().setAllGesturesEnabled(true);
+			@Override
+			public void onCancel() {
+				// _googleMap.getUiSettings().setAllGesturesEnabled(true);
 
-            }
-        });
+			}
+		});
 	}
 
 	private class initData extends AsyncTask<Void, Void, Void> {
@@ -847,8 +844,8 @@ public class MainActivity extends FragmentActivity implements
 			DatabaseUtils.InsertHelper inserter = new DatabaseUtils.InsertHelper(
 					db, Tables.CITIES);
 
-			DatabaseUtils.InsertHelper inserter2 = new DatabaseUtils.InsertHelper(db,
-					Tables.OREF_LOCATIONS);
+			DatabaseUtils.InsertHelper inserter2 = new DatabaseUtils.InsertHelper(
+					db, Tables.OREF_LOCATIONS);
 			int latCol = inserter.getColumnIndex(CitiesColumns.lat);
 			int lngCol = inserter.getColumnIndex(CitiesColumns.lng);
 			int nameHeCol = inserter.getColumnIndex(CitiesColumns.name_he);
@@ -896,9 +893,6 @@ public class MainActivity extends FragmentActivity implements
 
 				}
 
-
-			
-
 				int indexCol = inserter2.getColumnIndex(OrefColumns.index);
 				int nameCol = inserter2.getColumnIndex(OrefColumns.name);
 				int idCol = inserter2.getColumnIndex(OrefColumns.ID);
@@ -922,7 +916,7 @@ public class MainActivity extends FragmentActivity implements
 
 					inserter2.bind(idCol, key);
 					inserter2.bind(nameCol, area);
-					inserter2.bind(indexCol,num);
+					inserter2.bind(indexCol, num);
 					inserter2.execute();
 
 				}
@@ -954,15 +948,17 @@ public class MainActivity extends FragmentActivity implements
 			editor.putBoolean("firstInit2", true);
 			editor.apply();
 
-			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?! 
+			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
 			// :OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-			 JsonRequest jr = new JsonRequest();
-			 jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/0/100", getApplicationContext());
-			 
-			 
+			queryServer();
 
-			
 		}
 
+	}
+	public void queryServer() {
+		JsonRequest jr = new JsonRequest();
+		jr.requestJsonObject(
+				"http://redalert-il.herokuapp.com/alerts/0/25",
+				getApplicationContext());
 	}
 }

@@ -44,7 +44,7 @@
     
     <string name="sucessfull_test">This is a test alert!</string>
     
-
+<string name="test_connection_summery">Notification test </string>
     <string-array name="pref_alert_type_enteries"></string-array>
     <string-array name="pref_alert_type_enteries">
         <item>All alerts</item>
