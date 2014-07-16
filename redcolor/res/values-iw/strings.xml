@@ -68,5 +68,6 @@
     <string name="time_fired">נורה בשעה: %1$s</string>
     <string name="test_connection">בדוק חיבור</string>
     <string name="test_response">מחובר לשרת</string>
+    <string name="test_sum">בדיקת קישוריות מול שרתי RED</string>
 
 </resources>

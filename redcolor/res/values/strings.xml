@@ -69,5 +69,6 @@
     <string name="time_fired">time fired: %1$s</string>
     <string name="test_connection">Test Connection</string>
     <string name="test_response">Connected</string>
+    <string name="test_sum">Check your connection with RED server</string>
 
 </resources>

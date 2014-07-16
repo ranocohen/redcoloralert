@@ -41,7 +41,7 @@
         android:key="@string/pref_alert_vibrate"
         android:title="@string/vibrate" />
     
-    <Preference android:title="TEST connection"
+    <Preference android:title="@string/test_connection"
                 android:key="button"
                 android:summary="Test connection"/>
 
