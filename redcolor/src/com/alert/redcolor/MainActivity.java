@@ -1,12 +1,8 @@
 package com.alert.redcolor;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +16,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,7 +29,6 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -49,6 +43,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +54,6 @@ import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
-import com.alert.redcolor.services.BackgroundLocationService;
 import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -74,9 +68,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -127,7 +119,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		//Utils.backup(getApplicationContext());
+		// Utils.backup(getApplicationContext());
 
 		Crashlytics.start(this);
 		// run location service
@@ -137,6 +129,9 @@ public class MainActivity extends FragmentActivity implements
 		context = getApplicationContext();
 
 		setContentView(R.layout.activity_main);
+		ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+		if (!cd.isConnectingToInternet())
+			showNoConnectionError();
 		initFirstData();
 		// Check device for Play Services APK.
 		if (checkPlayServices()) {
@@ -229,6 +224,19 @@ public class MainActivity extends FragmentActivity implements
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 
+	}
+
+	private void showNoConnectionError() {
+		FrameLayout fl = (FrameLayout) findViewById(R.id.main_content);
+		LayoutInflater vi = (LayoutInflater) getApplicationContext()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View v = vi.inflate(R.layout.error, null);
+
+		fl.addView(v, 0, new ViewGroup.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+		
+		
 	}
 
 	/**
@@ -738,7 +746,6 @@ public class MainActivity extends FragmentActivity implements
 			return;
 		}
 		queryServer();
-			
 
 	}
 
@@ -955,10 +962,10 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 	}
+
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
-		jr.requestJsonObject(
-				"http://redalert-il.herokuapp.com/alerts/0/25",
+		jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/0/25",
 				getApplicationContext());
 	}
 }
