@@ -40,5 +40,9 @@
         android:dependency="pref_enable_alerts"
         android:key="@string/pref_alert_vibrate"
         android:title="@string/vibrate" />
+    
+    <Preference android:title="Acts like a button"
+                android:key="button"
+                android:summary="This will act like a button"/>
 
 </PreferenceScreen>
