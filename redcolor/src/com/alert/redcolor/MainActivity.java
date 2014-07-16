@@ -668,7 +668,7 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 	
-	private void sendAliveTest() {
+	public void sendAliveTest() {
 		new AsyncTask<Void, Void, String>() {
 
 			protected String doInBackground(Void... params) {
@@ -840,7 +840,9 @@ public class MainActivity extends FragmentActivity implements
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			startActivity(new Intent(this, SettingsActivity.class));
+            Intent intent=new Intent(MainActivity.this,SettingsActivity.class);  
+
+			startActivityForResult(intent,2);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

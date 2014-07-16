@@ -10,6 +10,7 @@ import java.util.Map;
 import com.alert.redcolor.ui.TownListPreference;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
@@ -19,11 +20,13 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 public class SettingsActivity extends Activity {
+	
+	Context con;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		// Display the fragment as the main content.
 		getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, new SettingsFragment()).commit();
@@ -64,6 +67,15 @@ public class SettingsActivity extends Activity {
 							return true;
 						}
 					});
+			
+			Preference button = (Preference)findPreference("button");
+			button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			                @Override
+			                public boolean onPreferenceClick(Preference arg0) { 
+			                	
+			                	return true;
+			                }
+			            });
 
 		}
 	}
