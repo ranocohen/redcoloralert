@@ -23,6 +23,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class SettingsActivity extends Activity {
 	
@@ -104,9 +105,8 @@ public class SettingsActivity extends Activity {
 
 				protected String doInBackground(Void... params) {
 					String msg = "";
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-					// then you use
-					String regid = prefs.getString(MainActivity.PROPERTY_REG_ID, null);
+
+					String regid = getRegistrationId(getActivity());
 					sendTestIdToBackend(regid);
 					return msg;
 				}
@@ -120,6 +120,16 @@ public class SettingsActivity extends Activity {
 				}
 			}.execute(null, null, null);
 
+		}
+		
+		private String getRegistrationId(Context context) {
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			String registrationId = prefs.getString(MainActivity.PROPERTY_REG_ID, "");
+			if (registrationId.isEmpty()) {
+				Log.i(Utils.TAG, "Registration not found.");
+				return "";
+			}
+			return registrationId;
 		}
 	}
 
