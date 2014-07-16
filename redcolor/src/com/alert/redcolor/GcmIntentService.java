@@ -199,6 +199,9 @@ public class GcmIntentService extends IntentService {
 					 */
 
 				}
+				else if(type == 2){
+					//TODO add test nottification
+				}
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.

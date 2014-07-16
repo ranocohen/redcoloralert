@@ -1,10 +1,17 @@
 package com.alert.redcolor;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
+
+import com.alert.redcolor.db.RedColordb;
 
 public class Utils {
 
@@ -67,5 +74,30 @@ public class Utils {
 		    }
 		    return json;	
 	    }
-	    
+	    public static void backup(Context con) {
+			File sd = Environment.getExternalStorageDirectory();
+
+			if (sd.canWrite()) {
+				File backupFile = null;
+				File backupDir = new File(sd, "RED//backup//");
+				if (!backupDir.exists())
+					backupDir.mkdirs();
+
+				String dbPath = con.getDatabasePath(RedColordb.DATABASE_NAME)
+						.toString();
+				String backupPath = "RED//backup//alerts.db";
+				File dbFile = new File(dbPath);
+				backupFile = new File(sd, backupPath);
+
+				try {
+					FileChannel src = new FileInputStream(dbFile).getChannel();
+					FileChannel dst = new FileOutputStream(backupFile).getChannel();
+					dst.transferFrom(src, 0, src.size());
+					src.close();
+					dst.close();
+				} catch (Exception e) {
+
+				}
+			}
+		}
 }
