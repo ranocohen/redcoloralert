@@ -26,7 +26,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class SettingsActivity extends Activity {
-	
+
 	Context con;
 
 	@Override
@@ -40,6 +40,7 @@ public class SettingsActivity extends Activity {
 
 	public static class SettingsFragment extends PreferenceFragment {
 		private TownListPreference townListPref;
+
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
@@ -48,19 +49,18 @@ public class SettingsActivity extends Activity {
 			addPreferencesFromResource(R.xml.preferences);
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
-			
 
 			ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
 			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
 
-			
 			String currValue = alertsPref.getValue();
-			if(currValue.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE))
+			if (currValue.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE))
 				townListPref.setEnabled(true);
-			else 
+			else
 				townListPref.setEnabled(false);
-			
-			alertsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+			alertsPref
+					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
 						@Override
 						public boolean onPreferenceChange(
@@ -73,22 +73,21 @@ public class SettingsActivity extends Activity {
 							return true;
 						}
 					});
-			
-			Preference button = (Preference)findPreference("button");
+
+			Preference button = (Preference) findPreference("button");
 			button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			                @Override
-			                public boolean onPreferenceClick(Preference arg0) { 
-			                	
-			                	sendAliveTest();
-			                	return true;
-			                }
-			            });
+				@Override
+				public boolean onPreferenceClick(Preference arg0) {
+
+					sendAliveTest();
+					return true;
+				}
+			});
 
 		}
-		
-		
+
 		private void sendTestIdToBackend(String regId) {
-			String serverUrl = Utils.SERVER+"/android_test";
+			String serverUrl = Utils.SERVER + "/android_test";
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("regid", regId);
 
@@ -99,7 +98,7 @@ public class SettingsActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
-		
+
 		private void sendAliveTest() {
 			new AsyncTask<Void, Void, String>() {
 
@@ -121,10 +120,13 @@ public class SettingsActivity extends Activity {
 			}.execute(null, null, null);
 
 		}
-		
+
 		private String getRegistrationId(Context context) {
-			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			String registrationId = prefs.getString(MainActivity.PROPERTY_REG_ID, "");
+			final SharedPreferences prefs = context.getSharedPreferences(
+					MainActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+			String registrationId = prefs.getString(
+					MainActivity.PROPERTY_REG_ID, "");
+
 			if (registrationId.isEmpty()) {
 				Log.i(Utils.TAG, "Registration not found.");
 				return "";
@@ -152,6 +154,5 @@ public class SettingsActivity extends Activity {
 			return result;
 		}
 	}
-	
-	
+
 }
