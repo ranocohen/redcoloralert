@@ -21,7 +21,7 @@ public class PreferencesUtils {
 	public static String getAlertsType(Context con) {
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(con);
-		String alertsType = sharedPref.getString(ALERTS_TYPE_KEY, "local");
+		String alertsType = sharedPref.getString(ALERTS_TYPE_KEY, con.getString(R.string.pref_alert_type_default));
 		return alertsType;
 
 	}

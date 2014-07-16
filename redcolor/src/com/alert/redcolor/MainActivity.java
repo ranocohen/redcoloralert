@@ -727,8 +727,8 @@ public class MainActivity extends FragmentActivity implements
 
 		// Clean alerts table
 		
-		RedColordb.getInstance(getApplicationContext()).getWritableDatabase()
-				.delete(Tables.ALERTS, null, null);
+		//RedColordb.getInstance(getApplicationContext()).getWritableDatabase()
+			//	.delete(Tables.ALERTS, null, null);
 		Toast.makeText(getApplicationContext(), "DELETE", Toast.LENGTH_LONG).show();
 		super.onPause();
 	}
