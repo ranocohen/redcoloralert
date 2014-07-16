@@ -1044,7 +1044,7 @@ public class MainActivity extends FragmentActivity implements
 
 			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
 			 JsonRequest jr = new JsonRequest();
-			 jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/50", getApplicationContext());
+			 jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/100", getApplicationContext());
 			 
 
 

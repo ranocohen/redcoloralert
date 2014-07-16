@@ -66,7 +66,7 @@ public class ProviderQueries {
 			c = mCon.getContentResolver().query(
 					AlertProvider.CITIES_CONTENT_URI,
 					new String[] { CitiesColumns.ID,CitiesColumns.name_he },
-					null, null, CitiesColumns.name_he +" DESC");
+					null, null, null);
 			while (c.moveToNext()) {
 				Long id = c.getLong(0);
 				String val = c.getString(1);

@@ -7,20 +7,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
@@ -37,7 +36,7 @@ public class GcmIntentService extends IntentService {
 	private int radiusDistance = 5 * 1000;
 	private int notificationsNums = 0;
 
-	/* 
+	/*
 	 * boolean mBound = false;
 	 * 
 	 * BackgroundLocationService mService; private ServiceConnection mConnection
@@ -62,11 +61,10 @@ public class GcmIntentService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		
-		if(!doneFirstInit())
-		{
+
+		if (!doneFirstInit())
 			return;
-		}
+
 		Bundle extras = intent.getExtras();
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 		// The getMessageType() intent parameter must be the intent you received
@@ -98,10 +96,12 @@ public class GcmIntentService extends IntentService {
 				}
 				if (type == 1) {
 
+					/* Parse time */
 					Long l = Long.parseLong(time);
 					DateTime dt = new DateTime(l.longValue() * 1000);
+
+					/* Get location */
 					String locationProvider = LocationManager.NETWORK_PROVIDER;
-					// Or use LocationManager.GPS_PROVIDER
 					LocationManager locationManager = (LocationManager) this
 							.getSystemService(Context.LOCATION_SERVICE);
 					Location lastKnownLocation = locationManager
@@ -119,19 +119,10 @@ public class GcmIntentService extends IntentService {
 
 							long id = json.getLong(i);
 
-							/* Adding the alert to db */
-							ContentValues cv = new ContentValues();
-							cv.put(AlertColumns.AreaId, id);
-							cv.put(AlertColumns.time, dt.toString());
-							cv.put(AlertColumns.painted, 0);
-
-							getContentResolver().insert(
-									AlertProvider.ALERTS_CONTENT_URI, cv);
-
-							/* Check location */
+							insertAlert(id, dt, getApplicationContext());
 
 							Area a = pq.areaById(id);
-							
+
 							titleBuilder.append(a.getName()).append(" ")
 									.append(a.getAreaNum());
 							if (i != json.length() - 1)
@@ -148,32 +139,55 @@ public class GcmIntentService extends IntentService {
 					}
 
 					boolean toNotify = false;
+					if (PreferencesUtils.toNotify(getApplicationContext())) {
+						String alertType = PreferencesUtils
+								.getAlertsType(getApplicationContext());
 
-					String alertType = PreferencesUtils
-							.getAlertsType(getApplicationContext());
-					if (alertType.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
-						toNotify = true;
+						/* build content text */
+						for (int j = 0; j < cities.size(); j++) {
+							contentBuilder.append(cities.get(j).getHebName());
+							if (j != cities.size() - 1)
+								contentBuilder.append(", ");
+						}
 
-					loop: for (int j = 0; j < cities.size(); j++) {
-						contentBuilder.append(cities.get(j).getHebName());
-						if (j != cities.size() - 1)
-							contentBuilder.append(", ");
+						if (alertType
+								.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
+							toNotify = true;
 
-						if (lastKnownLocation != null
-								&& alertType
-										.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE)) {
-							double distance = cities.get(j).distanceTo(
-									lastKnownLocation);
-							if (distance <= radiusDistance) {
-								toNotify = true;
-								break loop;
+						else if (alertType
+								.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE)) {
+							loop: for (int j = 0; j < cities.size(); j++) {
+								if (lastKnownLocation != null
+										&& alertType
+												.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE)) {
+									double distance = cities.get(j).distanceTo(
+											lastKnownLocation);
+									if (distance <= radiusDistance) {
+										toNotify = true;
+										break loop;
+									}
+								}
+							}
+						} else if (alertType
+								.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE)) {
+							long[] ids = PreferencesUtils
+									.getSelectedTownsIds(getApplicationContext());
+							loop: for (int j = 0; j < cities.size(); j++) {
+
+								long id = cities.get(j).getId();
+								for (int k = 0; k < ids.length; k++) {
+									if (ids[k] == id) {
+										toNotify = true;
+										break loop;
+									}
+								}
 							}
 						}
+						if (toNotify)
+							sendNotification(titleBuilder.toString(),
+									contentBuilder.toString(),
+									notificationsNums);
 					}
-
-					if (toNotify)
-						sendNotification(titleBuilder.toString(),
-								contentBuilder.toString(), notificationsNums);
 
 					/*
 					 * Intent intent1 = new Intent(this,
@@ -192,7 +206,7 @@ public class GcmIntentService extends IntentService {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		boolean firstInit = preferences.getBoolean("firstInit", false);
-		
+
 		return firstInit;
 	}
 
@@ -207,17 +221,20 @@ public class GcmIntentService extends IntentService {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				new Intent(this, MainActivity.class), 0);
 
-		Uri notificationType = PreferencesUtils.getRingtone(getApplicationContext());
-		//(instead of):
-		/*.setSound(
-				Uri.parse("android.resource://" + getPackageName()
-						+ "/" + R.raw.short_alert))*/
-		
-		//hacky as fuck
-		if(notificationType.toString().equals("content://settings/system/notification_sound")) //defualt 
+		Uri notificationType = PreferencesUtils
+				.getRingtone(getApplicationContext());
+		// (instead of):
+		/*
+		 * .setSound( Uri.parse("android.resource://" + getPackageName() + "/" +
+		 * R.raw.short_alert))
+		 */
+
+		// hacky as fuck
+		if (notificationType.toString().equals(
+				"content://settings/system/notification_sound")) // defualt
 		{
-			notificationType = Uri.parse("android.resource://" + getPackageName()
-					+ "/" + R.raw.short_alert);
+			notificationType = Uri.parse("android.resource://"
+					+ getPackageName() + "/" + R.raw.short_alert);
 		}
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
@@ -225,16 +242,27 @@ public class GcmIntentService extends IntentService {
 				.setSmallIcon(R.drawable.ic_launcher)
 				.setContentTitle(title)
 				.setNumber(counter)
-				.setDefaults(
-						Notification.DEFAULT_LIGHTS
-								| Notification.DEFAULT_VIBRATE)
 				.setSound(notificationType)
 				.setContentText(content)
+				.setLights(Color.RED, 500, 500)
 				.setStyle(
 						new NotificationCompat.BigTextStyle().bigText(content));
 
+		if (PreferencesUtils.toVibrate(getApplicationContext()))
+			mBuilder.setVibrate(new long[] { 200, 400 });
 		mBuilder.setContentIntent(contentIntent);
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 
+	/* Inserting alert to db */
+	private void insertAlert(long id, DateTime time, Context con) {
+		/* Adding the alert to db */
+		ContentValues cv = new ContentValues();
+		cv.put(AlertColumns.AreaId, id);
+		cv.put(AlertColumns.time, time.toString());
+		cv.put(AlertColumns.painted, 0);
+
+		getContentResolver().insert(AlertProvider.ALERTS_CONTENT_URI, cv);
+
+	}
 }

@@ -28,6 +28,7 @@
     <string name="server_register_error">Could not register device on Demo Server after %1$d attempts.</string>
     <string name="server_unregister_error">Could not unregister device on Demo Server (%1$s).</string>
     <string name="options_register">Register</string>
+    <string name="vibrate">רטט</string>
     <string name="options_unregister">Unregister</string>
     <string name="red_alert">Alert</string>
     <string name="options_clear">Clear</string>
@@ -39,6 +40,8 @@
     <string name="pref_alert_type_default">all</string>
     <string name="pref_alert_type_title">Alert Type</string>
     <string name="pref_alert_type_default">all</string>
+    <string name="pref_alert_vibrate">vibrate</string>
+    
     
     
 
