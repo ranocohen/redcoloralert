@@ -4,8 +4,10 @@ import org.joda.time.DateTime;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -18,7 +20,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
@@ -38,7 +39,7 @@ public class AlertsListFragment extends ListFragment implements
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
 	private int visibleThreshold = 5;
-	private int currentPage = 0;
+	//private int currentPage = 0;
 	private int previousTotal = 0;
 	private boolean loading = true;
 
@@ -104,7 +105,6 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
-		currentPage = Math.round(data.getCount()/25);
 		// The list should now be shown.
 		if (isResumed()) {
 			setListShown(true);
@@ -219,13 +219,18 @@ public class AlertsListFragment extends ListFragment implements
 	            if (totalItemCount > previousTotal) {
 	                loading = false;
 	                previousTotal = totalItemCount;
+	                int currentPage = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("page", 0);
 	                currentPage++;
+	                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+	        		editor.putInt("page", currentPage);
+	        		editor.apply();
+
 	            }
 	        }
 	        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
 	            // I load the next page of gigs using a background task,
 	            // but you can call any function here.
-	           
+	        	int currentPage = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("page", 0);
 	            JsonRequest jr = new JsonRequest();
 				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
 	            int offset = currentPage*25;
@@ -233,4 +238,5 @@ public class AlertsListFragment extends ListFragment implements
 	            loading = true;
 	        }
 	}
+
 }
