@@ -965,7 +965,7 @@ public class MainActivity extends FragmentActivity implements
 
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
-		jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/0/25",
+		jr.requestJsonObject(Utils.SERVER_ALERTS+"0/25",
 				getApplicationContext());
 	}
 }

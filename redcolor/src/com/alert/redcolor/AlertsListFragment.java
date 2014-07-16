@@ -228,7 +228,7 @@ public class AlertsListFragment extends ListFragment implements
 	           
 	            JsonRequest jr = new JsonRequest();
 				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
-	            jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/"+totalItemCount+"/25",getActivity());
+	            jr.requestJsonObject(Utils.SERVER_ALERTS+totalItemCount+"/25",getActivity());
 	            loading = true;
 	        }
 	}
