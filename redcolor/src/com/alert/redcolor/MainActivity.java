@@ -1042,7 +1042,8 @@ public class MainActivity extends FragmentActivity implements
 			editor.putBoolean("firstInit", true);
 			editor.apply();
 
-			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
+			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?! 
+			// :OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 			 JsonRequest jr = new JsonRequest();
 			 jr.requestJsonObject("http://213.57.173.69:4567/alerts/0/100", getApplicationContext());
 			 
