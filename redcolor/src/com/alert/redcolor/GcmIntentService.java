@@ -94,7 +94,7 @@ public class GcmIntentService extends IntentService {
 				int type = Integer.parseInt(extras.getString("type"));
 				if (type == 2) {
 					Toast.makeText(getApplication(),
-							"Connected server",
+							R.string.test_response,
 							Toast.LENGTH_LONG).show();
 				}
 				if (type == 1) {
