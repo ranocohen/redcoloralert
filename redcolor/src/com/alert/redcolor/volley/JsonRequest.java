@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -147,8 +148,9 @@ public class JsonRequest {
 
 	private static DateTime parseDateTime(String input) {
 		String pattern = "yyyy-MM-dd HH:mm:ss 'UTC";
-		DateTime dateTime = DateTime.parse(input,
-				DateTimeFormat.forPattern(pattern));
+		DateTime utc = DateTime.parse(input,
+				DateTimeFormat.forPattern(pattern).withZoneUTC());
+		DateTime dateTime = utc.withZone(DateTimeZone.getDefault());
 		return dateTime;
 	}
 
