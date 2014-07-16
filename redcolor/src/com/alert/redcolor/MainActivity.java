@@ -234,32 +234,7 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	private void backup() {
-		File sd = Environment.getExternalStorageDirectory();
-
-		if (sd.canWrite()) {
-			File backupFile = null;
-			File backupDir = new File(sd, "RED//backup//");
-			if (!backupDir.exists())
-				backupDir.mkdirs();
-
-			String dbPath = getDatabasePath(RedColordb.DATABASE_NAME)
-					.toString();
-			String backupPath = "RED//backup//alerts.db";
-			File dbFile = new File(dbPath);
-			backupFile = new File(sd, backupPath);
-
-			try {
-				FileChannel src = new FileInputStream(dbFile).getChannel();
-				FileChannel dst = new FileOutputStream(backupFile).getChannel();
-				dst.transferFrom(src, 0, src.size());
-				src.close();
-				dst.close();
-			} catch (Exception e) {
-
-			}
-		}
-	}
+	
 
 	/**
 	 * Check the device to make sure it has the Google Play Services APK. If it
@@ -848,7 +823,6 @@ public class MainActivity extends FragmentActivity implements
 
 	private class initData extends AsyncTask<Void, Void, Void> {
 		private Context context;
-		private long start;
 
 		public initData(Context context) { // can take other params if needed
 			this.context = context;
@@ -857,7 +831,6 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			start = System.currentTimeMillis();
 			deleteDatabase(RedColordb.DATABASE_NAME);
 		}
 
@@ -978,7 +951,7 @@ public class MainActivity extends FragmentActivity implements
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("firstInit", true);
+			editor.putBoolean("firstInit2", true);
 			editor.apply();
 
 			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?! 

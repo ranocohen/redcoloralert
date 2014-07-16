@@ -199,6 +199,10 @@ public class GcmIntentService extends IntentService {
 					 */
 
 				}
+				else if(type == 2){
+					sendNotification(getString(R.string.app_name) , 
+							getString(R.string.sucessfull_test), 1);
+				}
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
