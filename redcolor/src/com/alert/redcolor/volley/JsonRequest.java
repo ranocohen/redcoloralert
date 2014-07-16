@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.db.AlertProvider;
@@ -157,7 +158,7 @@ public class JsonRequest {
 	public void requestJsonObject(String url, final Context con) {
 		// Tag used to cancel the request
 		String tag_json_obj = "json_obj_req";
-
+		Toast.makeText(con, url.toString(), Toast.LENGTH_SHORT).show();
 		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET, url,
 				null, new Response.Listener<JSONObject>() {
 

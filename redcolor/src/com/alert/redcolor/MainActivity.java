@@ -726,9 +726,10 @@ public class MainActivity extends FragmentActivity implements
 			circles.clear();
 
 		// Clean alerts table
-
+		
 		RedColordb.getInstance(getApplicationContext()).getWritableDatabase()
 				.delete(Tables.ALERTS, null, null);
+		Toast.makeText(getApplicationContext(), "DELETE", Toast.LENGTH_LONG).show();
 		super.onPause();
 	}
 
@@ -745,7 +746,8 @@ public class MainActivity extends FragmentActivity implements
 			init.execute();
 			return;
 		}
-		queryServer();
+		else
+			queryServer();
 
 	}
 
@@ -965,6 +967,7 @@ public class MainActivity extends FragmentActivity implements
 
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
+		
 		jr.requestJsonObject(Utils.SERVER_ALERTS+"0/25",
 				getApplicationContext());
 	}
