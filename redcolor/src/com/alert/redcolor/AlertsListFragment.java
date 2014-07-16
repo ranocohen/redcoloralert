@@ -104,6 +104,7 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
+		currentPage = Math.round(data.getCount()/25);
 		// The list should now be shown.
 		if (isResumed()) {
 			setListShown(true);
@@ -226,10 +227,9 @@ public class AlertsListFragment extends ListFragment implements
 	            // but you can call any function here.
 	           
 	            JsonRequest jr = new JsonRequest();
-	            int offset = currentPage*25;
 				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
-	            Toast.makeText(getActivity(), "Loading "+offset +" - "+(offset+25), Toast.LENGTH_SHORT).show();
-	            jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/"+offset+"/25",getActivity());
+	            Toast.makeText(getActivity(), "Loading "+totalItemCount +" - "+(totalItemCount+25), Toast.LENGTH_SHORT).show();
+	            jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/"+totalItemCount+"/25",getActivity());
 	            loading = true;
 	        }
 	}

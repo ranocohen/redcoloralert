@@ -957,7 +957,7 @@ public class MainActivity extends FragmentActivity implements
 			//TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?! 
 			// :OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 			 JsonRequest jr = new JsonRequest();
-			 jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/0/25", getApplicationContext());
+			 jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/0/100", getApplicationContext());
 			 
 			 
 
