@@ -13,9 +13,12 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
@@ -24,15 +27,20 @@ import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.model.Alert;
 import com.alert.redcolor.model.Area;
+import com.alert.redcolor.volley.JsonRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 public class AlertsListFragment extends ListFragment implements
-		LoaderCallbacks<Cursor> {
+		LoaderCallbacks<Cursor> , OnScrollListener  {
 
 	public final static String TAG = "AlertsList";
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
+	private int visibleThreshold = 5;
+	private int currentPage = 0;
+	private int previousTotal = 0;
+	private boolean loading = true;
 
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
@@ -59,7 +67,7 @@ public class AlertsListFragment extends ListFragment implements
 				getResources().getDrawable(R.drawable.fade_divider));
 		getListView().setDividerHeight(1);
 		getListView().setVerticalScrollBarEnabled(false);
-		
+		getListView().setOnScrollListener(this);
 
 		mAdapter = new AlertsAdapter(getActivity(), null, 0);
 		setListAdapter(mAdapter);
@@ -96,6 +104,7 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
+		currentPage = Math.round(data.getCount()/25);
 		// The list should now be shown.
 		if (isResumed()) {
 			setListShown(true);
@@ -197,4 +206,31 @@ public class AlertsListFragment extends ListFragment implements
         }
     	
     }
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+	        if (loading) {
+	            if (totalItemCount > previousTotal) {
+	                loading = false;
+	                previousTotal = totalItemCount;
+	                currentPage++;
+	            }
+	        }
+	        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+	            // I load the next page of gigs using a background task,
+	            // but you can call any function here.
+	           
+	            JsonRequest jr = new JsonRequest();
+				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
+	            Toast.makeText(getActivity(), "Loading "+totalItemCount +" - "+(totalItemCount+25), Toast.LENGTH_SHORT).show();
+	            jr.requestJsonObject("http://redalert-il.herokuapp.com/alerts/"+totalItemCount+"/25",getActivity());
+	            loading = true;
+	        }
+	}
 }

@@ -36,6 +36,7 @@ public class GcmIntentService extends IntentService {
 	// Distance to get notification is 5km
 	private int radiusDistance = 5 * 1000;
 	private int notificationsNums = 0;
+	
 
 	/*
 	 * boolean mBound = false;
@@ -92,11 +93,7 @@ public class GcmIntentService extends IntentService {
 				String jsonStr = extras.getString("alerts");
 				String time = extras.getString("timestamp");
 				int type = Integer.parseInt(extras.getString("type"));
-				if (type == 2) {
-					Toast.makeText(getApplication(),
-							R.string.test_response,
-							Toast.LENGTH_LONG).show();
-				}
+				
 				if (type == 1) {
 
 					/* Parse time */
@@ -198,9 +195,8 @@ public class GcmIntentService extends IntentService {
 					 * mConnection, Context.BIND_AUTO_CREATE);
 					 */
 
-				}
-				else if(type == 2){
-					sendNotification(getString(R.string.app_name) , 
+				} else if (type == 2) {
+					sendNotification(getString(R.string.app_name),
 							getString(R.string.sucessfull_test), 1);
 				}
 			}
