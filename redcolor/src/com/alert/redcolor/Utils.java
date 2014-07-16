@@ -14,7 +14,10 @@ public class Utils {
 	
 		//DEBUG VALUES
 	    static final String SERVER_URL = "http://213.57.173.69:4567/android_register_v1";
-	    static final String SERVER = "http://213.57.173.69:4567";
+	    
+	    //static final String SERVER = "http://213.57.173.69:4567";
+	    static final String SERVER = "http://redalert-il.herokuapp.com";
+	    
 
 	 
 	    // Google project id

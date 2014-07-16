@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
@@ -92,7 +93,9 @@ public class GcmIntentService extends IntentService {
 				String time = extras.getString("timestamp");
 				int type = Integer.parseInt(extras.getString("type"));
 				if (type == 2) {
-					int COEV_LI_HACUS=0;
+					Toast.makeText(getApplication(),
+							"Connected server",
+							Toast.LENGTH_LONG).show();
 				}
 				if (type == 1) {
 
