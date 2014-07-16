@@ -25,8 +25,9 @@ public class Utils {
 	    //static final String SERVER = "http://213.57.173.69:4567";
 	    static final String SERVER = "http://redalert-il.herokuapp.com";
 	    
-
-	 
+	    //static final String SERVER = "http://213.57.173.69:4567";
+	    static final String SERVER_ALERTS = " http://redalert-il.herokuapp.com/alerts/";
+	   
 	    // Google project id
 	    static final String SENDER_ID = "903913289319"; 
 	 
