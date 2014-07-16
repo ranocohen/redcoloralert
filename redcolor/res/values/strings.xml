@@ -42,7 +42,7 @@
     <string name="pref_alert_type_default">all</string>
     <string name="pref_alert_vibrate">vibrate</string>
     
-    
+    <string name="sucessfull_test">This is a test alert!</string>
     
 
     <string-array name="pref_alert_type_enteries"></string-array>

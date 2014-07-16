@@ -200,7 +200,8 @@ public class GcmIntentService extends IntentService {
 
 				}
 				else if(type == 2){
-					//TODO add test nottification
+					sendNotification(getString(R.string.app_name) , 
+							getString(R.string.sucessfull_test), 1);
 				}
 			}
 		}
