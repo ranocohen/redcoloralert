@@ -134,8 +134,8 @@ public class MainActivity extends FragmentActivity implements
 		// backup();
 		Crashlytics.start(this);
 		// run location service
-		Intent intent = new Intent(this, BackgroundLocationService.class);
-		startService(intent);
+		//Intent intent = new Intent(this, BackgroundLocationService.class);
+		//startService(intent);
 
 		context = getApplicationContext();
 
@@ -817,7 +817,7 @@ public class MainActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit", false);
+		boolean firstInit = preferences.getBoolean("firstInit2", false);
 		if (!firstInit) {
 			setProgressBarIndeterminateVisibility(true);
 			setProgressBarVisibility(true);
