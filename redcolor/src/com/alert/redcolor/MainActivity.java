@@ -416,7 +416,7 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position
 	 *            - where the code red alert was 'fired'
 	 */
-	public void drawAlertHotzone(final LatLng position, final String color) {
+	public void drawAlertHotzone(final LatLng position, final String color,long timePassed) {
 
 		final Marker mMarker;
 		double radiusInMeters = 10000.0;
@@ -433,10 +433,6 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 		Location l = new Location("");
-		l.setLatitude(position.latitude);
-		l.setLatitude(position.longitude);
-
-		Location l2 = new Location("");
 		l.setLatitude(position.latitude);
 		l.setLatitude(position.longitude);
 
@@ -469,8 +465,6 @@ public class MainActivity extends FragmentActivity implements
 			// int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
 			// time in seconds int strockInterval = (int) (240 /
 			// //(cooldownTime/2/1000));
-
-			final LatLng positionc = position;
 
 			int fillInterval = STARTING_ALPHA / coolTime;
 
@@ -836,7 +830,7 @@ public class MainActivity extends FragmentActivity implements
 				tempMarker.setIcon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 				int i = 0;
-				drawAlertHotzone(latlng, "blue");
+				drawAlertHotzone(latlng, "blue",1);
 
 				new CountDownTimer(10000, 1000) {
 					public void onTick(long millisUntilFinished) {

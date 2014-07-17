@@ -126,7 +126,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				
 				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
-				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red");
+				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",1);
 				
 				
 				
