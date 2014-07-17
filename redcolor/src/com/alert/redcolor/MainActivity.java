@@ -429,6 +429,7 @@ public class MainActivity extends FragmentActivity implements
 
 		if (color.equals("red")) {
 			fillColor = Color.argb(STARTING_COLOR, 255, 0, 00);
+
 			strokeColor = Color.argb(200, 255, 0, 0);
 		} else if (color.equals("blue")) {
 			fillColor = Color.argb(STARTING_COLOR, 0, 0, 255);
@@ -994,10 +995,14 @@ public class MainActivity extends FragmentActivity implements
 
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
-		Cursor c = getContentResolver().query(AlertProvider.ALERTS_CONTENT_URI,
-				null, null, null, "datetime(" + AlertColumns.time + ") DESC");
-		if (c != null && c.getCount() <= 0)
+		ProviderQueries pq = new ProviderQueries(this);
+		long latest = pq.getLastestAlertTime();
+		if (latest != -1)
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/" + latest,
+					getApplicationContext());
+		else
 			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
 					getApplicationContext());
+
 	}
 }

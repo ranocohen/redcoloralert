@@ -19,6 +19,7 @@ import android.util.Log;
 import com.alert.redcolor.AlertsListFragmentbackup.AlertsAdapter;
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.db.AlertProvider;
+import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.model.Alert;
 import com.android.volley.Request.Method;
@@ -210,6 +211,7 @@ alerts = new ArrayList<Alert>();
 					public void onResponse(JSONObject response) {
 						Log.d("VolleyJsonObjectOnResponse", response.toString());
 						analyzeAlertJson(response, con);
+						RedColordb.getInstance(con).cleanDatabase();
 					}
 				}, new Response.ErrorListener() {
 

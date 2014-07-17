@@ -9,11 +9,13 @@ import org.json.JSONException;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
@@ -142,7 +144,7 @@ public class GcmIntentService extends IntentService {
 						e.printStackTrace();
 					}
 
-					cleanAlerts();
+					RedColordb.getInstance(getApplicationContext()).cleanDatabase();
 
 					boolean toNotify = false;
 					if (PreferencesUtils.toNotify(getApplicationContext())) {
@@ -210,20 +212,6 @@ public class GcmIntentService extends IntentService {
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
-
-	private void cleanAlerts() {
-		SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
-				.getWritableDatabase();
-		
-		Cursor c2 = db.rawQuery("SELECT "+AlertColumns.ID +" FROM "+Tables.ALERTS,null);
-		Cursor c = db.rawQuery("select * from alerts where _id not in " +
-				" (select _id from alerts order by time desc limit 50)",null);
-		
-		Log.i("CURSORORRORO", ""+c.getCount());
-		Log.i("CURSORORRORO", ""+c2.getCount());
-
-	}
-
 	private boolean doneFirstInit() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
@@ -294,7 +282,6 @@ public class GcmIntentService extends IntentService {
 		cv.put(AlertColumns.AreaId, id);
 		cv.put(AlertColumns.time, time.toString());
 		cv.put(AlertColumns.painted, 0);
-
 		getContentResolver().insert(AlertProvider.ALERTS_CONTENT_URI, cv);
 
 	}
