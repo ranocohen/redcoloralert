@@ -428,7 +428,10 @@ public class MainActivity extends FragmentActivity implements
 
 		//timepassed in minutes
 		int timePassedMin = (int) (timePassed/60000);
-		int fillScale = (timePassedMin / 10) * STARTING_ALPHA;
+		
+		int fillScale = STARTING_ALPHA;
+		if(timePassed<=10)
+			fillScale = (timePassedMin / 10) * STARTING_ALPHA;
 		
 		if (color.equals("red")) {
 			fillColor = Color.argb(fillScale, 255, 0, 00);
@@ -481,14 +484,22 @@ public class MainActivity extends FragmentActivity implements
 			int fillInterval = STARTING_ALPHA / coolTime;
 
 			public void onTick(long millisUntilFinished) {
+				
+
 
 				// filling alpha reduction
 				// int currFillColor = circles.get(positionc).getFillColor();
 				int p = circles.lastIndexOf(circleZone);
+				
+				
+				Log.d("TEST",circles.size()+" /"+p);
 				try {
 					int currFillColor = circles.get(p).getFillColor();
 					int a = Color.alpha(currFillColor);
 					a = a - fillInterval;
+					
+					
+					Log.d("TICK", circles.get(p).toString()+"/"+a);
 
 					if (color.equals("red")) {
 						circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
@@ -748,15 +759,29 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.animateCamera(cameraUpdate);
 
 	}
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		
+
+	}
 
 	@Override
-	protected void onPause() {
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
 		if (mUIGoogleMap != null)
 			mUIGoogleMap.clear();
 		if (circles!=null) {
 			if (circles.size() != 0)
 				circles.clear();
 		}
+	}
+	@Override
+	protected void onPause() {
+
 
 
 		// Clean alerts table
