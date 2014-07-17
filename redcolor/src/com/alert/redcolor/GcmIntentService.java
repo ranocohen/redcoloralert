@@ -144,7 +144,8 @@ public class GcmIntentService extends IntentService {
 						e.printStackTrace();
 					}
 
-					cleanAlerts();
+					RedColordb.getInstance(getApplicationContext()).
+					cleanDatabase(getApplicationContext());
 
 					boolean toNotify = false;
 					if (PreferencesUtils.toNotify(getApplicationContext())) {
@@ -212,35 +213,6 @@ public class GcmIntentService extends IntentService {
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
-
-	private void cleanAlerts() {
-		Cursor c = null;
-		try {
-
-			SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
-					.getWritableDatabase();
-
-			c = db.rawQuery("select * from alerts where _id not in "
-					+ " (select _id from alerts order by time desc limit 50)",
-					null);
-
-			while (c.moveToNext()) {
-				long id = c.getLong(0);
-				getApplication().getContentResolver().delete(
-						ContentUris.withAppendedId(
-								AlertProvider.ALERTS_CONTENT_URI, id), null,
-						null);
-			}
-
-		} catch (SQLException e) {
-
-		} finally {
-			if (c != null)
-				c.close();
-		}
-		
-	}
-
 	private boolean doneFirstInit() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);

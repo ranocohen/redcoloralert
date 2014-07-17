@@ -3,10 +3,13 @@ package com.alert.redcolor.db;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.joda.time.DateTime;
+
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.model.Area;
 import com.alert.redcolor.model.City;
@@ -95,6 +98,29 @@ public class ProviderQueries {
 			if (c != null)
 				c.close();
 		}
+		return ans;
+	}
+	/* returns unix time_stamp of latest alert in db */
+	public long getLastestAlertTime() {
+		long ans = -1;
+		Cursor c = null;
+		try {
+			c = mCon.getContentResolver().query(
+					AlertProvider.CITIES_CONTENT_URI,
+					new String []{ AlertColumns.time},
+					null, null, AlertColumns.time+" DESC LIMIT 1");
+			
+			
+			while (c.moveToNext()) {
+				String dtStr = c.getString(0);
+				DateTime dt = new DateTime(dtStr);
+				ans = dt.getMillis()/1000;
+			}
+		} finally {
+			if (c != null)
+				c.close();
+		}
+		
 		return ans;
 	}
 }

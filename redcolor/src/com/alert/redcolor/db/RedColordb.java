@@ -1,22 +1,11 @@
 package com.alert.redcolor.db;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import android.app.ProgressDialog;
-import android.content.ContentValues;
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
-
-import com.alert.redcolor.R;
 
 public class RedColordb extends SQLiteOpenHelper {
 	// DATABASE Name
@@ -120,7 +109,33 @@ public class RedColordb extends SQLiteOpenHelper {
 		}
 
 	}
-	
+	/* Keeping only 50 entries in db */
+	public void cleanDatabase(Context con) {
+		Cursor c = null;
+		try {
+
+			SQLiteDatabase db = getWritableDatabase();
+
+			c = db.rawQuery("select * from alerts where _id not in "
+					+ " (select _id from alerts order by time desc limit 50)",
+					null);
+
+			while (c.moveToNext()) {
+				long id = c.getLong(0);
+				con.getContentResolver().delete(
+						ContentUris.withAppendedId(
+								AlertProvider.ALERTS_CONTENT_URI, id), null,
+						null);
+			}
+
+		} catch (SQLException e) {
+
+		} finally {
+			if (c != null)
+				c.close();
+		}
+		
+	}
 
 	
 }
