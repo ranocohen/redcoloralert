@@ -244,7 +244,6 @@ public class MainActivity extends FragmentActivity implements
 		fl.addView(v, 0, new ViewGroup.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT));
-
 	}
 
 	/**
@@ -430,7 +429,7 @@ public class MainActivity extends FragmentActivity implements
 		int timePassedMin = (int) (timePassed/60000);
 		
 		int fillScale = STARTING_ALPHA;
-		if(timePassed<=10)
+		if(timePassed<=10 && timePassed>0)
 			fillScale = (timePassedMin / 10) * STARTING_ALPHA;
 		
 		if (color.equals("red")) {
