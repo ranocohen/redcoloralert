@@ -747,8 +747,11 @@ public class MainActivity extends FragmentActivity implements
 	protected void onPause() {
 		if (mUIGoogleMap != null)
 			mUIGoogleMap.clear();
-		if (circles.size() != 0)
-			circles.clear();
+		if (circles!=null) {
+			if (circles.size() != 0)
+				circles.clear();
+		}
+
 
 		// Clean alerts table
 
