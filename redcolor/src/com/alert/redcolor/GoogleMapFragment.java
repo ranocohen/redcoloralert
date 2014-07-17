@@ -2,6 +2,7 @@ package com.alert.redcolor;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.joda.time.Seconds;
 
 import android.app.Activity;
 import android.content.ContentUris;
