@@ -210,7 +210,7 @@ public class AlertProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
 
             case ALERTS:
-                //do nothing
+                deleteCount = db.delete(Tables.ALERTS, selection, selectionArgs);
                 break;
             case SINGLE_ALERT:
                 id = uri.getPathSegments().get(1);

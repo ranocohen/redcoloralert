@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -49,8 +50,10 @@ import android.widget.Toast;
 
 import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
+import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
+import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
@@ -127,7 +130,9 @@ public class MainActivity extends FragmentActivity implements
 		// startService(intent);
 
 		context = getApplicationContext();
-
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		editor.putInt("page", 0);
+		editor.apply();
 		setContentView(R.layout.activity_main);
 		ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
 		if (!cd.isConnectingToInternet())
@@ -727,9 +732,13 @@ public class MainActivity extends FragmentActivity implements
 
 		// Clean alerts table
 		
-		//RedColordb.getInstance(getApplicationContext()).getWritableDatabase()
-			//	.delete(Tables.ALERTS, null, null);
-		Toast.makeText(getApplicationContext(), "DELETE", Toast.LENGTH_LONG).show();
+		
+		int deleted = getContentResolver().delete(AlertProvider.ALERTS_CONTENT_URI, null, null);
+		Toast.makeText(getApplicationContext(), "DELETED " +deleted, Toast.LENGTH_LONG).show();
+
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		editor.putInt("page", 0);
+		editor.apply();
 		super.onPause();
 	}
 
@@ -967,7 +976,9 @@ public class MainActivity extends FragmentActivity implements
 
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
-		
+		Cursor c =getContentResolver().query(	AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("
+				+ AlertColumns.time + ") DESC");
+		if(c!= null && c.getCount() <= 0)
 		jr.requestJsonObject(Utils.SERVER_ALERTS+"0/25",
 				getApplicationContext());
 	}
