@@ -423,12 +423,15 @@ public class MainActivity extends FragmentActivity implements
 		int fillColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 		int strokeColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 
+		//timepassed in minutes
+		int timePassedMin = (int) (timePassed/60000);
+		int fillScale = (timePassedMin / 10) * STARTING_ALPHA;
 		if (color.equals("red")) {
-			fillColor = Color.argb(STARTING_ALPHA, 255, 0, 00);
+			fillColor = Color.argb(fillScale, 255, 0, 00);
 
 			strokeColor = Color.argb(200, 255, 0, 0);
 		} else if (color.equals("blue")) {
-			fillColor = Color.argb(STARTING_ALPHA, 0, 0, 255);
+			fillColor = Color.argb(fillScale, 0, 0, 255);
 			strokeColor = Color.argb(200, 0, 0, 255);
 		}
 
