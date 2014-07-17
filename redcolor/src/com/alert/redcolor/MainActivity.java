@@ -64,6 +64,7 @@ import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallback
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.internal.lt;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -415,11 +416,19 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position
 	 *            - where the code red alert was 'fired'
 	 */
-	public void drawAlertHotzone(final LatLng position) {
+	public void drawAlertHotzone(final LatLng position, String color) {
 
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(90, 255, 0, 00);
-		int strokeColor = Color.argb(200, 255, 0, 0);
+		int fillColor = Color.argb(90, 255, 255, 255);;
+		int strokeColor =Color.argb(90, 255, 255, 255);;
+		
+		if(color.equals("red")) {
+			fillColor = Color.argb(90, 255, 0, 00);
+			strokeColor = Color.argb(200, 255, 0, 0);
+		}else if(color.equals("blue")) {
+			fillColor = Color.argb(90, 0, 0, 255);
+			strokeColor = Color.argb(200, 0, 0, 255);
+		}
 
 		Location l = new Location("");
 		l.setLatitude(position.latitude);
@@ -812,6 +821,7 @@ public class MainActivity extends FragmentActivity implements
 						.position(latlng);
 				final Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
 				int i = 0;
+				drawAlertHotzone(latlng, "blue");
 
 				new CountDownTimer(10000, 1000) {
 					public void onTick(long millisUntilFinished) {
