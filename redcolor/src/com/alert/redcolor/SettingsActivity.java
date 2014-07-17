@@ -49,7 +49,7 @@ public class SettingsActivity extends Activity {
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
 
-			ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
+			final ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
 			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
 
 			String currValue = alertsPref.getValue();
@@ -57,6 +57,9 @@ public class SettingsActivity extends Activity {
 				townListPref.setEnabled(true);
 			else
 				townListPref.setEnabled(false);
+			
+			alertsPref.setSummary(alertsPref.getEntry());
+
 
 			alertsPref
 					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -69,6 +72,9 @@ public class SettingsActivity extends Activity {
 								townListPref.setEnabled(true);
 							else
 								townListPref.setEnabled(false);
+							
+							alertsPref.setSummary(alertsPref.getEntry());
+
 							return true;
 						}
 					});
