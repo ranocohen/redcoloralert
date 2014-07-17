@@ -123,10 +123,10 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				
 				//Update on db that this area is painted
 				setPainted(a.getId());			
-				
+				Seconds seconds = Seconds.secondsBetween(a.getTime(), now);
 				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
-				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",1);
+				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",seconds.toPeriod().getMillis());
 				
 				
 				
