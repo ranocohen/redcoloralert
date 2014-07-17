@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -114,6 +115,7 @@ public class ProviderQueries {
 			while (c.moveToNext()) {
 				String dtStr = c.getString(0);
 				DateTime dt = new DateTime(dtStr);
+				dt = dt. toDateTime(DateTimeZone.UTC);
 				ans = dt.getMillis()/1000;
 			}
 		} finally {

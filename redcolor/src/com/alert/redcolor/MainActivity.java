@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -49,12 +48,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alert.redcolor.AlertsListFragmentbackup.OnRedSelectListener;
+import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
-import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
-import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
@@ -65,7 +62,6 @@ import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallback
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.internal.lt;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -309,7 +305,7 @@ public class MainActivity extends FragmentActivity implements
 				// return new LaunchpadSectionFragment();
 				return new GoogleMapFragment();
 			case 1:
-				return new AlertsListFragmentbackup();
+				return new AlertsListFragment();
 
 				// TODO need to make listview within fragment and not to use
 				// listfragmet
@@ -1005,7 +1001,7 @@ public class MainActivity extends FragmentActivity implements
 		ProviderQueries pq = new ProviderQueries(this);
 		long latest = pq.getLastestAlertTime();
 		if (latest != -1)
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/" + latest,
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/PAGE_SIZE?timestamp=" + latest,
 					getApplicationContext());
 		else
 			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
