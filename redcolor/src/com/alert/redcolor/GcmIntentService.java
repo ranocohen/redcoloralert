@@ -29,6 +29,7 @@ import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.db.RedColordb.Tables;
 import com.alert.redcolor.model.Area;
 import com.alert.redcolor.model.City;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -213,10 +214,13 @@ public class GcmIntentService extends IntentService {
 	private void cleanAlerts() {
 		SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
 				.getWritableDatabase();
-		Cursor c = db.rawQuery("select * from alerts where _id not in" +
-				" (   select _id from alerts order by time desc limit 50)",null);
+		
+		Cursor c2 = db.rawQuery("SELECT "+AlertColumns.ID +" FROM "+Tables.ALERTS,null);
+		Cursor c = db.rawQuery("select * from alerts where _id not in " +
+				" (select _id from alerts order by time desc limit 50)",null);
 		
 		Log.i("CURSORORRORO", ""+c.getCount());
+		Log.i("CURSORORRORO", ""+c2.getCount());
 
 	}
 
