@@ -13,7 +13,9 @@ import com.alert.redcolor.ui.TownListPreference;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,9 +59,8 @@ public class SettingsActivity extends Activity {
 				townListPref.setEnabled(true);
 			else
 				townListPref.setEnabled(false);
-			
-			alertsPref.setSummary(alertsPref.getEntry());
 
+			alertsPref.setSummary(alertsPref.getEntry());
 
 			alertsPref
 					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -68,12 +69,19 @@ public class SettingsActivity extends Activity {
 						public boolean onPreferenceChange(
 								Preference preference, Object newValue) {
 							String val = (String) newValue;
+							// custom places
 							if (val.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE))
 								townListPref.setEnabled(true);
 							else
 								townListPref.setEnabled(false);
+
+							if (val.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE))
+								if (showReminderMessage())
+									locationReminderDialog();
+
+							CharSequence[] currText = alertsPref.getEntries();
 							
-							alertsPref.setSummary(alertsPref.getEntry());
+							alertsPref.setSummary(currText[alertsPref.findIndexOfValue(val)]);
 
 							return true;
 						}
@@ -89,6 +97,47 @@ public class SettingsActivity extends Activity {
 				}
 			});
 
+		}
+
+		/*
+		 * returns true if locationReminderDialog need to be shown
+		 */
+		public boolean showReminderMessage() {
+
+			boolean setting = true;
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(getActivity());
+			setting = preferences.getBoolean("alerttypelocationdialog", true);
+
+			return setting;
+		}
+
+		public void locationReminderDialog() {
+			new AlertDialog.Builder(getActivity())
+					.setTitle(R.string.location_reminder_title)
+					.setMessage(R.string.location_reminder_message)
+					.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// continue with delete
+								}
+							})
+					.setNegativeButton(R.string.never_remind,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// don't show this message again
+									SharedPreferences preferences = PreferenceManager
+											.getDefaultSharedPreferences(getActivity());
+									SharedPreferences.Editor editor = preferences
+											.edit();
+									editor.putBoolean(
+											"alerttypelocationdialog", false);
+									editor.apply();
+								}
+							}).setIcon(android.R.drawable.ic_dialog_alert)
+					.show();
 		}
 
 		private void sendTestIdToBackend(String regId) {
