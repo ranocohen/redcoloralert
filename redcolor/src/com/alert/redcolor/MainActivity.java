@@ -3,6 +3,7 @@ package com.alert.redcolor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,6 +74,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -86,6 +88,7 @@ public class MainActivity extends FragmentActivity implements
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
+	private static final int STARTING_COLOR = 90; //hot zone starting color
 
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
@@ -97,7 +100,8 @@ public class MainActivity extends FragmentActivity implements
 
 	String regid;
 	private GoogleMap mUIGoogleMap;
-	HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
+	//HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
+	ArrayList<Circle> circles = new ArrayList<Circle>();
 
 	// Location related variables
 	LocationRequest locationRequest;
@@ -131,7 +135,8 @@ public class MainActivity extends FragmentActivity implements
 		// startService(intent);
 
 		context = getApplicationContext();
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		SharedPreferences.Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext()).edit();
 		editor.putInt("page", 0);
 		editor.apply();
 		setContentView(R.layout.activity_main);
@@ -241,8 +246,7 @@ public class MainActivity extends FragmentActivity implements
 		fl.addView(v, 0, new ViewGroup.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT));
-		
-		
+
 	}
 
 	/**
@@ -416,17 +420,18 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position
 	 *            - where the code red alert was 'fired'
 	 */
-	public void drawAlertHotzone(final LatLng position, String color) {
+	public void drawAlertHotzone(final LatLng position, final String color) {
 
+		final Marker mMarker;
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(90, 255, 255, 255);;
-		int strokeColor =Color.argb(90, 255, 255, 255);;
-		
-		if(color.equals("red")) {
-			fillColor = Color.argb(90, 255, 0, 00);
+		int fillColor = Color.argb(STARTING_COLOR, 255, 255, 255);
+		int strokeColor = Color.argb(STARTING_COLOR, 255, 255, 255);
+
+		if (color.equals("red")) {
+			fillColor = Color.argb(STARTING_COLOR, 255, 0, 00);
 			strokeColor = Color.argb(200, 255, 0, 0);
-		}else if(color.equals("blue")) {
-			fillColor = Color.argb(90, 0, 0, 255);
+		} else if (color.equals("blue")) {
+			fillColor = Color.argb(STARTING_COLOR, 0, 0, 255);
 			strokeColor = Color.argb(200, 0, 0, 255);
 		}
 
@@ -442,8 +447,12 @@ public class MainActivity extends FragmentActivity implements
 				.radius(radiusInMeters).fillColor(fillColor)
 				.strokeColor(strokeColor).strokeWidth(8);
 
+		
+		final Circle circleZone;
+		
+		circleZone = mUIGoogleMap.addCircle(circleOptions);
 		// add to hashmap as well
-		circles.put(position, mUIGoogleMap.addCircle(circleOptions));
+		circles.add(circleZone);
 
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
@@ -459,44 +468,46 @@ public class MainActivity extends FragmentActivity implements
 		 * 10;
 		 */
 
-		/*
-		 * new CountDownTimer(cooldownTime, intervalTime) {
-		 * 
-		 * // int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
-		 * // time in seconds int strockInterval = (int) (240 / //
-		 * (cooldownTime/2/1000));
-		 * 
-		 * final LatLng positionc = position;
-		 * 
-		 * int fillInterval = 150 / coolTime; // divide by time in seconds int
-		 * strockInterval = 240 / coolTime;
-		 * 
-		 * public void onTick(long millisUntilFinished) {
-		 * 
-		 * // filling alpha reduction int currFillColor =
-		 * circles.get(positionc).getFillColor(); int a =
-		 * Color.alpha(currFillColor);
-		 * 
-		 * a = a - fillInterval;
-		 * 
-		 * circles.get(positionc).setFillColor(Color.argb(a, 255, 0, 0));
-		 * 
-		 * // mCircle.setFillColor(Color.argb(a, 255, 0, 0));
-		 * 
-		 * // stock alpha reduction
-		 * 
-		 * 
-		 * int currStrokeColor = circles.get(positionc).getStrokeColor(); int a1
-		 * = Color.alpha(currStrokeColor);
-		 * 
-		 * a1 = a1 - strockInterval;
-		 * 
-		 * circles.get(positionc).setStrokeColor(Color.argb(a1, 255, 0, 0));
-		 * 
-		 * }
-		 * 
-		 * public void onFinish() { // mTextField.setText("done!"); } }.start();
-		 */}
+		
+		 new CountDownTimer(cooldownTime, intervalTime) {
+		  
+		  // int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
+		  // time in seconds int strockInterval = (int) (240 / //(cooldownTime/2/1000));
+		  
+		  final LatLng positionc = position;
+		  
+		  int fillInterval = STARTING_COLOR / coolTime;
+		  
+		  public void onTick(long millisUntilFinished) {
+		  
+		  // filling alpha reduction  
+		  //int currFillColor = circles.get(positionc).getFillColor();
+			  int p = circles.lastIndexOf(circleZone);
+			  int currFillColor = circles.get(p).getFillColor();
+		  int a = Color.alpha(currFillColor);
+		  a = a - fillInterval;
+		  
+		  
+			if (color.equals("red")) {
+				  circles.get(p).setFillColor(Color.argb(a, 255, 0, 0));
+			} else if (color.equals("blue")) {
+				  circles.get(p).setFillColor(Color.argb(a, 0, 0, 255));
+			}
+		  
+		  // mCircle.setFillColor(Color.argb(a, 255, 0, 0));
+		  
+		  
+		  }
+		  
+		 public void onFinish(){
+			 int p = circles.lastIndexOf(circleZone);
+			 circles.get(p).remove();
+			 mMarker.remove();
+			 circles.remove(p);
+			 
+		 } // mTextField.setText("done!"); } 
+			 }.start();
+		 }
 
 	public void stayInSafePlaceTimer() {
 
@@ -535,7 +546,6 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private Circle mCircle;
-	private Marker mMarker;
 
 	@Override
 	public void onDisconnected() {
@@ -740,9 +750,9 @@ public class MainActivity extends FragmentActivity implements
 			circles.clear();
 
 		// Clean alerts table
-		
-		
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+
+		SharedPreferences.Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext()).edit();
 		editor.putInt("page", 0);
 		editor.apply();
 		super.onPause();
@@ -760,8 +770,7 @@ public class MainActivity extends FragmentActivity implements
 			initData init = new initData(this);
 			init.execute();
 			return;
-		}
-		else
+		} else
 			queryServer();
 
 	}
@@ -820,6 +829,8 @@ public class MainActivity extends FragmentActivity implements
 				MarkerOptions markerOptions = new MarkerOptions()
 						.position(latlng);
 				final Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
+				tempMarker.setIcon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 				int i = 0;
 				drawAlertHotzone(latlng, "blue");
 
@@ -983,10 +994,10 @@ public class MainActivity extends FragmentActivity implements
 
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
-		Cursor c =getContentResolver().query(	AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("
-				+ AlertColumns.time + ") DESC");
-		if(c!= null && c.getCount() <= 0)
-		jr.requestJsonObject(Utils.SERVER_ALERTS+"0/25",
-				getApplicationContext());
+		Cursor c = getContentResolver().query(AlertProvider.ALERTS_CONTENT_URI,
+				null, null, null, "datetime(" + AlertColumns.time + ") DESC");
+		if (c != null && c.getCount() <= 0)
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
+					getApplicationContext());
 	}
 }
