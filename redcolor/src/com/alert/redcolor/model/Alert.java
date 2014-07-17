@@ -19,6 +19,7 @@ public class Alert {
 	public Alert(long areaId , DateTime time) {
 		this.areaId = areaId;
 		this.time = time;
+		this.painted = false;
 	}
 	public Alert(Cursor cursor) {
 		this.id = cursor.getLong(cursor.getColumnIndex(RedColordb.AlertColumns.ID));

@@ -130,7 +130,9 @@ public class MainActivity extends FragmentActivity implements
 		// startService(intent);
 
 		context = getApplicationContext();
-
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		editor.putInt("page", 0);
+		editor.apply();
 		setContentView(R.layout.activity_main);
 		ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
 		if (!cd.isConnectingToInternet())
