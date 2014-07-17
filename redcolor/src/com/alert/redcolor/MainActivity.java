@@ -131,7 +131,8 @@ public class MainActivity extends FragmentActivity implements
 		// startService(intent);
 
 		context = getApplicationContext();
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		SharedPreferences.Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext()).edit();
 		editor.putInt("page", 0);
 		editor.apply();
 		setContentView(R.layout.activity_main);
@@ -241,8 +242,7 @@ public class MainActivity extends FragmentActivity implements
 		fl.addView(v, 0, new ViewGroup.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT));
-		
-		
+
 	}
 
 	/**
@@ -419,13 +419,15 @@ public class MainActivity extends FragmentActivity implements
 	public void drawAlertHotzone(final LatLng position, String color) {
 
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(90, 255, 255, 255);;
-		int strokeColor =Color.argb(90, 255, 255, 255);;
-		
-		if(color.equals("red")) {
+		int fillColor = Color.argb(90, 255, 255, 255);
+		;
+		int strokeColor = Color.argb(90, 255, 255, 255);
+		;
+
+		if (color.equals("red")) {
 			fillColor = Color.argb(90, 255, 0, 00);
 			strokeColor = Color.argb(200, 255, 0, 0);
-		}else if(color.equals("blue")) {
+		} else if (color.equals("blue")) {
 			fillColor = Color.argb(90, 0, 0, 255);
 			strokeColor = Color.argb(200, 0, 0, 255);
 		}
@@ -740,9 +742,9 @@ public class MainActivity extends FragmentActivity implements
 			circles.clear();
 
 		// Clean alerts table
-		
-		
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+
+		SharedPreferences.Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext()).edit();
 		editor.putInt("page", 0);
 		editor.apply();
 		super.onPause();
@@ -760,8 +762,7 @@ public class MainActivity extends FragmentActivity implements
 			initData init = new initData(this);
 			init.execute();
 			return;
-		}
-		else
+		} else
 			queryServer();
 
 	}
@@ -983,10 +984,14 @@ public class MainActivity extends FragmentActivity implements
 
 	public void queryServer() {
 		JsonRequest jr = new JsonRequest();
-		Cursor c =getContentResolver().query(	AlertProvider.ALERTS_CONTENT_URI, null, null, null, "datetime("
-				+ AlertColumns.time + ") DESC");
-		if(c!= null && c.getCount() <= 0)
-		jr.requestJsonObject(Utils.SERVER_ALERTS+"0/25",
-				getApplicationContext());
+		ProviderQueries pq = new ProviderQueries(this);
+		long latest = pq.getLastestAlertTime();
+		if (latest != -1)
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/" + latest,
+					getApplicationContext());
+		else
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
+					getApplicationContext());
+
 	}
 }

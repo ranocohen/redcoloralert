@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class RedColordb extends SQLiteOpenHelper {
 	// DATABASE Name
@@ -110,7 +111,7 @@ public class RedColordb extends SQLiteOpenHelper {
 
 	}
 	/* Keeping only 50 entries in db */
-	public void cleanDatabase(Context con) {
+	public void cleanDatabase() {
 		Cursor c = null;
 		try {
 
@@ -119,10 +120,10 @@ public class RedColordb extends SQLiteOpenHelper {
 			c = db.rawQuery("select * from alerts where _id not in "
 					+ " (select _id from alerts order by time desc limit 50)",
 					null);
-
+			Log.i("DB CLEAN", "DELETED "+c.getCount() +" ENTRIES");
 			while (c.moveToNext()) {
 				long id = c.getLong(0);
-				con.getContentResolver().delete(
+				mCon.getContentResolver().delete(
 						ContentUris.withAppendedId(
 								AlertProvider.ALERTS_CONTENT_URI, id), null,
 						null);

@@ -144,8 +144,7 @@ public class GcmIntentService extends IntentService {
 						e.printStackTrace();
 					}
 
-					RedColordb.getInstance(getApplicationContext()).
-					cleanDatabase(getApplicationContext());
+					RedColordb.getInstance(getApplicationContext()).cleanDatabase();
 
 					boolean toNotify = false;
 					if (PreferencesUtils.toNotify(getApplicationContext())) {
@@ -283,7 +282,6 @@ public class GcmIntentService extends IntentService {
 		cv.put(AlertColumns.AreaId, id);
 		cv.put(AlertColumns.time, time.toString());
 		cv.put(AlertColumns.painted, 0);
-
 		getContentResolver().insert(AlertProvider.ALERTS_CONTENT_URI, cv);
 
 	}

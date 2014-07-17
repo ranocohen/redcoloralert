@@ -106,7 +106,7 @@ public class ProviderQueries {
 		Cursor c = null;
 		try {
 			c = mCon.getContentResolver().query(
-					AlertProvider.CITIES_CONTENT_URI,
+					AlertProvider.ALERTS_CONTENT_URI,
 					new String []{ AlertColumns.time},
 					null, null, AlertColumns.time+" DESC LIMIT 1");
 			
