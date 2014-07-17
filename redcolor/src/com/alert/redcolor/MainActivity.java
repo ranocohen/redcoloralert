@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity implements
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
-	private static final int STARTING_COLOR = 90; //hot zone starting color
+	private static final int STARTING_ALPHA = 90; //hot zone starting color
 
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
@@ -424,15 +424,15 @@ public class MainActivity extends FragmentActivity implements
 
 		final Marker mMarker;
 		double radiusInMeters = 10000.0;
-		int fillColor = Color.argb(STARTING_COLOR, 255, 255, 255);
-		int strokeColor = Color.argb(STARTING_COLOR, 255, 255, 255);
+		int fillColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
+		int strokeColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 
 		if (color.equals("red")) {
-			fillColor = Color.argb(STARTING_COLOR, 255, 0, 00);
+			fillColor = Color.argb(STARTING_ALPHA, 255, 0, 00);
 
 			strokeColor = Color.argb(200, 255, 0, 0);
 		} else if (color.equals("blue")) {
-			fillColor = Color.argb(STARTING_COLOR, 0, 0, 255);
+			fillColor = Color.argb(STARTING_ALPHA, 0, 0, 255);
 			strokeColor = Color.argb(200, 0, 0, 255);
 		}
 
@@ -477,7 +477,7 @@ public class MainActivity extends FragmentActivity implements
 		  
 		  final LatLng positionc = position;
 		  
-		  int fillInterval = STARTING_COLOR / coolTime;
+		  int fillInterval = STARTING_ALPHA / coolTime;
 		  
 		  public void onTick(long millisUntilFinished) {
 		  
@@ -490,9 +490,9 @@ public class MainActivity extends FragmentActivity implements
 		  
 		  
 			if (color.equals("red")) {
-				  circles.get(p).setFillColor(Color.argb(a, 255, 0, 0));
+				  circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
 			} else if (color.equals("blue")) {
-				  circles.get(p).setFillColor(Color.argb(a, 0, 0, 255));
+				  circles.get(p).setFillColor(Color.argb(a, 0, 0, 200));
 			}
 		  
 		  // mCircle.setFillColor(Color.argb(a, 255, 0, 0));
