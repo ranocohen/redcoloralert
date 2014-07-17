@@ -12,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -420,15 +422,16 @@ public class MainActivity extends FragmentActivity implements
 
 		final Marker mMarker;
 		double radiusInMeters = 10000.0;
+		//default values
 		int fillColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 		int strokeColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 
 		//timepassed in minutes
 		int timePassedMin = (int) (timePassed/60000);
 		int fillScale = (timePassedMin / 10) * STARTING_ALPHA;
+		
 		if (color.equals("red")) {
 			fillColor = Color.argb(fillScale, 255, 0, 00);
-
 			strokeColor = Color.argb(200, 255, 0, 0);
 		} else if (color.equals("blue")) {
 			fillColor = Color.argb(fillScale, 0, 0, 255);
@@ -452,8 +455,14 @@ public class MainActivity extends FragmentActivity implements
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
 
-		final long cooldownTime = 1 * 10 * 1000; // 10 seconds
-		final long intervalTime = 1 * 1000; // 1 second interval
+		long cooldownTimeDef = 10 * 60 * 1000; // 10 minutes
+		if (timePassedMin<10) {
+			 cooldownTimeDef = (10 - timePassedMin) * 60 * 1000;
+		}
+		
+		final long cooldownTime = cooldownTimeDef; 
+		//final long cooldownTime = 1 * 10 * 1000; // 10 seconds
+		final long intervalTime = 60 * 1000; // 1 minute interval
 		final int coolTime = 10;
 
 		// TODO change DEBUG Values
@@ -797,13 +806,20 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void OnRedSelectedListener(long id, DateTime time) {
+		DateTime now = new DateTime();
+		Period period = new Period(time, now);
+		int i = period.getMinutes();
+
+		
 		ProviderQueries pq = new ProviderQueries(getApplicationContext());
 		Location location = pq.getCities(id).get(0).getLocation();
-		setFocus(location);
+		setFocus(location,i);
 		mViewPager.setCurrentItem(0);
 
 		DateTimeFormatter parser2 = DateTimeFormat
 				.forPattern("yyyy-MM-dd HH:mm");
+		
+		
 
 		String strFormat = getResources().getString(R.string.time_fired);
 		String strTimeMessage = String
@@ -816,8 +832,13 @@ public class MainActivity extends FragmentActivity implements
 
 	Marker testMarker;
 
-	private void setFocus(Location location) {
-
+	private void setFocus(Location location,int timeToShow) {
+		
+		if (timeToShow>10) {
+			timeToShow = 10;
+		}
+		
+		final long timeToShowMiliSec = 10 * 60 * 1000;
 		final LatLng latlng = new LatLng(location.getLatitude(),
 				location.getLongitude());
 
@@ -833,7 +854,10 @@ public class MainActivity extends FragmentActivity implements
 				tempMarker.setIcon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 				int i = 0;
-				drawAlertHotzone(latlng, "blue",1);
+				
+				if (timeToShowMiliSec!=0) {
+					drawAlertHotzone(latlng, "blue",timeToShowMiliSec);
+				}
 
 				new CountDownTimer(10000, 1000) {
 					public void onTick(long millisUntilFinished) {
