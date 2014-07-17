@@ -202,7 +202,7 @@ public class AlertsListFragment extends ListFragment implements
             mCallback = (OnRedSelectListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement OnRedSelectedListener");
         }
     	
     }
