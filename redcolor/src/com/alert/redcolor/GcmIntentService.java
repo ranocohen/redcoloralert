@@ -13,6 +13,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -21,9 +23,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
+import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.model.Area;
 import com.alert.redcolor.model.City;
@@ -36,7 +40,6 @@ public class GcmIntentService extends IntentService {
 	// Distance to get notification is 5km
 	private int radiusDistance = 5 * 1000;
 	private int notificationsNums = 0;
-	
 
 	/*
 	 * boolean mBound = false;
@@ -93,7 +96,7 @@ public class GcmIntentService extends IntentService {
 				String jsonStr = extras.getString("alerts");
 				String time = extras.getString("timestamp");
 				int type = Integer.parseInt(extras.getString("type"));
-				
+
 				if (type == 1) {
 
 					/* Parse time */
@@ -137,6 +140,8 @@ public class GcmIntentService extends IntentService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
+					cleanAlerts();
 
 					boolean toNotify = false;
 					if (PreferencesUtils.toNotify(getApplicationContext())) {
@@ -205,6 +210,16 @@ public class GcmIntentService extends IntentService {
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
+	private void cleanAlerts() {
+		SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
+				.getWritableDatabase();
+		Cursor c = db.rawQuery("select * from alerts where _id not in" +
+				" (   select _id from alerts order by time desc limit 50)",null);
+		
+		Log.i("CURSORORRORO", ""+c.getCount());
+
+	}
+
 	private boolean doneFirstInit() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
@@ -222,21 +237,19 @@ public class GcmIntentService extends IntentService {
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		Intent resultIntent = new Intent(this, MainActivity.class);
-		// The stack builder object will contain an artificial back stack for the 
-		// started Activity. 
-		// This ensures that navigating backward from the Activity leads out of 
-		// your application to the Home screen. 
+		// The stack builder object will contain an artificial back stack for
+		// the
+		// started Activity.
+		// This ensures that navigating backward from the Activity leads out of
+		// your application to the Home screen.
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		// Adds the back stack for the Intent (but not the Intent itself) 
+		// Adds the back stack for the Intent (but not the Intent itself)
 		stackBuilder.addParentStack(MainActivity.class);
-		// Adds the Intent that starts the Activity to the top of the stack 
+		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent =
-		        stackBuilder.getPendingIntent(
-		            0, 
-		            PendingIntent.FLAG_UPDATE_CURRENT
-		        ); 
-		
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
 		Uri notificationType = PreferencesUtils
 				.getRingtone(getApplicationContext());
 		// (instead of):

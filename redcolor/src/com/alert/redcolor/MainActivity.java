@@ -48,7 +48,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
+import com.alert.redcolor.AlertsListFragmentbackup.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
@@ -304,7 +304,7 @@ public class MainActivity extends FragmentActivity implements
 				// return new LaunchpadSectionFragment();
 				return new GoogleMapFragment();
 			case 1:
-				return new AlertsListFragment();
+				return new AlertsListFragmentbackup();
 
 				// TODO need to make listview within fragment and not to use
 				// listfragmet
@@ -733,9 +733,6 @@ public class MainActivity extends FragmentActivity implements
 		// Clean alerts table
 		
 		
-		int deleted = getContentResolver().delete(AlertProvider.ALERTS_CONTENT_URI, null, null);
-		Toast.makeText(getApplicationContext(), "DELETED " +deleted, Toast.LENGTH_LONG).show();
-
 		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 		editor.putInt("page", 0);
 		editor.apply();
