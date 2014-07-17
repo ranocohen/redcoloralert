@@ -9,11 +9,13 @@ import org.json.JSONException;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
@@ -212,16 +214,31 @@ public class GcmIntentService extends IntentService {
 	}
 
 	private void cleanAlerts() {
-		SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
-				.getWritableDatabase();
-		
-		Cursor c2 = db.rawQuery("SELECT "+AlertColumns.ID +" FROM "+Tables.ALERTS,null);
-		Cursor c = db.rawQuery("select * from alerts where _id not in " +
-				" (select _id from alerts order by time desc limit 50)",null);
-		
-		Log.i("CURSORORRORO", ""+c.getCount());
-		Log.i("CURSORORRORO", ""+c2.getCount());
+		Cursor c = null;
+		try {
 
+			SQLiteDatabase db = RedColordb.getInstance(getApplicationContext())
+					.getWritableDatabase();
+
+			c = db.rawQuery("select * from alerts where _id not in "
+					+ " (select _id from alerts order by time desc limit 50)",
+					null);
+
+			while (c.moveToNext()) {
+				long id = c.getLong(0);
+				getApplication().getContentResolver().delete(
+						ContentUris.withAppendedId(
+								AlertProvider.ALERTS_CONTENT_URI, id), null,
+						null);
+			}
+
+		} catch (SQLException e) {
+
+		} finally {
+			if (c != null)
+				c.close();
+		}
+		
 	}
 
 	private boolean doneFirstInit() {
