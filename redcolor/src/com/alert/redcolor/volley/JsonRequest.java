@@ -16,7 +16,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 
-import com.alert.redcolor.AlertsListFragment.AlertsAdapter;
+import com.alert.redcolor.AlertsListFragmentbackup.AlertsAdapter;
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
