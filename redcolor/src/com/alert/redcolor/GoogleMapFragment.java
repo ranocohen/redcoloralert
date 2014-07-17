@@ -2,6 +2,7 @@ package com.alert.redcolor;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.joda.time.Seconds;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -122,10 +123,10 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				
 				//Update on db that this area is painted
 				setPainted(a.getId());			
-				
+				Seconds seconds = Seconds.secondsBetween(a.getTime(), now);
 				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
-				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",1);
+				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",seconds.toPeriod().getMillis());
 				
 				
 				
