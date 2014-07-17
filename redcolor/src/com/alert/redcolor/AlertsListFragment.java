@@ -20,6 +20,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
@@ -230,6 +231,7 @@ public class AlertsListFragment extends ListFragment implements
 				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
 	            int offset = currentPage*25;
 	            jr.requestJsonObject(Utils.SERVER_ALERTS+offset+"/25",getActivity());
+	            Toast.makeText(getActivity(), "Loading "+offset, Toast.LENGTH_SHORT).show();
 	            loading = true;
 	            currentPage++;
 	        }

@@ -782,14 +782,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onPause() {
 
-
-
-		// Clean alerts table
-
-		SharedPreferences.Editor editor = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext()).edit();
-		editor.putInt("page", 0);
-		editor.apply();
+		RedColordb.getInstance(this).cleanDatabase();
 		super.onPause();
 	}
 

@@ -8,11 +8,11 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,6 +127,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
 				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",seconds.toPeriod().getMillis());
+				Log.i("Paint","Painting city - "+city.getHebName()+ " "+seconds.toString());
 
 			}
 

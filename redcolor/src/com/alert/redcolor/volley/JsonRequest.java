@@ -2,7 +2,6 @@ package com.alert.redcolor.volley;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -12,14 +11,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.alert.redcolor.AlertsListFragmentbackup.AlertsAdapter;
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.db.AlertProvider;
-import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.model.Alert;
 import com.android.volley.Request.Method;
@@ -126,7 +126,7 @@ alerts = new ArrayList<Alert>();
 					cv.put(AlertColumns.AreaId, area_id);
 					cv.put(AlertColumns.time, dt.toString());
 					cv.put(AlertColumns.painted, 0);
-				
+					if(!isDuplciate(area_id,dt,context))
 					context.getContentResolver().insert(
 							AlertProvider.ALERTS_CONTENT_URI, cv);
 
@@ -149,6 +149,19 @@ alerts = new ArrayList<Alert>();
 			e.printStackTrace();
 		}
 	}
+	private boolean isDuplciate(int area_id, DateTime dt, Context context) {
+		Cursor c = context.getContentResolver().query
+				(AlertProvider.ALERTS_CONTENT_URI,
+						null,
+						AlertColumns.AreaId+" = ? AND "+
+						AlertColumns.time+" = ?",
+						new String[] { String.valueOf(area_id), dt.toString()}, null);
+		if(c.getCount()>0)
+			return true;
+		return false;
+		
+	}
+
 	public ArrayList<Alert> analyzeAlertJson2(JSONObject response, Context context) {
 		try {
 			JSONArray data = response.getJSONArray("data");
@@ -211,7 +224,6 @@ alerts = new ArrayList<Alert>();
 					public void onResponse(JSONObject response) {
 						Log.d("VolleyJsonObjectOnResponse", response.toString());
 						analyzeAlertJson(response, con);
-						RedColordb.getInstance(con).cleanDatabase();
 					}
 				}, new Response.ErrorListener() {
 
