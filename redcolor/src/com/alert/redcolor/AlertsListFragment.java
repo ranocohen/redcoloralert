@@ -39,8 +39,9 @@ public class AlertsListFragment extends ListFragment implements
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
 	private int visibleThreshold = 5;
-	//private int currentPage = 0;
+	private int currentPage = 0;
 	private int previousTotal = 0;
+	
 	private boolean loading = true;
 
 	public static AlertsListFragment newInstance() {
@@ -219,23 +220,18 @@ public class AlertsListFragment extends ListFragment implements
 	            if (totalItemCount > previousTotal) {
 	                loading = false;
 	                previousTotal = totalItemCount;
-	                int currentPage = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("page", 0);
 	                currentPage++;
-	                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-	        		editor.putInt("page", currentPage);
-	        		editor.apply();
-
 	            }
 	        }
 	        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
 	            // I load the next page of gigs using a background task,
 	            // but you can call any function here.
-	        	int currentPage = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("page", 0);
 	            JsonRequest jr = new JsonRequest();
 				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
 	            int offset = currentPage*25;
 	            jr.requestJsonObject(Utils.SERVER_ALERTS+offset+"/25",getActivity());
 	            loading = true;
+	            currentPage++;
 	        }
 	}
 

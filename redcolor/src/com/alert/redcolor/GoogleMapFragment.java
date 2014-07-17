@@ -117,7 +117,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 			int minutes = diff.getMinutes();
 			if(minutes <= 10 && !a.isPainted())
 			{
-				
+
 				//get random city in this area
 				City city = pq.getCities(a.getAreaId()).get(0);
 				
@@ -127,9 +127,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
 				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",seconds.toPeriod().getMillis());
-				
-				
-				
+
 			}
 
 		}
