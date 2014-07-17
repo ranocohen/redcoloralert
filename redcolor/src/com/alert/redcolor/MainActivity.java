@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity implements
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
-	private static final int STARTING_ALPHA = 90; //hot zone starting color
+	private static final int STARTING_ALPHA = 90; // hot zone starting color
 
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
@@ -100,7 +100,7 @@ public class MainActivity extends FragmentActivity implements
 
 	String regid;
 	private GoogleMap mUIGoogleMap;
-	//HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
+	// HashMap<LatLng, Circle> circles = new HashMap<LatLng, Circle>();
 	ArrayList<Circle> circles = new ArrayList<Circle>();
 
 	// Location related variables
@@ -448,9 +448,8 @@ public class MainActivity extends FragmentActivity implements
 				.radius(radiusInMeters).fillColor(fillColor)
 				.strokeColor(strokeColor).strokeWidth(8);
 
-		
 		final Circle circleZone;
-		
+
 		circleZone = mUIGoogleMap.addCircle(circleOptions);
 		// add to hashmap as well
 		circles.add(circleZone);
@@ -469,46 +468,51 @@ public class MainActivity extends FragmentActivity implements
 		 * 10;
 		 */
 
-		
-		 new CountDownTimer(cooldownTime, intervalTime) {
-		  
-		  // int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
-		  // time in seconds int strockInterval = (int) (240 / //(cooldownTime/2/1000));
-		  
-		  final LatLng positionc = position;
-		  
-		  int fillInterval = STARTING_ALPHA / coolTime;
-		  
-		  public void onTick(long millisUntilFinished) {
-		  
-		  // filling alpha reduction  
-		  //int currFillColor = circles.get(positionc).getFillColor();
-			  int p = circles.lastIndexOf(circleZone);
-			  int currFillColor = circles.get(p).getFillColor();
-		  int a = Color.alpha(currFillColor);
-		  a = a - fillInterval;
-		  
-		  
-			if (color.equals("red")) {
-				  circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
-			} else if (color.equals("blue")) {
-				  circles.get(p).setFillColor(Color.argb(a, 0, 0, 200));
+		new CountDownTimer(cooldownTime, intervalTime) {
+
+			// int fillInterval = (int) (150 / (cooldownTime/1000)); //divide by
+			// time in seconds int strockInterval = (int) (240 /
+			// //(cooldownTime/2/1000));
+
+			final LatLng positionc = position;
+
+			int fillInterval = STARTING_ALPHA / coolTime;
+
+			public void onTick(long millisUntilFinished) {
+
+				// filling alpha reduction
+				// int currFillColor = circles.get(positionc).getFillColor();
+				int p = circles.lastIndexOf(circleZone);
+				try {
+					int currFillColor = circles.get(p).getFillColor();
+					int a = Color.alpha(currFillColor);
+					a = a - fillInterval;
+
+					if (color.equals("red")) {
+						circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
+					} else if (color.equals("blue")) {
+						circles.get(p).setFillColor(Color.argb(a, 0, 0, 200));
+					}
+
+				} catch (IndexOutOfBoundsException e) {
+				}
+
+				// mCircle.setFillColor(Color.argb(a, 255, 0, 0));
+
 			}
-		  
-		  // mCircle.setFillColor(Color.argb(a, 255, 0, 0));
-		  
-		  
-		  }
-		  
-		 public void onFinish(){
-			 int p = circles.lastIndexOf(circleZone);
-			 circles.get(p).remove();
-			 mMarker.remove();
-			 circles.remove(p);
-			 
-		 } // mTextField.setText("done!"); } 
-			 }.start();
-		 }
+
+			public void onFinish() {
+				try {
+					int p = circles.lastIndexOf(circleZone);
+					circles.get(p).remove();
+					mMarker.remove();
+					circles.remove(p);
+				} catch (IndexOutOfBoundsException e) {
+				}
+
+			} // mTextField.setText("done!"); }
+		}.start();
+	}
 
 	public void stayInSafePlaceTimer() {
 
