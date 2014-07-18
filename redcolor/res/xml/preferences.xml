@@ -33,7 +33,7 @@
         android:key="ringtonePref"
         android:ringtoneType="notification"
         android:showDefault="true"
-        android:title="@string/ringtone_settings" />
+        android:title="@string/ringtone_settings" android:showSilent="true"/>
 
     <SwitchPreference
         android:defaultValue="true"

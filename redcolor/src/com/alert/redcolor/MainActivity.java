@@ -810,8 +810,7 @@ public class MainActivity extends FragmentActivity implements
 			setProgressBarVisibility(true);
 			initData init = new initData(this);
 			init.execute();
-			redRingtone();
-
+			saveRingtone();
 			return;
 		} else
 			queryServer();
@@ -835,8 +834,8 @@ public class MainActivity extends FragmentActivity implements
 			//return false;
 		}
 
-		String path = "/media/audio/notifications/";
-		String filename = "filename" + ".mp3";
+		String path = "/sdcard/media/audio/notifications/";
+		String filename = "RED" + ".mp3";
 
 		boolean exists = (new File(path)).exists();
 		if (!exists) {
@@ -856,6 +855,26 @@ public class MainActivity extends FragmentActivity implements
 			// TODO Auto-generated catch block
 			//return false;
 		}
+		
+		sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://"+path+filename)));  
+
+
+	}
+	
+	private void saveRingtone() {
+
+		new AsyncTask<Void, Void, Void>() {
+
+			protected Void doInBackground(Void... params) {
+				
+				redRingtone();
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void msg) {
+			}
+		}.execute(null, null, null);
 
 	}
 

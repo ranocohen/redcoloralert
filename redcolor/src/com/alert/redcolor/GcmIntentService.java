@@ -240,19 +240,6 @@ public class GcmIntentService extends IntentService {
 
 		Uri notificationType = PreferencesUtils
 				.getRingtone(getApplicationContext());
-		// (instead of):
-		/*
-		 * .setSound( Uri.parse("android.resource://" + getPackageName() + "/" +
-		 * R.raw.short_alert))
-		 */
-
-		// hacky as fuck
-		if (notificationType.toString().equals(
-				"content://settings/system/notification_sound")) // defualt
-		{
-			notificationType = Uri.parse("android.resource://"
-					+ getPackageName() + "/" + R.raw.short_alert);
-		}
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this)

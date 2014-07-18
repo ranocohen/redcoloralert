@@ -1,5 +1,6 @@
 package com.alert.redcolor;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -22,6 +24,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.RingtonePreference;
 import android.util.Log;
 
 import com.alert.redcolor.ui.TownListPreference;
@@ -49,6 +52,16 @@ public class SettingsActivity extends Activity {
 			addPreferencesFromResource(R.xml.preferences);
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
+			
+			final RingtonePreference ringPref = (RingtonePreference) findPreference("ringtonePref");
+			File file = new File("/sdcard/media/audio/notifications/RED.mp3");
+			if(file.exists()) {    
+				Uri ringtoneUri = Uri.parse("/sdcard/media/audio/notifications/RED.mp3");
+				ringPref.setDefaultValue(ringtoneUri);
+				}else{
+					Uri ringtoneUri = Uri.parse("content://settings/system/notification_sound");
+				}
+			// Do something else
 
 			final ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
 			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
