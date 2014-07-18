@@ -266,22 +266,21 @@ public class AlertsListFragment extends ListFragment implements
 	public void onScroll(AbsListView view, int firstVisible, int visibleCount,
 			int totalCount) {
 		
-		   // Get tracker.
-        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
-            TrackerName.APP_TRACKER);
-        // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder()
-            .setCategory(getString(R.string.category_id))
-            .setAction(getString(R.string.action_id))
-            .setLabel("ScrollEnd")
-            .build());
-	/*	
-		boolean loadMore =  maybe add a padding 
-		firstVisible + visibleCount >= totalCount;
+	
+		
+		boolean loadMore =  firstVisible + visibleCount >= totalCount;
 
-		if (loadMore && mAdapter != null && !mAdapter.isLoading()) {
-			mAdapter.loadMore();
-		}*/
+		if (loadMore) {
+			   // Get tracker.
+	        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
+	            TrackerName.APP_TRACKER);
+	        // Build and send an Event.
+	        t.send(new HitBuilders.EventBuilder()
+	            .setCategory(getString(R.string.category_id))
+	            .setAction(getString(R.string.action_id))
+	            .setLabel("ScrollEnd")
+	            .build());
+		}
 
 	}
 
