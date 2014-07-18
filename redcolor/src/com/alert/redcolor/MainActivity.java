@@ -1,8 +1,12 @@
 package com.alert.redcolor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +30,17 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -417,21 +426,22 @@ public class MainActivity extends FragmentActivity implements
 	 * @param position
 	 *            - where the code red alert was 'fired'
 	 */
-	public void drawAlertHotzone(final LatLng position, final String color,long timePassed) {
+	public void drawAlertHotzone(final LatLng position, final String color,
+			long timePassed) {
 
 		final Marker mMarker;
 		double radiusInMeters = 10000.0;
-		//default values
+		// default values
 		int fillColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 		int strokeColor = Color.argb(STARTING_ALPHA, 255, 255, 255);
 
-		//timepassed in minutes
-		int timePassedMin = (int) (timePassed/60000);
-		
+		// timepassed in minutes
+		int timePassedMin = (int) (timePassed / 60000);
+
 		int fillScale = STARTING_ALPHA;
-		if(timePassed<=10 && timePassed>0)
+		if (timePassed <= 10 && timePassed > 0)
 			fillScale = (timePassedMin / 10) * STARTING_ALPHA;
-		
+
 		if (color.equals("red")) {
 			fillColor = Color.argb(fillScale, 255, 0, 00);
 			strokeColor = Color.argb(200, 255, 0, 0);
@@ -458,12 +468,12 @@ public class MainActivity extends FragmentActivity implements
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
 
 		long cooldownTimeDef = 10 * 60 * 1000; // 10 minutes
-		if (timePassedMin<10) {
-			 cooldownTimeDef = (10 - timePassedMin) * 60 * 1000;
+		if (timePassedMin < 10) {
+			cooldownTimeDef = (10 - timePassedMin) * 60 * 1000;
 		}
-		
-		final long cooldownTime = cooldownTimeDef; 
-		//final long cooldownTime = 1 * 10 * 1000; // 10 seconds
+
+		final long cooldownTime = cooldownTimeDef;
+		// final long cooldownTime = 1 * 10 * 1000; // 10 seconds
 		final long intervalTime = 60 * 1000; // 1 minute interval
 		final int coolTime = 10;
 
@@ -483,22 +493,18 @@ public class MainActivity extends FragmentActivity implements
 			int fillInterval = STARTING_ALPHA / coolTime;
 
 			public void onTick(long millisUntilFinished) {
-				
-
 
 				// filling alpha reduction
 				// int currFillColor = circles.get(positionc).getFillColor();
 				int p = circles.lastIndexOf(circleZone);
-				
-				
-				Log.d("TEST",circles.size()+" /"+p);
+
+				Log.d("TEST", circles.size() + " /" + p);
 				try {
 					int currFillColor = circles.get(p).getFillColor();
 					int a = Color.alpha(currFillColor);
 					a = a - fillInterval;
-					
-					
-					Log.d("TICK", circles.get(p).toString()+"/"+a);
+
+					Log.d("TICK", circles.get(p).toString() + "/" + a);
 
 					if (color.equals("red")) {
 						circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
@@ -758,12 +764,11 @@ public class MainActivity extends FragmentActivity implements
 		mUIGoogleMap.animateCamera(cameraUpdate);
 
 	}
-	
+
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-		
 
 	}
 
@@ -773,11 +778,12 @@ public class MainActivity extends FragmentActivity implements
 		super.onDestroy();
 		if (mUIGoogleMap != null)
 			mUIGoogleMap.clear();
-		if (circles!=null) {
+		if (circles != null) {
 			if (circles.size() != 0)
 				circles.clear();
 		}
 	}
+
 	@Override
 	protected void onPause() {
 
@@ -816,9 +822,41 @@ public class MainActivity extends FragmentActivity implements
 		case R.id.action_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
+		case R.id.share:
+			// dick shit fuck face thing
+
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void shareImage() {
+		Intent share = new Intent(Intent.ACTION_SEND);
+
+		View screen = getWindow().getDecorView().findViewById(
+				android.R.id.content);
+		screen.setDrawingCacheEnabled(true);
+		Bitmap bm = screen.getDrawingCache();
+		
+		
+
+		// If you want to share a png image only, you can do:
+
+		// setType("image/png"); OR for jpeg: setType("image/jpeg");
+		share.setType("image/*");
+
+		// Make sure you put example png image named myImage.png in your
+		// directory
+		String imagePath = Environment.getExternalStorageDirectory()
+				+ "/myImage.png";
+
+		File imageFileToShare = new File(imagePath);
+
+		Uri uri = Uri.fromFile(imageFileToShare);
+		share.putExtra(Intent.EXTRA_STREAM, uri);
+
+		startActivity(Intent.createChooser(share, "Share Image!"));
 	}
 
 	@Override
@@ -827,16 +865,13 @@ public class MainActivity extends FragmentActivity implements
 		Period period = new Period(time, now);
 		int i = period.getMinutes();
 
-		
 		ProviderQueries pq = new ProviderQueries(getApplicationContext());
 		Location location = pq.getCities(id).get(0).getLocation();
-		setFocus(location,i);
+		setFocus(location, i);
 		mViewPager.setCurrentItem(0);
 
 		DateTimeFormatter parser2 = DateTimeFormat
 				.forPattern("yyyy-MM-dd HH:mm");
-		
-		
 
 		String strFormat = getResources().getString(R.string.time_fired);
 		String strTimeMessage = String
@@ -849,12 +884,12 @@ public class MainActivity extends FragmentActivity implements
 
 	Marker testMarker;
 
-	private void setFocus(Location location,int timeToShow) {
-		
-		if (timeToShow>10) {
+	private void setFocus(Location location, int timeToShow) {
+
+		if (timeToShow > 10) {
 			timeToShow = 10;
 		}
-		
+
 		final long timeToShowMiliSec = 10 * 60 * 1000;
 		final LatLng latlng = new LatLng(location.getLatitude(),
 				location.getLongitude());
@@ -871,9 +906,9 @@ public class MainActivity extends FragmentActivity implements
 				tempMarker.setIcon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 				int i = 0;
-				
-				if (timeToShowMiliSec!=0) {
-					drawAlertHotzone(latlng, "blue",timeToShowMiliSec);
+
+				if (timeToShowMiliSec != 0) {
+					drawAlertHotzone(latlng, "blue", timeToShowMiliSec);
 				}
 
 				new CountDownTimer(10000, 1000) {
@@ -1039,8 +1074,8 @@ public class MainActivity extends FragmentActivity implements
 		ProviderQueries pq = new ProviderQueries(this);
 		long latest = pq.getLastestAlertTime();
 		if (latest != -1)
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/?timestamp=" + latest,
-					getApplicationContext());
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/?timestamp="
+					+ latest, getApplicationContext());
 		else
 			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
 					getApplicationContext());
