@@ -36,6 +36,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -50,6 +51,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -840,6 +842,28 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void onSnapshotReady(Bitmap snapshot) {
                 try {
+                	//check status bar height 
+                	Rect rectangle= new Rect();
+                	Window window= getWindow();
+                	window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+                	int statusBarHeight= rectangle.top;
+                	int contentViewTop= 
+                	    window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+                	int titleBarHeight= contentViewTop - statusBarHeight;
+
+                	   Log.i("*** Jorgesys :: ", "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+                	   
+                	// Calculate ActionBar height
+                	   
+                	   int actionBarHeight = 0;
+/*                	   TypedValue tv = new TypedValue();
+                	   if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+                	   {
+                		   actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+                	   }*/
+                	   actionBarHeight = getActionBar().getHeight();
+                	//end checking
+                	
             		View mView = findViewById(android.R.id.content).getRootView();
                     mView.setDrawingCacheEnabled(true);
                     Bitmap backBitmap = mView.getDrawingCache();
@@ -848,8 +872,10 @@ public class MainActivity extends FragmentActivity implements
                             backBitmap.getConfig());
                     Canvas canvas = new Canvas(bmOverlay);
                     
-                    canvas.drawBitmap(snapshot, new Matrix(), null);
-                    //canvas.drawBitmap(backBitmap, 0, 0, null);
+                    
+                    canvas.drawBitmap(backBitmap, 0, 0, null);
+                    canvas.drawBitmap(snapshot, 0,statusBarHeight+actionBarHeight, null);
+                    
                     
                     String path = Environment.getExternalStorageDirectory()
                             + "/MapScreenShot"
