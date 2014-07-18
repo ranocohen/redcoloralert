@@ -125,4 +125,27 @@ public class ProviderQueries {
 		
 		return ans;
 	}
+	/* returns unix time_stamp of latest alert in db */
+	public ArrayList<Long> latestAlerts() {
+		ArrayList<Long> ans = new ArrayList<Long>();
+		Cursor c = null;
+		try {
+			c = mCon.getContentResolver().query(
+					AlertProvider.ALERTS_CONTENT_URI,
+					new String []{ AlertColumns.ID},
+					"strftime('%Y-%m-%d %H:%M:%S',time) > datetime('now', '-10 minutes')", null,
+					null);
+			
+			
+			while (c.moveToNext()) {
+				ans.add(c.getLong(0));
+			}
+		} finally {
+			if (c != null)
+				c.close();
+		}
+		
+		return ans;
+	}
+	
 }
