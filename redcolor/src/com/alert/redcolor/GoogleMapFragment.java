@@ -248,7 +248,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 	                	    window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
 	                	int titleBarHeight= contentViewTop - statusBarHeight;
 
-	                	   Log.i("*** Jorgesys :: ", "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+	                	 //  Log.i("*** Jorgesys :: ", "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
 	                	   
 	                	// Calculate ActionBar height
 	                	   
@@ -273,13 +273,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 	                    bm = Bitmap.createBitmap(bmOverlay, 0, statusBarHeight, backBitmap.getWidth(), backBitmap.getHeight()-statusBarHeight);
 	                    
 	                    
-	                    String path = Environment.getExternalStorageDirectory()
-	                            + "/MapScreenShot"
-	                            + System.currentTimeMillis() + ".png";
-	                    //File file = new File(path);
-	                    File file = new File( getActivity().getCacheDir(), "screenshot.png");
-	                    file.setReadable(true, false);
+	                    String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) 
+	                    		+ File.separator + "Screenshots";
+	                           
+	                    File dir = new File( path);
+	                    dir.mkdirs();
+	                    File file = new File(path+"/"+"red.png");
 	                    
+	                    file.setReadable(true, false);
 	                    FileOutputStream out = new FileOutputStream(file);
 
 	                    //bmOverlay.compress(Bitmap.CompressFormat.PNG, 90, out);
