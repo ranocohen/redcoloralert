@@ -33,6 +33,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -47,6 +48,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -824,12 +826,44 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.id.share:
 			// dick shit fuck face thing
-			captureMapScreen();
+			shareScreenShotTask screenTask = new shareScreenShotTask();
+			screenTask.execute();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+    class shareScreenShotTask extends AsyncTask<Void, Void, Void>    {
+    	 
+        TextView tv;
+ 
+        shareScreenShotTask()    {
+                     
+        }
+ 
+        // Executed on the UI thread before the
+        // time taking task begins
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+ 
+        // Executed on a special thread and all your
+        // time taking tasks should be inside this method
+        @Override
+        protected Void doInBackground(Void... arg0) {
+        	captureMapScreen();
+            return null;
+        }
+        
+        // Executed on the UI thread after the
+        // time taking process is completed
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }   
 	
 	public void captureMapScreen() {
         SnapshotReadyCallback callback = new SnapshotReadyCallback() {
@@ -837,6 +871,28 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void onSnapshotReady(Bitmap snapshot) {
                 try {
+                	//check status bar height 
+                	Rect rectangle= new Rect();
+                	Window window= getWindow();
+                	window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+                	int statusBarHeight= rectangle.top;
+                	int contentViewTop= 
+                	    window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+                	int titleBarHeight= contentViewTop - statusBarHeight;
+
+                	   Log.i("*** Jorgesys :: ", "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+                	   
+                	// Calculate ActionBar height
+                	   
+                	   int actionBarHeight = 0;
+/*                	   TypedValue tv = new TypedValue();
+                	   if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+                	   {
+                		   actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+                	   }*/
+                	   actionBarHeight = getActionBar().getHeight();
+                	//end checking
+                	
             		View mView = findViewById(android.R.id.content).getRootView();
                     mView.setDrawingCacheEnabled(true);
                     Bitmap backBitmap = mView.getDrawingCache();
@@ -844,9 +900,15 @@ public class MainActivity extends FragmentActivity implements
                             backBitmap.getWidth(), backBitmap.getHeight(),
                             backBitmap.getConfig());
                     Canvas canvas = new Canvas(bmOverlay);
+                    canvas.drawBitmap(backBitmap, 0, 0, null);
+                    canvas.drawBitmap(snapshot, 0,statusBarHeight+actionBarHeight, null);
                     
-                    canvas.drawBitmap(snapshot, new Matrix(), null);
-                    //canvas.drawBitmap(backBitmap, 0, 0, null);
+                    Bitmap bm = Bitmap.createBitmap(
+                            backBitmap.getWidth(), backBitmap.getHeight()-statusBarHeight,
+                            backBitmap.getConfig());
+                    
+                    bm = Bitmap.createBitmap(bmOverlay, 0, statusBarHeight, backBitmap.getWidth(), backBitmap.getHeight()-statusBarHeight);
+                    
                     
                     String path = Environment.getExternalStorageDirectory()
                             + "/MapScreenShot"
@@ -854,7 +916,8 @@ public class MainActivity extends FragmentActivity implements
                     File file = new File(path);
                     FileOutputStream out = new FileOutputStream(file);
 
-                    bmOverlay.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    //bmOverlay.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    bm.compress(Bitmap.CompressFormat.PNG, 90, out);
                     
             		try {
             			out.flush();
