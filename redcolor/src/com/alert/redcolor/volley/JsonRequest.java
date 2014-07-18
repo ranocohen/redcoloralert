@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -149,13 +148,13 @@ alerts = new ArrayList<Alert>();
 			e.printStackTrace();
 		}
 	}
-	private boolean isDuplciate(int area_id, DateTime dt, Context context) {
+	private boolean isDuplciate(long area_id, DateTime dt, Context context) {
 		Cursor c = context.getContentResolver().query
 				(AlertProvider.ALERTS_CONTENT_URI,
 						null,
-						AlertColumns.AreaId+" = ? AND "+
-						AlertColumns.time+" = ?",
-						new String[] { String.valueOf(area_id), dt.toString()}, null);
+						AlertColumns.AreaId+" = "+area_id+" AND "+
+						AlertColumns.time+" = '"+dt.toString()+"'",
+						null, null);
 		if(c.getCount()>0)
 			return true;
 		return false;

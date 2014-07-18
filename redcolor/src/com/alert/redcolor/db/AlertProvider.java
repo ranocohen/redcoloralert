@@ -1,10 +1,5 @@
 package com.alert.redcolor.db;
 
-import com.alert.redcolor.db.RedColordb.AlertColumns;
-import com.alert.redcolor.db.RedColordb.CitiesColumns;
-import com.alert.redcolor.db.RedColordb.OrefColumns;
-import com.alert.redcolor.db.RedColordb.Tables;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -13,8 +8,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.provider.SyncStateContract.Columns;
 import android.text.TextUtils;
+
+import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.db.RedColordb.CitiesColumns;
+import com.alert.redcolor.db.RedColordb.OrefColumns;
+import com.alert.redcolor.db.RedColordb.Tables;
 
 
 

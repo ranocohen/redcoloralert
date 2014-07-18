@@ -1,6 +1,7 @@
 package com.alert.redcolor;
 
 import java.util.ArrayList;
+import java.util.DuplicateFormatFlagsException;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -9,14 +10,11 @@ import org.json.JSONException;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -25,13 +23,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
-import com.alert.redcolor.db.RedColordb.Tables;
 import com.alert.redcolor.model.Area;
 import com.alert.redcolor.model.City;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -124,7 +120,7 @@ public class GcmIntentService extends IntentService {
 						for (int i = 0; i < json.length(); i++) {
 
 							long id = json.getLong(i);
-
+							if(!isDuplciate(id, dt, getApplicationContext()))
 							insertAlert(id, dt, getApplicationContext());
 
 							Area a = pq.areaById(id);
@@ -284,5 +280,17 @@ public class GcmIntentService extends IntentService {
 		cv.put(AlertColumns.painted, 0);
 		getContentResolver().insert(AlertProvider.ALERTS_CONTENT_URI, cv);
 
+	}
+	private boolean isDuplciate(long area_id, DateTime dt, Context context) {
+		Cursor c = context.getContentResolver().query
+				(AlertProvider.ALERTS_CONTENT_URI,
+						null,
+						AlertColumns.AreaId+" = "+area_id+" AND "+
+						AlertColumns.time+" = '"+dt.toString()+"'",
+						null, null);
+		if(c.getCount()>0)
+			return true;
+		return false;
+		
 	}
 }

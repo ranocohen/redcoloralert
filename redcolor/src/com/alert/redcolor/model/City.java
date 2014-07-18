@@ -1,9 +1,9 @@
 package com.alert.redcolor.model;
 
-import com.alert.redcolor.db.RedColordb.CitiesColumns;
-
 import android.database.Cursor;
 import android.location.Location;
+
+import com.alert.redcolor.db.RedColordb.CitiesColumns;
 
 public class City {
 	
