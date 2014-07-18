@@ -22,6 +22,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,7 +31,11 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -77,6 +82,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
@@ -821,12 +827,71 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.id.share:
 			// dick shit fuck face thing
-			shareImage();
+			captureMapScreen();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	public void captureMapScreen() {
+        SnapshotReadyCallback callback = new SnapshotReadyCallback() {
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot) {
+                try {
+            		View mView = findViewById(android.R.id.content).getRootView();
+                    mView.setDrawingCacheEnabled(true);
+                    Bitmap backBitmap = mView.getDrawingCache();
+                    Bitmap bmOverlay = Bitmap.createBitmap(
+                            backBitmap.getWidth(), backBitmap.getHeight(),
+                            backBitmap.getConfig());
+                    Canvas canvas = new Canvas(bmOverlay);
+                    
+                    canvas.drawBitmap(snapshot, new Matrix(), null);
+                    //canvas.drawBitmap(backBitmap, 0, 0, null);
+                    
+                    String path = Environment.getExternalStorageDirectory()
+                            + "/MapScreenShot"
+                            + System.currentTimeMillis() + ".png";
+                    File file = new File(path);
+                    FileOutputStream out = new FileOutputStream(file);
+
+                    bmOverlay.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    
+            		try {
+            			out.flush();
+            			out.close();
+            		} catch (IOException e1) {
+            			// TODO Auto-generated catch block
+            			e1.printStackTrace();
+            		}
+            		
+            		Intent share = new Intent(Intent.ACTION_SEND);
+
+            		// If you want to share a png image only, you can do:
+
+            		// setType("image/png"); OR for jpeg: setType("image/jpeg");
+            		share.setType("image/*");
+
+            		// Make sure you put example png image named myImage.png in your
+            		// directory
+
+            		Uri uri = Uri.fromFile(file);
+            		share.putExtra(Intent.EXTRA_STREAM, uri);
+
+            		startActivity(Intent.createChooser(share, "Share Image!"));
+                    
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        mUIGoogleMap.snapshot(callback);
+
+    }
 
 	private void shareImage() {
 		Intent share = new Intent(Intent.ACTION_SEND);
