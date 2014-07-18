@@ -795,10 +795,11 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	protected void onPause() {
-
 		RedColordb.getInstance(this).cleanDatabase();
-		super.onPause();
+		RedColordb.getInstance(this).updatePainted();
 	}
+
+	
 
 	/* Inserting the data from csv to database only in the first launch */
 	private void initFirstData() {

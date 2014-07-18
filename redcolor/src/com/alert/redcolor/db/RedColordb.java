@@ -1,6 +1,9 @@
 package com.alert.redcolor.db;
 
+import java.util.ArrayList;
+
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -137,6 +140,25 @@ public class RedColordb extends SQLiteOpenHelper {
 		}
 		
 	}
-
+	/* Keeping only 50 entries in db */
+	public void updatePainted() {
+		
+		ProviderQueries pq = new ProviderQueries(mCon);
+		ArrayList<Long> alerts = pq.latestAlerts();
+		
+		for(Long id : alerts) {
+			ContentValues updatedValues = new ContentValues();
+			updatedValues.put(AlertColumns.painted, 0);
+			mCon.getContentResolver().update(
+					ContentUris.withAppendedId(AlertProvider.ALERTS_CONTENT_URI, id),   // the user dictionary content URI
+				    updatedValues ,                      // the columns to update
+				    null,         // the column to select on
+				    null // the value to compare to
+				);
+	
+		}
+		
+		
+	}
 	
 }

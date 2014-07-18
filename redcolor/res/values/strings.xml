@@ -65,7 +65,7 @@
         <item>2</item>
     </string-array>
     <string-array name="empty_array" />
-
+    <string name="town_name">City/Town name</string>
     <string name="ringtone_settings">Alert sound</string>
     <string name="time_fired">time fired: %1$s</string>
     <string name="test_connection">Test Connection</string>
