@@ -790,14 +790,11 @@ public class MainActivity extends FragmentActivity implements
 		}
 		if (locationClient != null)
 			locationClient.disconnect();
-
-	}
-
-	@Override
-	protected void onPause() {
+		
 		RedColordb.getInstance(this).cleanDatabase();
 		RedColordb.getInstance(this).updatePainted();
 	}
+
 
 	
 
