@@ -253,11 +253,6 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 	                	// Calculate ActionBar height
 	                	   
 	                	   int actionBarHeight = 0;
-	/*                	   TypedValue tv = new TypedValue();
-	                	   if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-	                	   {
-	                		   actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-	                	   }*/
 	                	   actionBarHeight = getActivity().getActionBar().getHeight();
 	                	//end checking
 	                	
@@ -281,20 +276,15 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 	                    String path = Environment.getExternalStorageDirectory()
 	                            + "/MapScreenShot"
 	                            + System.currentTimeMillis() + ".png";
-	                    File file = new File(path);
+	                    //File file = new File(path);
+	                    File file = new File( getActivity().getCacheDir(), "screenshot.png");
+	                    file.setReadable(true, false);
+	                    
 	                    FileOutputStream out = new FileOutputStream(file);
 
 	                    //bmOverlay.compress(Bitmap.CompressFormat.PNG, 90, out);
 	                    bm.compress(Bitmap.CompressFormat.PNG, 90, out);
 	                    
-	            		try {
-	            			out.flush();
-	            			out.close();
-	            		} catch (IOException e1) {
-	            			// TODO Auto-generated catch block
-	            			e1.printStackTrace();
-	            		}
-	            		
 	            		Intent share = new Intent(Intent.ACTION_SEND);
 
 	            		// If you want to share a png image only, you can do:
@@ -307,6 +297,14 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 
 	            		Uri uri = Uri.fromFile(file);
 	            		share.putExtra(Intent.EXTRA_STREAM, uri);
+	            		
+	            		try {
+	            			out.flush();
+	            			out.close();
+	            		} catch (IOException e1) {
+	            			// TODO Auto-generated catch block
+	            			e1.printStackTrace();
+	            		}
 
 	            		startActivity(Intent.createChooser(share, "Share Image!"));
 	                    
