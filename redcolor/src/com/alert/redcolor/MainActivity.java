@@ -1,10 +1,12 @@
 package com.alert.redcolor;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.util.ByteArrayBuffer;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -27,6 +30,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.AssetManager;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -578,8 +582,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
-        Toast.makeText(this, "Disconnected. Please re-connect.",
-                Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Disconnected. Please re-connect.",
+				Toast.LENGTH_SHORT).show();
 	}
 
 	// You need to do the Play Services APK check here too.
@@ -790,13 +794,10 @@ public class MainActivity extends FragmentActivity implements
 		}
 		if (locationClient != null)
 			locationClient.disconnect();
-		
+
 		RedColordb.getInstance(this).cleanDatabase();
 		RedColordb.getInstance(this).updatePainted();
 	}
-
-
-	
 
 	/* Inserting the data from csv to database only in the first launch */
 	private void initFirstData() {
@@ -809,9 +810,52 @@ public class MainActivity extends FragmentActivity implements
 			setProgressBarVisibility(true);
 			initData init = new initData(this);
 			init.execute();
+			redRingtone();
+
 			return;
 		} else
 			queryServer();
+
+	}
+
+	public void redRingtone() {
+
+		byte[] buffer = null;
+		InputStream fIn = getBaseContext().getResources().openRawResource(
+				R.raw.short_alert);
+		int size = 0;
+
+		try {
+			size = fIn.available();
+			buffer = new byte[size];
+			fIn.read(buffer);
+			fIn.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//return false;
+		}
+
+		String path = "/media/audio/notifications/";
+		String filename = "filename" + ".mp3";
+
+		boolean exists = (new File(path)).exists();
+		if (!exists) {
+			new File(path).mkdirs();
+		}
+
+		FileOutputStream save;
+		try {
+			save = new FileOutputStream(path + filename);
+			save.write(buffer);
+			save.flush();
+			save.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			//return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//return false;
+		}
 
 	}
 
