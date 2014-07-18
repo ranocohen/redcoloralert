@@ -3,6 +3,7 @@ package com.alert.redcolor;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,6 +43,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -824,7 +826,7 @@ public class MainActivity extends FragmentActivity implements
 			return true;
 		case R.id.share:
 			// dick shit fuck face thing
-
+			shareImage();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -839,6 +841,24 @@ public class MainActivity extends FragmentActivity implements
 		screen.setDrawingCacheEnabled(true);
 		Bitmap bm = screen.getDrawingCache();
 		
+		String path = Environment.getExternalStorageDirectory().toString();
+		OutputStream fOut = null;
+		File file = new File(path, "screenshot.jpg");
+		try {
+			fOut = new FileOutputStream(file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+		try {
+			fOut.flush();
+			fOut.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 
 		// If you want to share a png image only, you can do:
@@ -848,12 +868,8 @@ public class MainActivity extends FragmentActivity implements
 
 		// Make sure you put example png image named myImage.png in your
 		// directory
-		String imagePath = Environment.getExternalStorageDirectory()
-				+ "/myImage.png";
 
-		File imageFileToShare = new File(imagePath);
-
-		Uri uri = Uri.fromFile(imageFileToShare);
+		Uri uri = Uri.fromFile(file);
 		share.putExtra(Intent.EXTRA_STREAM, uri);
 
 		startActivity(Intent.createChooser(share, "Share Image!"));
