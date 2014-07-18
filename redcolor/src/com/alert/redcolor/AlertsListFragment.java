@@ -33,7 +33,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 public class AlertsListFragment extends ListFragment implements
-		LoaderCallbacks<Cursor> , OnScrollListener  {
+		LoaderCallbacks<Cursor>, OnScrollListener {
 
 	public final static String TAG = "AlertsList";
 	OnRedSelectListener mCallback;
@@ -119,6 +119,7 @@ public class AlertsListFragment extends ListFragment implements
 		private LayoutInflater layoutInflater;
 		private int page;
 		private boolean isLoading;
+
 		public AlertsAdapter(Context context, Cursor c, int flags) {
 			super(context, c, flags);
 			layoutInflater = LayoutInflater.from(context);
@@ -126,18 +127,22 @@ public class AlertsListFragment extends ListFragment implements
 			isLoading = false;
 
 		}
+
 		public void resetPage() {
 			this.page = 0;
-			Log.i("Adapter","resting page to 0");
+			Log.i("Adapter", "resting page to 0");
 		}
+
 		public void increasePage() {
-			
+
 			page++;
-			Log.i("Adapter","Increasing page to "+page);
+			Log.i("Adapter", "Increasing page to " + page);
 		}
+
 		public int getPage() {
 			return this.page;
 		}
+
 		@Override
 		public void bindView(View view, final Context context, Cursor cursor) {
 			if (cursor == null)
@@ -175,34 +180,45 @@ public class AlertsListFragment extends ListFragment implements
 			view.setTag(holder);
 			return view;
 		}
+
 		public boolean isLoading() {
-			Log.i("Adapter","is loading "+isLoading);
+			
+			Log.i("Adapter", "is loading " + isLoading);
 			return isLoading;
 		}
-		public void setLoading(boolean isLoading) 
-		{
-			Log.i("Adapter","setting is loading "+isLoading);
+
+		public void setLoading(boolean isLoading) {
+			getActivity().setProgressBarIndeterminateVisibility(isLoading);
+			Log.i("Adapter", "setting is loading " + isLoading);
 			this.isLoading = isLoading;
 		}
+
 		public void loadMore() {
-		     JsonRequest jr = new JsonRequest();
-	            mAdapter.setLoading(true);
-				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity()); 
-	            jr.requestJsonObject(Utils.SERVER_ALERTS+mAdapter.getPage()*25+"/25",getActivity(),mAdapter);
-	            
-	            Toast.makeText(getActivity(), "Loading "+mAdapter.getPage()*25, Toast.LENGTH_SHORT).show();			
+			/* We clean the database on push notification , it means we must reset page as well */
+			if(getCount() == Utils.MAX_ENTRIES)
+				resetPage();
+			
+			/* Query the server */
+			JsonRequest jr = new JsonRequest();
+			mAdapter.setLoading(true);
+			// jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
+			jr.requestJsonObject(Utils.SERVER_ALERTS + mAdapter.getPage() * 25
+					+ "/25", getActivity(), mAdapter);
+
+			Toast.makeText(getActivity(), "Loading " + mAdapter.getPage() * 25,
+					Toast.LENGTH_SHORT).show();
 		}
 	}
-	
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        
-        super.onListItemClick(l, v, position, id);
-        Cursor c = ((CursorAdapter)l.getAdapter()).getCursor();
-        c.moveToPosition(position);
-        Alert a = new Alert(c);
-        mCallback.OnRedSelectedListener(a.getAreaId(),a.getTime());
-    }
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+
+		super.onListItemClick(l, v, position, id);
+		Cursor c = ((CursorAdapter) l.getAdapter()).getCursor();
+		c.moveToPosition(position);
+		Alert a = new Alert(c);
+		mCallback.OnRedSelectedListener(a.getAreaId(), a.getTime());
+	}
 
 	// static class for holding references to views optimizing listview recycles
 	private static class ViewHolder {
@@ -213,44 +229,44 @@ public class AlertsListFragment extends ListFragment implements
 
 	}
 
-    // MainActivity Activity must implement this interface
-    public interface OnRedSelectListener {
-    	/**
-    	 * 
-    	 * @param id the database id of the RED(Alert)
-    	 * @param dateTime 
-    	 */
-        public void OnRedSelectedListener(long id, DateTime dateTime);
-    }
-    @Override
-    public void onAttach(Activity activity) {
-    	super.onAttach(activity);
-        try {
-            mCallback = (OnRedSelectListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnRedSelectedListener");
-        }
-    	
-    }
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		
+	// MainActivity Activity must implement this interface
+	public interface OnRedSelectListener {
+		/**
+		 * 
+		 * @param id
+		 *            the database id of the RED(Alert)
+		 * @param dateTime
+		 */
+		public void OnRedSelectedListener(long id, DateTime dateTime);
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisible,
-			int visibleCount, int totalCount) {
-		
-		
-	     boolean loadMore = /* maybe add a padding */
-	             firstVisible + visibleCount >= totalCount;
-	  
-	         if(loadMore && mAdapter != null && !mAdapter.isLoading()) {
-		       mAdapter.loadMore();
-	         }
-	             
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mCallback = (OnRedSelectListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnRedSelectedListener");
+		}
+
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisible, int visibleCount,
+			int totalCount) {
+
+		boolean loadMore = /* maybe add a padding */
+		firstVisible + visibleCount >= totalCount;
+
+		if (loadMore && mAdapter != null && !mAdapter.isLoading()) {
+			mAdapter.loadMore();
+		}
 
 	}
 
