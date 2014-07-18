@@ -1039,7 +1039,7 @@ public class MainActivity extends FragmentActivity implements
 		ProviderQueries pq = new ProviderQueries(this);
 		long latest = pq.getLastestAlertTime();
 		if (latest != -1)
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/timestamp=" + latest,
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/?timestamp=" + latest,
 					getApplicationContext());
 		else
 			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
