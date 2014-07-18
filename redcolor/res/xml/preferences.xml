@@ -44,5 +44,6 @@
     <Preference android:title="@string/test_connection"
                 android:key="button"
                 android:summary="@string/test_connection_summery"/>
+    <Preference android:key="version" android:title="@string/version"/>
 
 </PreferenceScreen>
