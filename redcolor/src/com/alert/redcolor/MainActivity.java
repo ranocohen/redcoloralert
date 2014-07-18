@@ -875,10 +875,12 @@ public class MainActivity extends FragmentActivity implements
 			public void onFinish() {
 				MarkerOptions markerOptions = new MarkerOptions()
 						.position(latlng);
-				final Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
+				Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
 				tempMarker.setIcon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+						.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 				int i = 0;
+				
+				final Marker finalMarker = tempMarker;
 
 				if (timeToShowMiliSec != 0) {
 					drawAlertHotzone(latlng, "blue", timeToShowMiliSec);
@@ -891,7 +893,7 @@ public class MainActivity extends FragmentActivity implements
 					}
 
 					public void onFinish() {
-						tempMarker.remove();
+						finalMarker.remove();
 					}
 				}.start();
 			}
