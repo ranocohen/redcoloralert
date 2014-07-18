@@ -73,5 +73,6 @@
     <string name="location_reminder_title">שימ/י לב!</string>
     <string name="location_reminder_message">על מנת להשתמש באפשרות זו, יש לאפשר את שירות המיקום.</string>
     <string name="never_remind">אל תזכיר שנית</string>
+    <string name="version">גירסא</string>
 
 </resources>

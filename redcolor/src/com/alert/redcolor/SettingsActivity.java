@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -84,6 +85,18 @@ public class SettingsActivity extends Activity {
 							return true;
 						}
 					});
+			
+			Preference ver = (Preference) findPreference("version");
+			String versionName;
+			try {
+				versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+				ver.setSummary(versionName);
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
 
 			Preference button = (Preference) findPreference("button");
 			button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
