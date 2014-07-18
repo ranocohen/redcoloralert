@@ -10,6 +10,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +38,6 @@ public class AlertsListFragment extends ListFragment implements
 	public final static String TAG = "AlertsList";
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
-	private int visibleThreshold = 5;
-	private int currentPage = 0;
-	private int previousTotal = 0;
-	
-	private boolean loading = true;
 
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
@@ -120,14 +116,28 @@ public class AlertsListFragment extends ListFragment implements
 	}
 
 	public class AlertsAdapter extends CursorAdapter {
-		LayoutInflater layoutInflater;
-
+		private LayoutInflater layoutInflater;
+		private int page;
+		private boolean isLoading;
 		public AlertsAdapter(Context context, Cursor c, int flags) {
 			super(context, c, flags);
 			layoutInflater = LayoutInflater.from(context);
+			page = 0;
+			isLoading = false;
 
 		}
-
+		public void resetPage() {
+			this.page = 0;
+			Log.i("Adapter","resting page to 0");
+		}
+		public void increasePage() {
+			
+			page++;
+			Log.i("Adapter","Increasing page to "+page);
+		}
+		public int getPage() {
+			return this.page;
+		}
 		@Override
 		public void bindView(View view, final Context context, Cursor cursor) {
 			if (cursor == null)
@@ -164,6 +174,23 @@ public class AlertsListFragment extends ListFragment implements
 			holder.cities = (TextView) view.findViewById(R.id.cities);
 			view.setTag(holder);
 			return view;
+		}
+		public boolean isLoading() {
+			Log.i("Adapter","is loading "+isLoading);
+			return isLoading;
+		}
+		public void setLoading(boolean isLoading) 
+		{
+			Log.i("Adapter","setting is loading "+isLoading);
+			this.isLoading = isLoading;
+		}
+		public void loadMore() {
+		     JsonRequest jr = new JsonRequest();
+	            mAdapter.setLoading(true);
+				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity()); 
+	            jr.requestJsonObject(Utils.SERVER_ALERTS+mAdapter.getPage()*25+"/25",getActivity(),mAdapter);
+	            
+	            Toast.makeText(getActivity(), "Loading "+mAdapter.getPage()*25, Toast.LENGTH_SHORT).show();			
 		}
 	}
 	
@@ -213,26 +240,18 @@ public class AlertsListFragment extends ListFragment implements
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,
-			int visibleItemCount, int totalItemCount) {
-	        if (loading) {
-	            if (totalItemCount > previousTotal) {
-	                loading = false;
-	                previousTotal = totalItemCount;
-	                currentPage++;
-	            }
-	        }
-	        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-	            // I load the next page of gigs using a background task,
-	            // but you can call any function here.
-	            JsonRequest jr = new JsonRequest();
-				//jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
-	            int offset = currentPage*25;
-	            jr.requestJsonObject(Utils.SERVER_ALERTS+offset+"/25",getActivity());
-	            Toast.makeText(getActivity(), "Loading "+offset, Toast.LENGTH_SHORT).show();
-	            loading = true;
-	            currentPage++;
-	        }
+	public void onScroll(AbsListView view, int firstVisible,
+			int visibleCount, int totalCount) {
+		
+		
+	     boolean loadMore = /* maybe add a padding */
+	             firstVisible + visibleCount >= totalCount;
+	  
+	         if(loadMore && mAdapter != null && !mAdapter.isLoading()) {
+		       mAdapter.loadMore();
+	         }
+	             
+
 	}
 
 }
