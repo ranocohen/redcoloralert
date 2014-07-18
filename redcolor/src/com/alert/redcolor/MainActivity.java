@@ -467,7 +467,7 @@ public class MainActivity extends FragmentActivity implements
 		circles.add(circleZone);
 
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
-		if(color.equals("blue"))
+		if (color.equals("blue"))
 			markerOptions.icon(BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
@@ -787,6 +787,9 @@ public class MainActivity extends FragmentActivity implements
 			if (circles.size() != 0)
 				circles.clear();
 		}
+		if (locationClient != null)
+			locationClient.disconnect();
+
 	}
 
 	@Override
@@ -832,8 +835,6 @@ public class MainActivity extends FragmentActivity implements
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-   
 
 	@Override
 	public void OnRedSelectedListener(long id, DateTime time) {
@@ -883,12 +884,10 @@ public class MainActivity extends FragmentActivity implements
 						.position(latlng);
 				Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
 				tempMarker.setIcon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 				int i = 0;
-				
-				final Marker finalMarker = tempMarker;
 
-				
+				final Marker finalMarker = tempMarker;
 
 				new CountDownTimer(10000, 1000) {
 					public void onTick(long millisUntilFinished) {
