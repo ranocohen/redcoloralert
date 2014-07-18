@@ -578,7 +578,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
-
+        Toast.makeText(this, "Disconnected. Please re-connect.",
+                Toast.LENGTH_SHORT).show();
 	}
 
 	// You need to do the Play Services APK check here too.
