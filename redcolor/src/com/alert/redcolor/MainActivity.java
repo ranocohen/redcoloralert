@@ -458,7 +458,7 @@ public class MainActivity extends FragmentActivity implements
 
 		CircleOptions circleOptions = new CircleOptions().center(position)
 				.radius(radiusInMeters).fillColor(fillColor)
-				.strokeColor(strokeColor).strokeWidth(8);
+				.strokeColor(strokeColor).strokeWidth(6);
 
 		final Circle circleZone;
 
@@ -467,6 +467,9 @@ public class MainActivity extends FragmentActivity implements
 		circles.add(circleZone);
 
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
+		if(color.equals("blue"))
+			markerOptions.icon(BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 		mMarker = mUIGoogleMap.addMarker(markerOptions);
 
 		long cooldownTimeDef = 10 * 60 * 1000; // 10 minutes
@@ -873,6 +876,9 @@ public class MainActivity extends FragmentActivity implements
 
 			@Override
 			public void onFinish() {
+				if (timeToShowMiliSec != 0) {
+					drawAlertHotzone(latlng, "blue", timeToShowMiliSec);
+				}
 				MarkerOptions markerOptions = new MarkerOptions()
 						.position(latlng);
 				Marker tempMarker = mUIGoogleMap.addMarker(markerOptions);
@@ -882,9 +888,7 @@ public class MainActivity extends FragmentActivity implements
 				
 				final Marker finalMarker = tempMarker;
 
-				if (timeToShowMiliSec != 0) {
-					drawAlertHotzone(latlng, "blue", timeToShowMiliSec);
-				}
+				
 
 				new CountDownTimer(10000, 1000) {
 					public void onTick(long millisUntilFinished) {
