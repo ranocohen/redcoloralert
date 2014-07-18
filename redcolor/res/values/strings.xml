@@ -73,6 +73,11 @@
     <string name="test_sum">Check your connection with RED server</string>
     <string name="location_reminder_title">Pay Attention!</string>
     <string name="location_reminder_message">In order to use this feature, location services must be enabled.</string>
+    
     <string name="never_remind">never remind</string>
+    <string name="category_id">user behavior</string>
+    <string name="action_id">enc_scroll_id</string>
+    
+    
 
 </resources>

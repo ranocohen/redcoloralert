@@ -182,30 +182,35 @@ public class AlertsListFragment extends ListFragment implements
 		}
 
 		public boolean isLoading() {
-			
+
 			Log.i("Adapter", "is loading " + isLoading);
 			return isLoading;
 		}
 
 		public void setLoading(boolean isLoading) {
-			getActivity().setProgressBarIndeterminateVisibility(isLoading);
+			if (getActivity() != null)
+				getActivity().setProgressBarIndeterminateVisibility(isLoading);
 			Log.i("Adapter", "setting is loading " + isLoading);
 			this.isLoading = isLoading;
 		}
 
 		public void loadMore() {
-			/* We clean the database on push notification , it means we must reset page as well */
-			if(getCount() == Utils.MAX_ENTRIES)
+			/*
+			 * We clean the database on push notification , it means we must
+			 * reset page as well
+			 */
+			if (getCount() == Utils.MAX_ENTRIES)
 				resetPage();
-			
+
 			/* Query the server */
 			JsonRequest jr = new JsonRequest();
 			mAdapter.setLoading(true);
 			// jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
-			jr.requestJsonObject(Utils.SERVER_ALERTS + mAdapter.getPage() * 25
-					+ "/25", getActivity(), mAdapter);
+			jr.requestJsonObject(Utils.SERVER_ALERTS + mAdapter.getPage()
+					* Utils.MAX_ENTRIES + "/50", getActivity(), mAdapter);
 
-			Toast.makeText(getActivity(), "Loading " + mAdapter.getPage() * 25,
+			Toast.makeText(getActivity(),
+					"Loading " + mAdapter.getPage() * Utils.MAX_ENTRIES,
 					Toast.LENGTH_SHORT).show();
 		}
 	}
@@ -260,13 +265,23 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onScroll(AbsListView view, int firstVisible, int visibleCount,
 			int totalCount) {
-
-		boolean loadMore = /* maybe add a padding */
+		
+		   // Get tracker.
+        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
+            TrackerName.APP_TRACKER);
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder()
+            .setCategory(getString(R.string.category_id))
+            .setAction(getString(R.string.action_id))
+            .setLabel("ScrollEnd")
+            .build());
+	/*	
+		boolean loadMore =  maybe add a padding 
 		firstVisible + visibleCount >= totalCount;
 
 		if (loadMore && mAdapter != null && !mAdapter.isLoading()) {
 			mAdapter.loadMore();
-		}
+		}*/
 
 	}
 
