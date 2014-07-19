@@ -100,8 +100,8 @@ public class SettingsActivity extends Activity {
 			
 					
 					/* Finally set to default */
-					PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString
-					("ringtonePref", uri2.toString()).commit();
+/*					PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString
+					("ringtonePref", uri2.toString()).commit();*/
 					//ringPref.setDefaultValue(ringtoneUri.toString());
 				} else {
 					Uri ringtoneUri = Uri
