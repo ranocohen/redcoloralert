@@ -214,7 +214,7 @@ public class GcmIntentService extends IntentService {
 	private boolean doneFirstInit() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit2", false);
+		boolean firstInit = preferences.getBoolean("firstInit3", false);
 
 		return firstInit;
 	}

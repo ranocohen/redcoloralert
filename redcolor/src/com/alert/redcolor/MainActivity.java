@@ -1098,7 +1098,7 @@ public class MainActivity extends FragmentActivity implements
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("firstInit2", true);
+			editor.putBoolean("firstInit3", true);
 			editor.apply();
 
 			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
