@@ -1,7 +1,6 @@
 package com.alert.redcolor;
 
 import java.util.ArrayList;
-import java.util.DuplicateFormatFlagsException;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
