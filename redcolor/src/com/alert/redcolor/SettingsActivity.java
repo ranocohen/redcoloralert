@@ -52,11 +52,15 @@ public class SettingsActivity extends Activity {
 			addPreferencesFromResource(R.xml.preferences);
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
-
+		
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getActivity());
-			boolean firstInit = preferences.getBoolean("firstInit2", false);
+			// ringinite is true if red ringtone was not set as default before
+			boolean firstInit = preferences.getBoolean("ringInit", false);
 			if (!firstInit) {
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putBoolean("ringInit", true);
+				editor.apply();
 				final RingtonePreference ringPref = (RingtonePreference) findPreference("ringtonePref");
 				File file = new File(
 						"/sdcard/media/audio/notifications/RED.mp3");
