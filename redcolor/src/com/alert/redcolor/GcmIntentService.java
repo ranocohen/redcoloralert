@@ -201,6 +201,10 @@ public class GcmIntentService extends IntentService {
 				} else if (type == 2) {
 					sendNotification(getString(R.string.app_name),
 							getString(R.string.sucessfull_test), 1);
+				} else if (type == 3) {
+					String msg= extras.getString("message");
+					sendNotification(getString(R.string.app_name),
+						msg	, 1);
 				}
 			}
 		}
