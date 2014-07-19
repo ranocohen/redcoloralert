@@ -28,7 +28,7 @@
     </PreferenceCategory>
 
     <RingtonePreference
-        android:defaultValue="android.resource://com.alert.redcolor/R.raw.short_alert"
+    
         android:dependency="pref_enable_alerts"
         android:key="ringtonePref"
         android:ringtoneType="notification"
