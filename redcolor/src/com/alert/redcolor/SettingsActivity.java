@@ -90,18 +90,18 @@ public class SettingsActivity extends Activity {
 					/* If its exist we delete it */
 					Uri uri = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
 					getActivity().getContentResolver().delete(uri, MediaStore.MediaColumns.DATA + "=\"" + file.getAbsolutePath() + "\"", null);
-					Uri newUri =getActivity().getContentResolver().insert(uri, values);
+					getActivity().getContentResolver().insert(uri, values);
 					 
 					/* Adding to the db and getting the REAL uri */
 					//Insert it into the database 
 					Uri uri2 = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
-					Uri newUri2 = getActivity().getContentResolver().insert(uri2, values);
+					
 					 
 			
 					
 					/* Finally set to default */
 					PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString
-					("ringtonePref", newUri2.toString()).commit();
+					("ringtonePref", uri2.toString()).commit();
 					//ringPref.setDefaultValue(ringtoneUri.toString());
 				} else {
 					Uri ringtoneUri = Uri
