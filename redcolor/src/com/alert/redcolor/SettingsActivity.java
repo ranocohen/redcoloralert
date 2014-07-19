@@ -97,15 +97,11 @@ public class SettingsActivity extends Activity {
 					Uri uri2 = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
 					Uri newUri2 = getActivity().getContentResolver().insert(uri2, values);
 					 
-					RingtoneManager.setActualDefaultRingtoneUri(
-					  getActivity(), 
-					  RingtoneManager.TYPE_NOTIFICATION,
-					  android.provider.Settings.System.DEFAULT_RINGTONE_URI
-					); 
+			
 					
 					/* Finally set to default */
 					PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString
-					("ringtonePref", newUri.toString()).commit();
+					("ringtonePref", newUri2.toString()).commit();
 					//ringPref.setDefaultValue(ringtoneUri.toString());
 				} else {
 					Uri ringtoneUri = Uri
@@ -114,17 +110,7 @@ public class SettingsActivity extends Activity {
 					//ringPref.setDefaultValue(ringtoneUri.toString());
 			}
 				
-			// Do something else
-				//I read my ringtone setting ( I read the value from my ringtone_uri key ) 
-				//than if it is not set I set the value with the default value from the phone 
-				Uri defaultstr = Uri.parse(PreferenceManager.getDefaultSharedPreferences
-						(getActivity()).getString("ringtonePref",
-								android.provider.Settings.System.DEFAULT_RINGTONE_URI.toString()));
-				//than I do this, I save the default ringtone to my setting 
-				 if(defaultstr.equals(android.provider.Settings.System.DEFAULT_RINGTONE_URI)){
-				PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString
-				("ringtonePref", android.provider.Settings.System.DEFAULT_RINGTONE_URI.toString()).commit();
-				                } 
+	
 			final ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
 			townListPref = (TownListPreference) findPreference(PreferencesUtils.ALERTS_TOWNS_SELECT);
 

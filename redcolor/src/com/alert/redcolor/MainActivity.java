@@ -38,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -130,12 +131,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		// Utils.backup(getApplicationContext());
-		RingtoneManager.setActualDefaultRingtoneUri(
-				  this,
-				  RingtoneManager.TYPE_NOTIFICATION,
-				  android.provider.Settings.System.DEFAULT_NOTIFICATION_URI
-				); 
+	
 				
 		Crashlytics.start(this);
 		// run location service
@@ -799,13 +795,21 @@ public class MainActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit2", false);
+		boolean firstInit = preferences.getBoolean("firstInit3", false);
 		if (!firstInit) {
 			setProgressBarIndeterminateVisibility(true);
 			setProgressBarVisibility(true);
 			initData init = new initData(this);
 			init.execute();
 			saveRingtone();
+			
+			
+			//Restoring default sound
+			RingtoneManager.setActualDefaultRingtoneUri(
+					  this,
+					  RingtoneManager.TYPE_NOTIFICATION,
+					  Settings.System.DEFAULT_NOTIFICATION_URI
+					); 
 			return;
 		} else
 			queryServer();
