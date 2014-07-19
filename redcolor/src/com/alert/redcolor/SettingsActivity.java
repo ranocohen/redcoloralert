@@ -52,15 +52,24 @@ public class SettingsActivity extends Activity {
 			addPreferencesFromResource(R.xml.preferences);
 			PreferenceManager.setDefaultValues(getActivity(),
 					R.xml.preferences, false);
-			
-			final RingtonePreference ringPref = (RingtonePreference) findPreference("ringtonePref");
-			File file = new File("/sdcard/media/audio/notifications/RED.mp3");
-			if(file.exists()) {    
-				Uri ringtoneUri = Uri.parse("/sdcard/media/audio/notifications/RED.mp3");
-				ringPref.setDefaultValue(ringtoneUri);
-				}else{
-					Uri ringtoneUri = Uri.parse("content://settings/system/notification_sound");
+
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(getActivity());
+			boolean firstInit = preferences.getBoolean("firstInit2", false);
+			if (!firstInit) {
+				final RingtonePreference ringPref = (RingtonePreference) findPreference("ringtonePref");
+				File file = new File(
+						"/sdcard/media/audio/notifications/RED.mp3");
+				if (file.exists()) {
+					Uri ringtoneUri = Uri
+							.parse("/sdcard/media/audio/notifications/RED.mp3");
+					ringPref.setDefaultValue(ringtoneUri);
+				} else {
+					Uri ringtoneUri = Uri
+							.parse("content://settings/system/notification_sound");
+					ringPref.setDefaultValue(ringtoneUri);
 				}
+			}
 			// Do something else
 
 			final ListPreference alertsPref = (ListPreference) findPreference(PreferencesUtils.ALERTS_TYPE_KEY);
@@ -92,24 +101,24 @@ public class SettingsActivity extends Activity {
 									locationReminderDialog();
 
 							CharSequence[] currText = alertsPref.getEntries();
-							
-							alertsPref.setSummary(currText[alertsPref.findIndexOfValue(val)]);
+
+							alertsPref.setSummary(currText[alertsPref
+									.findIndexOfValue(val)]);
 
 							return true;
 						}
 					});
-			
+
 			Preference ver = (Preference) findPreference("version");
 			String versionName;
 			try {
-				versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+				versionName = getActivity().getPackageManager().getPackageInfo(
+						getActivity().getPackageName(), 0).versionName;
 				ver.setSummary(versionName);
 			} catch (NameNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			
 
 			Preference button = (Preference) findPreference("button");
 			button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
