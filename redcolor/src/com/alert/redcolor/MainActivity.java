@@ -32,6 +32,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -130,7 +131,12 @@ public class MainActivity extends FragmentActivity implements
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		// Utils.backup(getApplicationContext());
-
+		RingtoneManager.setActualDefaultRingtoneUri(
+				  this,
+				  RingtoneManager.TYPE_NOTIFICATION,
+				  android.provider.Settings.System.DEFAULT_NOTIFICATION_URI
+				); 
+				
 		Crashlytics.start(this);
 		// run location service
 		// Intent intent = new Intent(this, BackgroundLocationService.class);

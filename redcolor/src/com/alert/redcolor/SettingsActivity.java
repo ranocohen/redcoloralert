@@ -100,7 +100,7 @@ public class SettingsActivity extends Activity {
 					RingtoneManager.setActualDefaultRingtoneUri(
 					  getActivity(), 
 					  RingtoneManager.TYPE_NOTIFICATION,
-					  newUri2
+					  android.provider.Settings.System.DEFAULT_RINGTONE_URI
 					); 
 					
 					/* Finally set to default */
