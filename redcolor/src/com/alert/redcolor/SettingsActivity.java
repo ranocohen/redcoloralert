@@ -96,6 +96,14 @@ public class SettingsActivity extends Activity {
 					//Insert it into the database 
 				
 		
+					Uri uri2 = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
+					
+					 
+			
+					
+					/* Finally set to default */
+/*					PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString
+					("ringtonePref", uri2.toString()).commit();*/
 					//ringPref.setDefaultValue(ringtoneUri.toString());
 				} else {
 					Uri ringtoneUri = Uri
