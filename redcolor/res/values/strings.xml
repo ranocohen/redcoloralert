@@ -42,7 +42,10 @@
     <string name="pref_alert_type_title">Alert Type</string>
     <string name="pref_alert_type_default">all</string>
     <string name="pref_alert_vibrate">vibrate</string>
-    
+    <string name="start">Start</string>
+    <string name="end">End</string>
+        <string name="night_mode">Night mode</string>
+        <string name="night_mode_summery">Night mode will set RED to silent</string>
     <string name="sucessfull_test">This is a test alert!</string>
     
 <string name="test_connection_summery">Notification test </string>

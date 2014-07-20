@@ -39,6 +39,7 @@
     <string name="alert_areas_summery">בחר יישובים להתרעות</string>
     <string name="vibrate">רטט</string>
     <string name="alerts">התרעות</string>
+    <string name="night_mode">מצב לילה</string>
     <string name="pref_alert_type_default">all</string>
     <string name="pref_alert_type_title">התרעות</string>
     <string name="pref_alert_type_default">all</string>

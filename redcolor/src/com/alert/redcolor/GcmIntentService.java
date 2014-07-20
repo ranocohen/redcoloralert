@@ -142,7 +142,7 @@ public class GcmIntentService extends IntentService {
 					RedColordb.getInstance(getApplicationContext()).cleanDatabase();
 
 					boolean toNotify = false;
-					if (PreferencesUtils.toNotify(getApplicationContext())) {
+					if (PreferencesUtils.toNotify(getApplicationContext(),dt)) {
 						String alertType = PreferencesUtils
 								.getAlertsType(getApplicationContext());
 
@@ -283,4 +283,5 @@ public class GcmIntentService extends IntentService {
 		return false;
 		
 	}
+	
 }

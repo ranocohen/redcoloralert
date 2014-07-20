@@ -28,22 +28,45 @@
     </PreferenceCategory>
 
     <RingtonePreference
-    
+        android:defaultValue="content://settings/system/notification_sound"
         android:dependency="pref_enable_alerts"
         android:key="ringtonePref"
         android:ringtoneType="notification"
         android:showDefault="true"
-        android:title="@string/ringtone_settings" android:showSilent="true"/>
+        android:showSilent="true"
+        android:title="@string/ringtone_settings" />
 
     <SwitchPreference
         android:defaultValue="true"
         android:dependency="pref_enable_alerts"
         android:key="@string/pref_alert_vibrate"
         android:title="@string/vibrate" />
-    
-    <Preference android:title="@string/test_connection"
-                android:key="button"
-                android:summary="@string/test_connection_summery"/>
-    <Preference android:key="version" android:title="@string/version"/>
+
+    <Preference
+        android:key="button"
+        android:summary="@string/test_connection_summery"
+        android:title="@string/test_connection" />
+    <Preference
+        android:key="version"
+        android:title="@string/version" />
+
+    <PreferenceCategory
+        android:key="pref_night_mode"
+        android:title="@string/night_mode" >
+        
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_enable_nightmode"
+            android:title="@string/alerts" />
+        <com.alert.redcolor.ui.TimePreference
+            android:key="night_mode_start"
+            android:title="@string/start" 
+            android:dependency="pref_enable_nightmode"
+            />
+        <com.alert.redcolor.ui.TimePreference
+            android:key="night_mode_end"
+            android:dependency="pref_enable_nightmode"
+            android:title="@string/end" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
