@@ -152,7 +152,7 @@ public class AlertsListFragment extends ListFragment implements
 			Alert alert = new Alert(cursor);
 
 			holder.time.setText(alert.getTime().toString("HH:mm:ss"));
-			holder.date.setText(alert.getTime().toString("dd-MM-yy"));
+			holder.date.setText(alert.getTime().toString("dd/MM/yy"));
 			ProviderQueries pq = new ProviderQueries(getActivity());
 			Area a = pq.areaById(alert.getAreaId());
 			holder.name.setText(a.getName() + " " + a.getAreaNum());

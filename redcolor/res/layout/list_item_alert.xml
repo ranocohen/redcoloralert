@@ -2,36 +2,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="start"
-    android:padding="5dp"
     android:minHeight="?android:listPreferredItemHeight"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:paddingStart="9dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:typeface="monospace" />
+    android:orientation="vertical"
+    android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:paddingBottom="10dp" >
 
-        
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:paddingStart="9dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="start"
+            android:gravity="center_horizontal"
             android:paddingStart="9dp"
-            android:textSize="18sp" />
-        
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/time"
             android:layout_width="0dp"
@@ -41,6 +42,7 @@
             android:paddingEnd="9dp"
             android:textSize="18sp" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/cities"
         android:layout_width="match_parent"
@@ -48,7 +50,6 @@
         android:gravity="start"
         android:paddingEnd="9dp"
         android:paddingStart="9dp"
-        android:textSize="14sp"
+        android:textSize="14sp" />
 
-        />
 </LinearLayout>
