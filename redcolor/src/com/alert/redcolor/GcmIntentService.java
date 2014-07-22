@@ -258,6 +258,8 @@ public class GcmIntentService extends IntentService {
 		if (PreferencesUtils.toVibrate(getApplicationContext()))
 			mBuilder.setVibrate(new long[] { 200, 400 });
 		mBuilder.setContentIntent(resultPendingIntent);
+		mBuilder.setAutoCancel(true);
+
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 
