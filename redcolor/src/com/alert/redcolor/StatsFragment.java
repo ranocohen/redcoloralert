@@ -23,7 +23,7 @@ public class StatsFragment extends Fragment {
 		return fragment;
 	}
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.stats, container);
+		View v = inflater.inflate(R.layout.stats, container,false);
 		
 		
 		BarChart mBarChart = (BarChart) v.findViewById(R.id.barchart);
