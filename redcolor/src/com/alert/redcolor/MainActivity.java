@@ -238,6 +238,10 @@ public class MainActivity extends FragmentActivity implements
 		actionBar.addTab(actionBar.newTab()
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
+		
+		actionBar.addTab(actionBar.newTab()
+				.setText(getString(R.string.stats))
+				.setTabListener(this));
 
 	}
 
@@ -305,19 +309,12 @@ public class MainActivity extends FragmentActivity implements
 		public Fragment getItem(int i) {
 			switch (i) {
 			case 0:
-				// The first section of the app is the most interesting -- it
-				// offers
-				// a launchpad into the other demonstrations in this example
-				// application.
-				// return new LaunchpadSectionFragment();
 				return new GoogleMapFragment();
 			case 1:
 				return new AlertsListFragment();
+			case 2:
+				return new StatsFragment();
 
-				// TODO need to make listview within fragment and not to use
-				// listfragmet
-				// (or find a solution for this ^ )
-				// update: found one
 
 			default:
 				// The other sections of the app are dummy placeholders.
@@ -331,7 +328,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
