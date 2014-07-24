@@ -62,7 +62,8 @@ public class PreferencesUtils {
 		if(!enabled)
 			return false;
 		
-		String alertType = PreferencesUtils.getAlertsType(con);
+		return true;
+		/*String alertType = PreferencesUtils.getAlertsType(con);
 		if(alertType.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE))
 			return true;
 		
@@ -84,7 +85,7 @@ public class PreferencesUtils {
 		
 		Interval inter = new Interval(start,end);
 		return (!inter.contains(alertTime));
-		
+*/		
 
 	}	
 	public static long[] getSelectedTownsIds(Context con) {
