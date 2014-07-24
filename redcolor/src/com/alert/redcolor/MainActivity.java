@@ -740,7 +740,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onMapReady(GoogleMap map) {
 		mUIGoogleMap = map;
-
+		if(map == null)
+			return;
 		mUIGoogleMap.setMyLocationEnabled(true);
 		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
