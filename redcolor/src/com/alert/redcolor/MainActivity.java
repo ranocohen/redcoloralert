@@ -406,6 +406,7 @@ public class MainActivity extends FragmentActivity implements
 	// check if the client already has the last location
 	@Override
 	public void onConnected(Bundle connectionHint) {
+		Log.i("GPS", "Connected ! lets set up broadcast reciever");
 				locationrequest = LocationRequest.create();
 		locationrequest.setInterval(1000);
 //		locationclient.requestLocationUpdates(locationrequest, mPendingIntent);
