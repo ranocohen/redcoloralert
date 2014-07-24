@@ -3,6 +3,8 @@ package com.alert.redcolor.db;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -42,10 +44,15 @@ public class ProviderQueries {
 	public String[] getCitiesNames(long id) {
 		String[] ans;
 		Cursor c = null;
-		String locale =Locale.getDefault().getLanguage().toString(); 
+		String locale =Locale.getDefault().getLanguage().toString();
+		boolean hebLocale = false;
+		String regex = "^\"?(.[^\",]*)";
+		Pattern p = Pattern.compile(regex);
 		String[] projection = new String[] { CitiesColumns.name_en };
-		if (locale.equals("iw") || locale.equals("he"))
+		if (locale.equals("iw") || locale.equals("he")) {
+			hebLocale = true;
 			projection = new String[] { CitiesColumns.name_he };
+		}
 
 		try {
 			c = mCon.getContentResolver().query(
@@ -55,7 +62,15 @@ public class ProviderQueries {
 			ans = new String[c.getCount()];
 			int i = 0;
 			while (c.moveToNext()) {
-				ans[i] = c.getString(0);
+				String tmp = c.getString(0);
+				if(!hebLocale)
+				{
+					Matcher m = p.matcher(tmp);
+					if (m.find()) 
+					    tmp = m.group(1);
+				}
+				
+				ans[i] = tmp;
 				i++;
 			}
 		} finally {
