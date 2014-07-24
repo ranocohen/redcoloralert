@@ -32,13 +32,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -360,7 +358,8 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location location) {
-		locationClient.removeLocationUpdates(this);
+		if(locationClient.isConnected())
+			locationClient.removeLocationUpdates(this);
 
 	}
 
