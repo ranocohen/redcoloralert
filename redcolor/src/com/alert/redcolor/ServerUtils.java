@@ -53,7 +53,7 @@ public class ServerUtils {
 	        byte[] bytes = body.getBytes();
 	        HttpURLConnection conn = null;
 	        try {
-	            Log.e("URL", "> " + url);
+	          //  Log.e("URL", "> " + url);
 	            conn = (HttpURLConnection) url.openConnection();
 	            conn.setDoOutput(true);
 	            conn.setUseCaches(false);

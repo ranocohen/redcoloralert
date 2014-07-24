@@ -123,7 +123,7 @@ public class RedColordb extends SQLiteOpenHelper {
 			c = db.rawQuery("select * from alerts where _id not in "
 					+ " (select _id from alerts order by time desc limit 50)",
 					null);
-			Log.i("DB CLEAN", "DELETED "+c.getCount() +" ENTRIES");
+			//Log.i("DB CLEAN", "DELETED "+c.getCount() +" ENTRIES");
 			while (c.moveToNext()) {
 				long id = c.getLong(0);
 				mCon.getContentResolver().delete(

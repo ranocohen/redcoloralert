@@ -1,5 +1,7 @@
 package com.alert.redcolor.model;
 
+import java.util.Locale;
+
 import android.database.Cursor;
 import android.location.Location;
 
@@ -42,6 +44,7 @@ public class City {
 	public String getEngName() {
 		return engName;
 	}
+
 	public void setEngName(String engName) {
 		this.engName = engName;
 	}

@@ -153,8 +153,7 @@ public class GcmIntentService extends IntentService {
 								contentBuilder.append(", ");
 						}
 
-						if (alertType
-								.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
+						if (alertType.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
 							toNotify = true;
 
 						else if (alertType

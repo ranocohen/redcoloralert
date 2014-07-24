@@ -256,7 +256,7 @@ public class SettingsActivity extends Activity {
 					MainActivity.PROPERTY_REG_ID, "");
 
 			if (registrationId.isEmpty()) {
-				Log.i(Utils.TAG, "Registration not found.");
+			//	Log.i(Utils.TAG, "Registration not found.");
 				return "";
 			}
 			return registrationId;
