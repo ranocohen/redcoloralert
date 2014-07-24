@@ -239,10 +239,10 @@ public class MainActivity extends FragmentActivity implements
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 		
-		actionBar.addTab(actionBar.newTab()
+	/*	actionBar.addTab(actionBar.newTab()
 				.setText(getString(R.string.stats))
 				.setTabListener(this));
-
+*/
 	}
 
 	private void showNoConnectionError() {
@@ -801,12 +801,7 @@ public class MainActivity extends FragmentActivity implements
 			saveRingtone();
 			
 			
-			//Restoring default sound
-			RingtoneManager.setActualDefaultRingtoneUri(
-					  this,
-					  RingtoneManager.TYPE_NOTIFICATION,
-					  Settings.System.DEFAULT_NOTIFICATION_URI
-					); 
+
 			return;
 		} else
 			queryServer();

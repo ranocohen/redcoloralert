@@ -96,7 +96,7 @@ public class SettingsActivity extends Activity {
 					//Insert it into the database 
 				
 		
-					Uri uri2 = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
+				//	Uri uri2 = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
 					
 					 
 			
