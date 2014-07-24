@@ -5,13 +5,11 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.joda.time.LocalTime;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.text.style.LineHeightSpan.WithDensity;
 
 public class PreferencesUtils {
 
@@ -59,14 +57,20 @@ public class PreferencesUtils {
 		return notify;
 	}
 	public static boolean toNotify(Context con,DateTime alertTime) {
+		
 		boolean enabled = PreferencesUtils.isNotifyEnabled(con);
 		if(!enabled)
 			return false;
+		
+		String alertType = PreferencesUtils.getAlertsType(con);
+		if(alertType.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE))
+			return true;
 		
 		boolean inNightMode = PreferencesUtils.inNightMode(con);
 		if(!inNightMode)
 			return true;
 		
+
 		DateTime start = PreferencesUtils.nightModeStart(con);
 		DateTime end = PreferencesUtils.nightModeEnd(con);
 		
@@ -81,8 +85,7 @@ public class PreferencesUtils {
 		Interval inter = new Interval(start,end);
 		return (!inter.contains(alertTime));
 		
-		
-		
+
 	}	
 	public static long[] getSelectedTownsIds(Context con) {
 		
