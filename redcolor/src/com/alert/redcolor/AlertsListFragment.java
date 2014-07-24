@@ -130,13 +130,13 @@ public class AlertsListFragment extends ListFragment implements
 
 		public void resetPage() {
 			this.page = 0;
-			Log.i("Adapter", "resting page to 0");
+		//	Log.i("Adapter", "resting page to 0");
 		}
 
 		public void increasePage() {
 
 			page++;
-			Log.i("Adapter", "Increasing page to " + page);
+		//	Log.i("Adapter", "Increasing page to " + page);
 		}
 
 		public int getPage() {
@@ -183,14 +183,14 @@ public class AlertsListFragment extends ListFragment implements
 
 		public boolean isLoading() {
 
-			Log.i("Adapter", "is loading " + isLoading);
+		//	Log.i("Adapter", "is loading " + isLoading);
 			return isLoading;
 		}
 
 		public void setLoading(boolean isLoading) {
 			if (getActivity() != null)
 				getActivity().setProgressBarIndeterminateVisibility(isLoading);
-			Log.i("Adapter", "setting is loading " + isLoading);
+		//	Log.i("Adapter", "setting is loading " + isLoading);
 			this.isLoading = isLoading;
 		}
 

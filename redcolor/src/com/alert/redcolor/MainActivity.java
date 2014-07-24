@@ -267,7 +267,7 @@ public class MainActivity extends FragmentActivity implements
 				GooglePlayServicesUtil.getErrorDialog(resultCode, this,
 						PLAY_SERVICES_RESOLUTION_REQUEST).show();
 			} else {
-				Log.i(Utils.TAG, "This device is not supported.");
+			//	Log.i(Utils.TAG, "This device is not supported.");
 				finish();
 			}
 			return false;
@@ -494,13 +494,13 @@ public class MainActivity extends FragmentActivity implements
 				// int currFillColor = circles.get(positionc).getFillColor();
 				int p = circles.lastIndexOf(circleZone);
 
-				Log.d("TEST", circles.size() + " /" + p);
+				//Log.d("TEST", circles.size() + " /" + p);
 				try {
 					int currFillColor = circles.get(p).getFillColor();
 					int a = Color.alpha(currFillColor);
 					a = a - fillInterval;
 
-					Log.d("TICK", circles.get(p).toString() + "/" + a);
+					//Log.d("TICK", circles.get(p).toString() + "/" + a);
 
 					if (color.equals("red")) {
 						circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
@@ -592,7 +592,7 @@ public class MainActivity extends FragmentActivity implements
 		final SharedPreferences prefs = getGCMPreferences(context);
 		String registrationId = prefs.getString(PROPERTY_REG_ID, "");
 		if (registrationId.isEmpty()) {
-			Log.i(Utils.TAG, "Registration not found.");
+			//Log.i(Utils.TAG, "Registration not found.");
 			return "";
 		}
 		// Check if app was updated; if so, it must clear the registration ID
@@ -602,7 +602,7 @@ public class MainActivity extends FragmentActivity implements
 				Integer.MIN_VALUE);
 		int currentVersion = getAppVersion(context);
 		if (registeredVersion != currentVersion) {
-			Log.i(Utils.TAG, "App version changed.");
+			//Log.i(Utils.TAG, "App version changed.");
 			return "";
 		}
 		return registrationId;
@@ -701,7 +701,7 @@ public class MainActivity extends FragmentActivity implements
 	private void storeRegistrationId(Context context, String regId) {
 		final SharedPreferences prefs = getGCMPreferences(context);
 		int appVersion = getAppVersion(context);
-		Log.i(Utils.TAG, "Saving regId on app version " + appVersion);
+		//Log.i(Utils.TAG, "Saving regId on app version " + appVersion);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(PROPERTY_REG_ID, regId);
 		editor.putInt(PROPERTY_APP_VERSION, appVersion);
@@ -792,7 +792,7 @@ public class MainActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit3", false);
+		boolean firstInit = preferences.getBoolean("firstInit4", false);
 		if (!firstInit) {
 			setProgressBarIndeterminateVisibility(true);
 			setProgressBarVisibility(true);
@@ -1090,7 +1090,7 @@ public class MainActivity extends FragmentActivity implements
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("firstInit3", true);
+			editor.putBoolean("firstInit4", true);
 			editor.apply();
 
 			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
