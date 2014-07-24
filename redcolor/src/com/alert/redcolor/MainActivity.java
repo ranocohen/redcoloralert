@@ -408,6 +408,11 @@ public class MainActivity extends FragmentActivity implements
 	 * mCircle.setCenter(position); mMarker.setPosition(position); }
 	 */
 
+	
+	public void drawMissilePath(long airtime) {
+		
+	}
+	
 	/**
 	 * gets location for code red alert and mark the area as a 'hot zone' which
 	 * would slowly faded after 10 minutes according to home front command
