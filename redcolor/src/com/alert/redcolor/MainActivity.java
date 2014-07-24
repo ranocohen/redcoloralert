@@ -794,7 +794,7 @@ public class MainActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit4", false);
+		boolean firstInit = preferences.getBoolean("firstInit"+Utils.initVer, false);
 		if (!firstInit) {
 			setProgressBarIndeterminateVisibility(true);
 			setProgressBarVisibility(true);
@@ -1090,7 +1090,7 @@ public class MainActivity extends FragmentActivity implements
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("firstInit4", true);
+			editor.putBoolean("firstInit"+Utils.initVer, true);
 			editor.apply();
 
 			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!

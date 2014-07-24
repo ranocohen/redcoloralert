@@ -156,12 +156,8 @@ public class GcmIntentService extends IntentService {
 						if (alertType.equals(PreferencesUtils.PREF_ALL_ALERTS_VALUE))
 							toNotify = true;
 
-						else if (alertType
-								.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE)) {
+						else if (alertType.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE) && lastKnownLocation != null) {
 							loop: for (int j = 0; j < cities.size(); j++) {
-								if (lastKnownLocation != null
-										&& alertType
-												.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE)) {
 									double distance = cities.get(j).distanceTo(
 											lastKnownLocation);
 									if (distance <= radiusDistance) {
@@ -170,7 +166,7 @@ public class GcmIntentService extends IntentService {
 									}
 								}
 							}
-						} else if (alertType
+						 else if (alertType
 								.equals(PreferencesUtils.PREF_CUSTOM_ALERT_VALUE)) {
 							long[] ids = PreferencesUtils
 									.getSelectedTownsIds(getApplicationContext());
@@ -213,7 +209,7 @@ public class GcmIntentService extends IntentService {
 	private boolean doneFirstInit() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit3", false);
+		boolean firstInit = preferences.getBoolean("firstInit"+Utils.initVer, false);
 
 		return firstInit;
 	}
