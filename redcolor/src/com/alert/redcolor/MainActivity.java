@@ -22,6 +22,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,6 +62,7 @@ import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
+import com.alert.redcolor.services.LocationService;
 import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -91,6 +93,13 @@ public class MainActivity extends FragmentActivity implements
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
 	private static final int STARTING_ALPHA = 90; // hot zone starting color
+	
+	//fused fuck shit
+	private LocationClient locationclient;
+	private LocationRequest locationrequest;
+	private Intent mIntentService;
+	private PendingIntent mPendingIntent;
+	//=====
 
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
@@ -144,6 +153,25 @@ public class MainActivity extends FragmentActivity implements
 		if (!cd.isConnectingToInternet())
 			showNoConnectionError();
 		initFirstData();
+		
+		//fused test fuck shitו
+		int resp =GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if(resp == ConnectionResult.SUCCESS){
+			locationclient = new LocationClient(this,this,this);
+			locationclient.connect();
+		}
+		else{
+			Toast.makeText(this, "Google Play Service Error " + resp, Toast.LENGTH_LONG).show();
+
+		}
+		
+		//fused fuck shit
+		mIntentService = new Intent(this,LocationService.class);
+		mPendingIntent = PendingIntent.getService(this, 1, mIntentService, 0);
+		//=====
+
+		
+		
 		// Check device for Play Services APK.
 		if (checkPlayServices()) {
 			gcm = GoogleCloudMessaging.getInstance(this);
@@ -156,6 +184,7 @@ public class MainActivity extends FragmentActivity implements
 		} else {
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
+
 
 		/*
 		 * JsonRequest jr = new JsonRequest();
@@ -175,11 +204,16 @@ public class MainActivity extends FragmentActivity implements
 		} else
 			locationEnabled = true;
 
+		//fused testing
+/*		
 		locationClient = new LocationClient(this, this, this);
 
 		locationClient.connect();
 
 		locationRequest = LocationRequest.create();
+		
+		//----
+*/		
 		// Use high accuracy
 
 		// Create the adapter that will return a fragment for each of the three
@@ -371,37 +405,36 @@ public class MainActivity extends FragmentActivity implements
 	// check if the client already has the last location
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		Location location = locationClient.getLastLocation();
+		
+		locationrequest = LocationRequest.create();
+		locationrequest.setInterval(1000);
+		locationclient.requestLocationUpdates(locationrequest, mPendingIntent);
 
-		if (location == null)
-			locationClient.connect();
-
-		if (locationClient.isConnected())
-			locationClient.requestLocationUpdates(locationRequest, this);
+/*		Location location = locationClient.getLastLocation();
 
 		if (location != null) {
 			// animate to last location
 			if (mUIGoogleMap != null) {
 
-				/*
+				
 				 * LatLng latLng = new LatLng(location.getLatitude(),
 				 * location.getLongitude()); CameraUpdate cameraUpdate =
 				 * CameraUpdateFactory.newLatLngZoom( latLng, 11);
 				 * mUIGoogleMap.animateCamera(cameraUpdate);
-				 */
+				 
 				// drawAlertHotzone(latLng);
 
 				// else
-				/*
+				
 				 * Toast.makeText( getActivity(), "Location: " +
 				 * location.getLatitude() + ", " + location.getLongitude(),
 				 * Toast.LENGTH_SHORT) .show();
-				 */
+				 
 			}
 		} else if (location == null && locationEnabled
 				&& locationClient.isConnected()) {
 			locationClient.requestLocationUpdates(locationRequest, this);
-		}
+		}*/
 
 	}
 
