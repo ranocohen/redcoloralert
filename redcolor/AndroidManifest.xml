@@ -53,30 +53,26 @@
         </activity>
         <activity android:name="com.alert.redcolor.SettingsActivity" />
 
-  
         <!-- RAN MAP DEBUG KEY -->
-      <!-- 
+        <!--
          <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD6aB8Ik1HLXf1zkx0ADCNPTCE4g5ndaD8" /> 
-           -->
-         
-        <!-- IDAN MAP DEBUG KEY -->
-<!-- 
+        -->
 
+
+        <!-- IDAN MAP DEBUG KEY -->
+        <!--
          <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyACpdceFkGdmgiybsZXZQ4kF8cpIT5Txrw" />
- -->
+        -->
 
-        <!--  PRODUCTION MAP KEY  -->
+
+        <!-- PRODUCTION MAP KEY -->
         <meta-data
-            
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAwHdNVr_m27jpytzz7ZrMgxfuyM42NvoM" /> 
-             
-        
-        
+            android:value="AIzaSyAwHdNVr_m27jpytzz7ZrMgxfuyM42NvoM" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -95,11 +91,14 @@
                 <category android:name="com.alert.redcolor.gcm" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".services.LocationReceiver" />
 
         <service android:name=".GcmIntentService" />
         <service android:name=".services.BackgroundLocationService" />
-        <meta-data android:name="com.crashlytics.ApiKey"
-             android:value="cfb37ac4e0c7ab59d7d9e3e321ca61a853817302"/>
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="cfb37ac4e0c7ab59d7d9e3e321ca61a853817302" />
     </application>
 
 </manifest>

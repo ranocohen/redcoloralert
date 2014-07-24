@@ -62,6 +62,7 @@ import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
+import com.alert.redcolor.services.LocationReceiver;
 import com.alert.redcolor.services.LocationService;
 import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
@@ -167,7 +168,7 @@ public class MainActivity extends FragmentActivity implements
 		
 		//fused fuck shit
 		mIntentService = new Intent(this,LocationService.class);
-		mPendingIntent = PendingIntent.getService(this, 1, mIntentService, 0);
+		mPendingIntent = PendingIntent.getService(this, 3, mIntentService, 0);
 		//=====
 
 		
@@ -195,7 +196,7 @@ public class MainActivity extends FragmentActivity implements
 		// check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
 				.getSystemService(Context.LOCATION_SERVICE);
-		if (!manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 				&& !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			locationEnabled = false;
 			Toast.makeText(getApplication(),
@@ -405,10 +406,12 @@ public class MainActivity extends FragmentActivity implements
 	// check if the client already has the last location
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		
-		locationrequest = LocationRequest.create();
+				locationrequest = LocationRequest.create();
 		locationrequest.setInterval(1000);
-		locationclient.requestLocationUpdates(locationrequest, mPendingIntent);
+//		locationclient.requestLocationUpdates(locationrequest, mPendingIntent);
+		 Intent intent = new Intent(this, LocationReceiver.class);
+		  PendingIntent locationIntent = PendingIntent.getBroadcast(getApplicationContext(), 14872, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		  locationclient.requestLocationUpdates(locationrequest, locationIntent);
 
 /*		Location location = locationClient.getLastLocation();
 
