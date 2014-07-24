@@ -166,7 +166,7 @@ public class MainActivity extends FragmentActivity implements
 		// check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
 				.getSystemService(Context.LOCATION_SERVICE);
-		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+		if (!manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 				&& !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			locationEnabled = false;
 			Toast.makeText(getApplication(),
@@ -375,7 +375,9 @@ public class MainActivity extends FragmentActivity implements
 
 		if (location == null)
 			locationClient.connect();
-		locationClient.requestLocationUpdates(locationRequest, this);
+
+		if (locationClient.isConnected())
+			locationClient.requestLocationUpdates(locationRequest, this);
 
 		if (location != null) {
 			// animate to last location
@@ -396,7 +398,8 @@ public class MainActivity extends FragmentActivity implements
 				 * Toast.LENGTH_SHORT) .show();
 				 */
 			}
-		} else if (location == null && locationEnabled) {
+		} else if (location == null && locationEnabled
+				&& locationClient.isConnected()) {
 			locationClient.requestLocationUpdates(locationRequest, this);
 		}
 
@@ -408,11 +411,10 @@ public class MainActivity extends FragmentActivity implements
 	 * mCircle.setCenter(position); mMarker.setPosition(position); }
 	 */
 
-	
 	public void drawMissilePath(long airtime) {
-		
+
 	}
-	
+
 	/**
 	 * gets location for code red alert and mark the area as a 'hot zone' which
 	 * would slowly faded after 10 minutes according to home front command
@@ -760,13 +762,13 @@ public class MainActivity extends FragmentActivity implements
 			location.setLongitude(lng);
 			LatLng latLng = new LatLng(location.getLatitude(),
 					location.getLongitude());
-			CameraUpdate cameraUpdate = CameraUpdateFactory
-					.newLatLngZoom(latLng, 8);
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+					latLng, 8);
 			mUIGoogleMap.animateCamera(cameraUpdate);
 		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), "Error",
-					Toast.LENGTH_SHORT).show();		}
-		
+			Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT)
+					.show();
+		}
 
 	}
 
@@ -799,7 +801,8 @@ public class MainActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		boolean firstInit = preferences.getBoolean("firstInit"+Utils.initVer, false);
+		boolean firstInit = preferences.getBoolean("firstInit" + Utils.initVer,
+				false);
 		if (!firstInit) {
 			setProgressBarIndeterminateVisibility(true);
 			setProgressBarVisibility(true);
@@ -1095,7 +1098,7 @@ public class MainActivity extends FragmentActivity implements
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("firstInit"+Utils.initVer, true);
+			editor.putBoolean("firstInit" + Utils.initVer, true);
 			editor.apply();
 
 			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
