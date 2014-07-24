@@ -50,6 +50,7 @@
         android:key="version"
         android:title="@string/version" />
 
+    <!-- 
     <PreferenceCategory
         android:key="pref_night_mode"
         android:title="@string/night_mode" >
@@ -68,5 +69,6 @@
             android:dependency="pref_enable_nightmode"
             android:title="@string/end" />
     </PreferenceCategory>
+     -->
 
 </PreferenceScreen>

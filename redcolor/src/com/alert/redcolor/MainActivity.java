@@ -129,8 +129,6 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-	
-				
 		Crashlytics.start(this);
 		// run location service
 		// Intent intent = new Intent(this, BackgroundLocationService.class);
@@ -236,11 +234,11 @@ public class MainActivity extends FragmentActivity implements
 		actionBar.addTab(actionBar.newTab()
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
-		
-	/*	actionBar.addTab(actionBar.newTab()
-				.setText(getString(R.string.stats))
-				.setTabListener(this));
-*/
+
+		/*
+		 * actionBar.addTab(actionBar.newTab()
+		 * .setText(getString(R.string.stats)) .setTabListener(this));
+		 */
 	}
 
 	private void showNoConnectionError() {
@@ -267,7 +265,7 @@ public class MainActivity extends FragmentActivity implements
 				GooglePlayServicesUtil.getErrorDialog(resultCode, this,
 						PLAY_SERVICES_RESOLUTION_REQUEST).show();
 			} else {
-			//	Log.i(Utils.TAG, "This device is not supported.");
+				// Log.i(Utils.TAG, "This device is not supported.");
 				finish();
 			}
 			return false;
@@ -313,7 +311,6 @@ public class MainActivity extends FragmentActivity implements
 			case 2:
 				return new StatsFragment();
 
-
 			default:
 				// The other sections of the app are dummy placeholders.
 				Fragment fragment = new DummySectionFragment();
@@ -358,7 +355,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location location) {
-		if(locationClient.isConnected())
+		if (locationClient.isConnected())
 			locationClient.removeLocationUpdates(this);
 
 	}
@@ -375,9 +372,9 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Location location = locationClient.getLastLocation();
-		/*
-		 * if (location == null) locationClient.connect();
-		 */
+
+		if (location == null)
+			locationClient.connect();
 		locationClient.requestLocationUpdates(locationRequest, this);
 
 		if (location != null) {
@@ -494,13 +491,13 @@ public class MainActivity extends FragmentActivity implements
 				// int currFillColor = circles.get(positionc).getFillColor();
 				int p = circles.lastIndexOf(circleZone);
 
-				//Log.d("TEST", circles.size() + " /" + p);
+				// Log.d("TEST", circles.size() + " /" + p);
 				try {
 					int currFillColor = circles.get(p).getFillColor();
 					int a = Color.alpha(currFillColor);
 					a = a - fillInterval;
 
-					//Log.d("TICK", circles.get(p).toString() + "/" + a);
+					// Log.d("TICK", circles.get(p).toString() + "/" + a);
 
 					if (color.equals("red")) {
 						circles.get(p).setFillColor(Color.argb(a, 200, 0, 0));
@@ -592,7 +589,7 @@ public class MainActivity extends FragmentActivity implements
 		final SharedPreferences prefs = getGCMPreferences(context);
 		String registrationId = prefs.getString(PROPERTY_REG_ID, "");
 		if (registrationId.isEmpty()) {
-			//Log.i(Utils.TAG, "Registration not found.");
+			// Log.i(Utils.TAG, "Registration not found.");
 			return "";
 		}
 		// Check if app was updated; if so, it must clear the registration ID
@@ -602,7 +599,7 @@ public class MainActivity extends FragmentActivity implements
 				Integer.MIN_VALUE);
 		int currentVersion = getAppVersion(context);
 		if (registeredVersion != currentVersion) {
-			//Log.i(Utils.TAG, "App version changed.");
+			// Log.i(Utils.TAG, "App version changed.");
 			return "";
 		}
 		return registrationId;
@@ -701,7 +698,7 @@ public class MainActivity extends FragmentActivity implements
 	private void storeRegistrationId(Context context, String regId) {
 		final SharedPreferences prefs = getGCMPreferences(context);
 		int appVersion = getAppVersion(context);
-		//Log.i(Utils.TAG, "Saving regId on app version " + appVersion);
+		// Log.i(Utils.TAG, "Saving regId on app version " + appVersion);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(PROPERTY_REG_ID, regId);
 		editor.putInt(PROPERTY_APP_VERSION, appVersion);
@@ -738,28 +735,33 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onMapReady(GoogleMap map) {
-		mUIGoogleMap = map;
-		if(map == null)
-			return;
-		mUIGoogleMap.setMyLocationEnabled(true);
-		mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-		mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+		try {
+			mUIGoogleMap = map;
+			if (map == null)
+				return;
+			mUIGoogleMap.setMyLocationEnabled(true);
+			mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+			mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
-		// lastLatLng = mUIGoogleMap.getCameraPosition().target;
+			// lastLatLng = mUIGoogleMap.getCameraPosition().target;
 
-		// Animate map to ideal location
-		// Tel aviv location
-		double lat = 32.055168;
-		double lng = 34.799744;
+			// Animate map to ideal location
+			// Tel aviv location
+			double lat = 32.055168;
+			double lng = 34.799744;
 
-		Location location = new Location("");
-		location.setLatitude(lat);
-		location.setLongitude(lng);
-		LatLng latLng = new LatLng(location.getLatitude(),
-				location.getLongitude());
-		CameraUpdate cameraUpdate = CameraUpdateFactory
-				.newLatLngZoom(latLng, 8);
-		mUIGoogleMap.animateCamera(cameraUpdate);
+			Location location = new Location("");
+			location.setLatitude(lat);
+			location.setLongitude(lng);
+			LatLng latLng = new LatLng(location.getLatitude(),
+					location.getLongitude());
+			CameraUpdate cameraUpdate = CameraUpdateFactory
+					.newLatLngZoom(latLng, 8);
+			mUIGoogleMap.animateCamera(cameraUpdate);
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), "Error",
+					Toast.LENGTH_SHORT).show();		}
+		
 
 	}
 
@@ -799,8 +801,6 @@ public class MainActivity extends FragmentActivity implements
 			initData init = new initData(this);
 			init.execute();
 			saveRingtone();
-			
-			
 
 			return;
 		} else
@@ -822,11 +822,11 @@ public class MainActivity extends FragmentActivity implements
 			fIn.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//return false;
+			// return false;
 		}
 
-		//TODO  CHANGE NOT TO HARDCODED PATH!
-		String path = "/sdcard/media/audio/notifications/"; 
+		// TODO CHANGE NOT TO HARDCODED PATH!
+		String path = "/sdcard/media/audio/notifications/";
 		String filename = "RED" + ".mp3";
 
 		boolean exists = (new File(path)).exists();
@@ -842,23 +842,23 @@ public class MainActivity extends FragmentActivity implements
 			save.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			//return false;
+			// return false;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//return false;
+			// return false;
 		}
-		
-		sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://"+path+filename)));  
 
+		sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+				Uri.parse("file://" + path + filename)));
 
 	}
-	
+
 	private void saveRingtone() {
 
 		new AsyncTask<Void, Void, Void>() {
 
 			protected Void doInBackground(Void... params) {
-				
+
 				redRingtone();
 				return null;
 			}
