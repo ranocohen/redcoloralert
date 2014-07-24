@@ -39,6 +39,8 @@ public class Utils {
 	static final String DISPLAY_MESSAGE_ACTION = "com.alert.redcolor.DISPLAY_MESSAGE";
 
 	static final String EXTRA_MESSAGE = "message";
+	//First init version
+	public static String initVer = "4";
 
 	/**
 	 * Notifies UI to display a message.
