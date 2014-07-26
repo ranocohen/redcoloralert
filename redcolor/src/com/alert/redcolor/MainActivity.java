@@ -504,8 +504,24 @@ public class MainActivity extends FragmentActivity implements
 
 		circleZone = mUIGoogleMap.addCircle(circleOptions);
 		
-		// add to hashmap as well
+/*		// add to hashmap as well
 		circles.add(circleZone);
+		
+		new CountDownTimer(1100, 10) {
+			
+			@Override
+			public void onTick(long millisUntilFinished) {
+				if(circleZone.getRadius()!=11000.0)
+				circleZone.setRadius(circleZone.getRadius()+100);
+				
+			}
+				
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				
+			}
+		}.start();*/
 
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
 		if (color.equals("blue"))
@@ -786,9 +802,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void drawMissilePath(int time,double lat,double lon) {
+	public void drawMissilePath(int time,double lat,double lon,int sec) {
 		final Handler mHandler = new Handler();
-		Animator animator = new Animator(time,mHandler,lat,lon);
+		Animator animator = new Animator(time,mHandler,lat,lon,sec);
 
 		mHandler.postDelayed(animator, 1000);
 		animator.startAnimation(true);
@@ -1185,15 +1201,17 @@ public class MainActivity extends FragmentActivity implements
 		private static final int ANIMATE_SPEEED_TURN = 1000;
 		private static final int BEARING_OFFSET = 20;
 		final Handler handler;
+		int sec;
 		
 		Random rnd = new Random(); 
 		int color = Color.argb(255, 255, rnd.nextInt(256), rnd.nextInt(256));
 
 		private final Interpolator interpolator = new LinearInterpolator();
 		
-		public Animator(final int time, Handler mHandler,double lat,double lon) {
+		public Animator(final int time, Handler mHandler,double lat,double lon, int sec) {
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
+			this.sec = sec;
 			endLatLng = new LatLng(lat, lon);
 			beginLatLng = new LatLng(31.522561, 34.453593);
 			
@@ -1295,6 +1313,7 @@ public class MainActivity extends FragmentActivity implements
 			if (t< 1) {
 				handler.postDelayed(this, 16);
 			} else {
+				drawAlertHotzone(endLatLng, "red", sec);
 				polyLine.remove();
 			}
 		}
