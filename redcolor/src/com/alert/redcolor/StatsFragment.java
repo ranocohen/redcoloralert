@@ -72,7 +72,9 @@ public class StatsFragment extends Fragment {
 									new DataSet(entries, "RED"));
 							ColorTemplate ct = new ColorTemplate();
 							ct.addColorsForDataSets(new int[] { R.color.red,
-									R.color.green }, getActivity());
+									R.color.green , R.color.green, R.color.red 
+									,R.color.green , R.color.green, R.color.red 
+									,R.color.green , R.color.green, R.color.red }, getActivity());
 							mBarChart.setColorTemplate(ct);
 							mBarChart.setData(chartData);
 							mBarChart.set3DEnabled(false);
@@ -82,6 +84,10 @@ public class StatsFragment extends Fragment {
 							mBarChart.setDrawYValues(false);
 							mBarChart.setDrawGridBackground(false);
 							mBarChart.getLegend().setForm(LegendForm.CIRCLE);
+							mBarChart.getLegend().setLegendLabels(new String[] { "AAA", "BBB", "CCC","DDD"
+									,"AAA", "BBB", "CCC","DDD","AAA", "BBB"
+								
+							});
 							mBarChart.getLegend().setFormSize(10f);
 							mBarChart.invalidate();
 						} catch (JSONException e) {
