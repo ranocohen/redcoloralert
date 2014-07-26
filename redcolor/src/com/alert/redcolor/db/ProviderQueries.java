@@ -12,6 +12,7 @@ import org.joda.time.DateTimeZone;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.view.LayoutInflater;
 
 import com.alert.redcolor.db.RedColordb.AlertColumns;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
@@ -169,5 +170,36 @@ public class ProviderQueries {
 
 		return ans;
 	}
+	
+	/* Return the time to get into shelter (in mills) */
+	public long getTime(long cityId) {
+		long ans = -1;
+		Cursor c = null;
+		try {
+			c = mCon.getContentResolver().query(
+					AlertProvider.CITIES_CONTENT_URI,
+					new String[] { CitiesColumns.time }, null, null,null);
 
+			while (c.moveToNext()) {
+				String dtStr = c.getString(0);
+				if(dtStr.equals("דקה וחצי"))
+					ans = 90*1000;
+				else if(dtStr.equals("דקה"))
+					ans = 60*1000;
+				else if(dtStr.contains("45"))
+					ans = 45*1000;
+				else if(dtStr.contains("30"))
+					ans = 30*1000;
+				else if(dtStr.contains("15"))
+					ans = 15*1000;
+				else if(dtStr.equals("3 דקות"))
+					ans = 3*60*1000;
+			}
+		} finally {
+			if (c != null)
+				c.close();
+		}
+
+		return ans;
+	}
 }
