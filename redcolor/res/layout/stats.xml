@@ -4,14 +4,9 @@
     android:gravity="start"
     android:orientation="vertical" >
 
-    <org.eazegraph.lib.charts.BarChart
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/barchart"
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:padding="10dp"
-        app:egBarWidth="20dp"
-        app:egFixedBarWidth="true"
-        app:egLegendHeight="40dp" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
