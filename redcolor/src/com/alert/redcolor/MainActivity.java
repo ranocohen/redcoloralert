@@ -459,10 +459,6 @@ public class MainActivity extends FragmentActivity implements
 	 */
 
 	// gaza
-	public void drawMissilePath(long airtime) {
-
-
-	}
 
 	/**
 	 * gets location for code red alert and mark the area as a 'hot zone' which
@@ -789,9 +785,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void drawMissilePath(int time) {
+	public void drawMissilePath(int time,double lat,double lon) {
 		final Handler mHandler = new Handler();
-		Animator animator = new Animator(time,mHandler);
+		Animator animator = new Animator(time,mHandler,lat,lon);
 
 		mHandler.postDelayed(animator, 1000);
 		animator.startAnimation(true);
@@ -1194,9 +1190,12 @@ public class MainActivity extends FragmentActivity implements
 
 		private final Interpolator interpolator = new LinearInterpolator();
 		
-		public Animator(final int time, Handler mHandler) {
+		public Animator(final int time, Handler mHandler,double lat,double lon) {
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
+			endLatLng = new LatLng(lat, lon);
+			beginLatLng = new LatLng(31.522561, 34.453593);
+			
 		}
 		
 		int currentIndex = 0;
@@ -1219,9 +1218,6 @@ public class MainActivity extends FragmentActivity implements
 			currentIndex = 0;
 /*			endLatLng = getEndLatLng();
 			beginLatLng = getBeginLatLng();*/
-			endLatLng = new LatLng(32.085300, 34.781768);
-			beginLatLng = new LatLng(31.522561, 34.453593);
-			
 		}
 		
 		public void stop() {
