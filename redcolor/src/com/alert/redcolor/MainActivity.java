@@ -503,6 +503,7 @@ public class MainActivity extends FragmentActivity implements
 		final Circle circleZone;
 
 		circleZone = mUIGoogleMap.addCircle(circleOptions);
+		
 		// add to hashmap as well
 		circles.add(circleZone);
 
