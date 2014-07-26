@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Handler;
 import android.util.Log;
 
 import com.alert.redcolor.AlertsListFragment.AlertsAdapter;
@@ -255,6 +256,7 @@ public class JsonRequest {
 		// Adding request to request queue
 		AnalyticsApp.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 	}
+
 
 	public void requestJsonObject(String url, final Context con,
 			final AlertsAdapter adapter) {
