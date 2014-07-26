@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,11 +145,6 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 	
-
-	private Animator animator = new Animator(10000);
-	
-	private final Handler mHandler = new Handler();
-
 
 	private List<Marker> markers = new ArrayList<Marker>(); //TODO MOVE UP
 
@@ -463,10 +459,6 @@ public class MainActivity extends FragmentActivity implements
 	 */
 
 	// gaza
-	public void drawMissilePath(long airtime) {
-
-
-	}
 
 	/**
 	 * gets location for code red alert and mark the area as a 'hot zone' which
@@ -793,6 +785,14 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	public void drawMissilePath(int time,double lat,double lon) {
+		final Handler mHandler = new Handler();
+		Animator animator = new Animator(time,mHandler,lat,lon);
+
+		mHandler.postDelayed(animator, 1000);
+		animator.startAnimation(true);
+	}
+
 	@Override
 	public void onMapReady(GoogleMap map) {
 		try {
@@ -803,7 +803,7 @@ public class MainActivity extends FragmentActivity implements
 			mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 			mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 			
-			mHandler.postDelayed(animator, 1000);
+			
 
 			// lastLatLng = mUIGoogleMap.getCameraPosition().target;
 
@@ -812,7 +812,6 @@ public class MainActivity extends FragmentActivity implements
 			double lat = 32.055168;
 			double lng = 34.799744;
 			
-			animator.startAnimation(true);
 
 			Location location = new Location("");
 			location.setLatitude(lat);
@@ -1184,11 +1183,19 @@ public class MainActivity extends FragmentActivity implements
 		private int ANIMATE_SPEEED = 5000;
 		private static final int ANIMATE_SPEEED_TURN = 1000;
 		private static final int BEARING_OFFSET = 20;
+		final Handler handler;
+		
+		Random rnd = new Random(); 
+		int color = Color.argb(255, 255, rnd.nextInt(256), rnd.nextInt(256));
 
 		private final Interpolator interpolator = new LinearInterpolator();
 		
-		public Animator(final int time) {
+		public Animator(final int time, Handler mHandler,double lat,double lon) {
 			this.ANIMATE_SPEEED = time;
+			this.handler = mHandler;
+			endLatLng = new LatLng(lat, lon);
+			beginLatLng = new LatLng(31.522561, 34.453593);
+			
 		}
 		
 		int currentIndex = 0;
@@ -1211,14 +1218,11 @@ public class MainActivity extends FragmentActivity implements
 			currentIndex = 0;
 /*			endLatLng = getEndLatLng();
 			beginLatLng = getBeginLatLng();*/
-			endLatLng = new LatLng(32.085300, 34.781768);
-			beginLatLng = new LatLng(31.522561, 34.453593);
-			
 		}
 		
 		public void stop() {
 			trackingMarker.remove();
-			mHandler.removeCallbacks(animator);
+			handler.removeCallbacks(this);
 			
 		}
 
@@ -1241,7 +1245,7 @@ public class MainActivity extends FragmentActivity implements
 		
 		private Polyline initializePolyLine() {
 			//polyLinePoints = new ArrayList<LatLng>();
-			rectOptions.add(new LatLng(31.522561, 34.453593));
+			rectOptions.add(new LatLng(31.522561, 34.453593)).color(color);
 			return mUIGoogleMap.addPolyline(rectOptions);
 		}
 		
@@ -1256,11 +1260,11 @@ public class MainActivity extends FragmentActivity implements
 		
 
 		public void stopAnimation() {
-			animator.stop();
+			this.stop();
 		}
 		
 		public void startAnimation(boolean showPolyLine) {
-				animator.initialize(showPolyLine);
+				this.initialize(showPolyLine);
 		}		
 
 
@@ -1288,7 +1292,7 @@ public class MainActivity extends FragmentActivity implements
 			//navigateToPoint(newPosition,false);
 
 			if (t< 1) {
-				mHandler.postDelayed(this, 16);
+				handler.postDelayed(this, 16);
 			} else {
 				polyLine.remove();
 			}
