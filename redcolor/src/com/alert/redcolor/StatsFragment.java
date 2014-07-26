@@ -24,6 +24,7 @@ import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.Legend.LegendForm;
 
 public class StatsFragment extends Fragment {
 
@@ -80,6 +81,8 @@ public class StatsFragment extends Fragment {
 							mBarChart.setValueDigits(3);
 							mBarChart.setDrawYValues(false);
 							mBarChart.setDrawGridBackground(false);
+							mBarChart.getLegend().setForm(LegendForm.CIRCLE);
+							mBarChart.getLegend().setFormSize(10f);
 							mBarChart.invalidate();
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
