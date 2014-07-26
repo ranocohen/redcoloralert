@@ -21,12 +21,20 @@ public class Utils {
 	static final String SERVER = "http://213.57.173.69:4567";
 	//static final String SERVER = "http://redalert-il.herokuapp.com";
 
+	//static final String SERVER = "http://213.57.173.69:4567";
+//	static final String SERVER = "http://redalert-il.herokuapp.com";
+
+	// static final String SERVER = "http://213.57.173.69:4567";
+	//static final String SERVER_ALERTS = " http://213.57.173.69:4567/alerts/";
+	
+	
+	static final String SERVER_STATS = SERVER + "/alerts_stats/";
 	static final String SERVER_URL = SERVER + "/android_register_v1";
 	static final String SERVER_ALERTS = SERVER + "/alerts/";
 	
 	// Google project id
 	static final String SENDER_ID = "903913289319";
-
+	
 	/**
 	 * Tag used on log messages.
 	 */
@@ -37,6 +45,7 @@ public class Utils {
 	static final String EXTRA_MESSAGE = "message";
 	// First init version
 	public static String initVer = "4";
+
 
 	/**
 	 * Notifies UI to display a message.
