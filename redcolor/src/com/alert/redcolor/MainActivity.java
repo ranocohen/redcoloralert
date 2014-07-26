@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,6 +21,7 @@ import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import android.R.interpolator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
@@ -37,6 +39,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -51,6 +55,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,11 +86,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener, ConnectionCallbacks, OnConnectionFailedListener,
@@ -134,11 +143,19 @@ public class MainActivity extends FragmentActivity implements
 	 * app, one at a time.
 	 */
 	ViewPager mViewPager;
+	
+
+	private Animator animator = new Animator();
+	
+	private final Handler mHandler = new Handler();
+
+
+	private List<Marker> markers = new ArrayList<Marker>(); //TODO MOVE UP
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
+		
 		Crashlytics.start(this);
 		// run location service
 		// Intent intent = new Intent(this, BackgroundLocationService.class);
@@ -445,7 +462,9 @@ public class MainActivity extends FragmentActivity implements
 	 * mCircle.setCenter(position); mMarker.setPosition(position); }
 	 */
 
+	// gaza
 	public void drawMissilePath(long airtime) {
+
 
 	}
 
@@ -783,6 +802,8 @@ public class MainActivity extends FragmentActivity implements
 			mUIGoogleMap.setMyLocationEnabled(true);
 			mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 			mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+			
+			mHandler.postDelayed(animator, 1000);
 
 			// lastLatLng = mUIGoogleMap.getCameraPosition().target;
 
@@ -790,6 +811,8 @@ public class MainActivity extends FragmentActivity implements
 			// Tel aviv location
 			double lat = 32.055168;
 			double lng = 34.799744;
+			
+			animator.startAnimation(true);
 
 			Location location = new Location("");
 			location.setLatitude(lat);
@@ -1155,4 +1178,145 @@ public class MainActivity extends FragmentActivity implements
 					getApplicationContext());
 
 	}
+	
+	public class Animator implements Runnable {
+		
+		private static final int ANIMATE_SPEEED = 5000;
+		private static final int ANIMATE_SPEEED_TURN = 1000;
+		private static final int BEARING_OFFSET = 20;
+
+		private final Interpolator interpolator = new LinearInterpolator();
+		
+		int currentIndex = 0;
+		
+		float tilt = 90;
+		float zoom = 15.5f;
+		boolean upward=true;
+		
+		long start = SystemClock.uptimeMillis();
+		
+		LatLng endLatLng = null; 
+		LatLng beginLatLng = null;
+		
+		boolean showPolyline = false;
+		
+		private Marker trackingMarker;
+		
+		public void reset() {
+			start = SystemClock.uptimeMillis();
+			currentIndex = 0;
+/*			endLatLng = getEndLatLng();
+			beginLatLng = getBeginLatLng();*/
+			endLatLng = new LatLng(32.085300, 34.781768);
+			beginLatLng = new LatLng(31.522561, 34.453593);
+			
+		}
+		
+		public void stop() {
+			trackingMarker.remove();
+			mHandler.removeCallbacks(animator);
+			
+		}
+
+		public void initialize(boolean showPolyLine) {
+			reset();
+			this.showPolyline = showPolyLine;
+			
+			//highLightMarker(0);
+			
+			if (showPolyLine) {
+				polyLine = initializePolyLine();
+			}
+			
+		}
+		
+		
+		private Polyline polyLine;
+		private PolylineOptions rectOptions = new PolylineOptions();
+
+		
+		private Polyline initializePolyLine() {
+			//polyLinePoints = new ArrayList<LatLng>();
+			rectOptions.add(new LatLng(31.522561, 34.453593));
+			return mUIGoogleMap.addPolyline(rectOptions);
+		}
+		
+		/**
+		 * Add the marker to the polyline.
+		 */
+		private void updatePolyLine(LatLng latLng) {
+			List<LatLng> points = polyLine.getPoints();
+			points.add(latLng);
+			polyLine.setPoints(points);
+		}
+		
+
+		public void stopAnimation() {
+			animator.stop();
+		}
+		
+		public void startAnimation(boolean showPolyLine) {
+				animator.initialize(showPolyLine);
+		}		
+
+
+		@Override
+		public void run() {
+			
+			long elapsed = SystemClock.uptimeMillis() - start;
+			double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
+			
+//			LatLng endLatLng = getEndLatLng();
+//			LatLng beginLatLng = getBeginLatLng();
+			
+			double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
+			double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
+			LatLng newPosition = new LatLng(lat, lng);
+			
+			//trackingMarker.setPosition(newPosition);
+			
+			if (showPolyline) {
+				updatePolyLine(newPosition);
+			}
+			
+			// It's not possible to move the marker + center it through a cameraposition update while another camerapostioning was already happening.
+			//navigateToPoint(newPosition,tilt,bearing,currentZoom,false);
+			//navigateToPoint(newPosition,false);
+
+			if (t< 1) {
+				mHandler.postDelayed(this, 16);
+			} else {
+				
+			}
+		}
+		
+		
+
+		
+		private LatLng getEndLatLng() {
+			return markers.get(currentIndex+1).getPosition();
+		}
+		
+		private LatLng getBeginLatLng() {
+			return markers.get(currentIndex).getPosition();
+		}
+		
+	};	
+	
+	private Location convertLatLngToLocation(LatLng latLng) {
+		Location loc = new Location("someLoc");
+		loc.setLatitude(latLng.latitude);
+		loc.setLongitude(latLng.longitude);
+		return loc;
+	}
+	
+	
+	private float bearingBetweenLatLngs(LatLng begin,LatLng end) {
+		Location beginL= convertLatLngToLocation(begin);
+		Location endL= convertLatLngToLocation(end);
+		
+		return beginL.bearingTo(endL);
+	}
+
+
 }
