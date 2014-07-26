@@ -145,7 +145,7 @@ public class MainActivity extends FragmentActivity implements
 	ViewPager mViewPager;
 	
 
-	private Animator animator = new Animator();
+	private Animator animator = new Animator(10000);
 	
 	private final Handler mHandler = new Handler();
 
@@ -1181,11 +1181,15 @@ public class MainActivity extends FragmentActivity implements
 	
 	public class Animator implements Runnable {
 		
-		private static final int ANIMATE_SPEEED = 5000;
+		private int ANIMATE_SPEEED = 5000;
 		private static final int ANIMATE_SPEEED_TURN = 1000;
 		private static final int BEARING_OFFSET = 20;
 
 		private final Interpolator interpolator = new LinearInterpolator();
+		
+		public Animator(final int time) {
+			this.ANIMATE_SPEEED = time;
+		}
 		
 		int currentIndex = 0;
 		
@@ -1286,7 +1290,7 @@ public class MainActivity extends FragmentActivity implements
 			if (t< 1) {
 				mHandler.postDelayed(this, 16);
 			} else {
-				
+				polyLine.remove();
 			}
 		}
 		
