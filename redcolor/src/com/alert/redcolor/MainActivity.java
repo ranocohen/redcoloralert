@@ -803,7 +803,7 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void drawMissilePath(long time,double lat,double lon,int sec) {
+	public void drawMissilePath(long time,double lat,double lon,long sec) {
 		final Handler mHandler = new Handler();
 		Animator animator = new Animator((int) time,mHandler,lat,lon,sec);
 
@@ -1202,14 +1202,14 @@ public class MainActivity extends FragmentActivity implements
 		private static final int ANIMATE_SPEEED_TURN = 1000;
 		private static final int BEARING_OFFSET = 20;
 		final Handler handler;
-		int sec;
+		long sec;
 		
 		Random rnd = new Random(); 
 		int color = Color.argb(255, 255, rnd.nextInt(256), rnd.nextInt(256));
 
 		private final Interpolator interpolator = new LinearInterpolator();
 		
-		public Animator(final int time, Handler mHandler,double lat,double lon, int sec) {
+		public Animator(final int time, Handler mHandler,double lat,double lon, long sec) {
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
 			this.sec = sec;
@@ -1292,7 +1292,7 @@ public class MainActivity extends FragmentActivity implements
 		public void run() {
 			
 			long elapsed = SystemClock.uptimeMillis() - start;
-			double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
+			double t = interpolator.getInterpolation((float)elapsed/sec);
 			
 //			LatLng endLatLng = getEndLatLng();
 //			LatLng beginLatLng = getBeginLatLng();
