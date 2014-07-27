@@ -71,6 +71,7 @@ import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
 import com.alert.redcolor.services.LocationReceiver;
 import com.alert.redcolor.services.LocationService;
+import com.alert.redcolor.ui.RateThisApp;
 import com.alert.redcolor.volley.JsonRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -1346,5 +1347,12 @@ public class MainActivity extends FragmentActivity implements
 		return beginL.bearingTo(endL);
 	}
 
-
+@Override
+protected void onStart() {
+	super.onStart();
+    // Monitor launch times and interval from installation
+    RateThisApp.onStart(this);
+    // If the criteria is satisfied, "Rate this app" dialog will be shown
+    RateThisApp.showRateDialogIfNeeded(this);
+}
 }
