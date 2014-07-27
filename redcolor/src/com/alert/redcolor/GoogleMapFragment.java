@@ -144,11 +144,11 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				Seconds seconds = Seconds.secondsBetween(a.getTime(), now);
 				//paint on map
 				MainActivity activity = (MainActivity)getActivity();
-				//activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",seconds.toPeriod().getMillis());
+				activity.drawAlertHotzone(new LatLng(city.getLat(), city.getLng()),"red",seconds.toPeriod().getMillis());
 
 				long flyTime = pq.getTime(city.getId());
 				
-				activity.drawMissilePath(pq.getTime(city.getId()),city.getLat(),city.getLng(),flyTime);
+				//activity.drawMissilePath(pq.getTime(city.getId()),city.getLat(),city.getLng(),flyTime);
 				//activity.stayInSafePlaceTimer();
 				//Log.i("Paint","Painting city - "+city.getHebName()+ " "+seconds.toString());
 				
