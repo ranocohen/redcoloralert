@@ -803,9 +803,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void drawMissilePath(int time,double lat,double lon,int sec) {
+	public void drawMissilePath(long time,double lat,double lon,int sec) {
 		final Handler mHandler = new Handler();
-		Animator animator = new Animator(time,mHandler,lat,lon,sec);
+		Animator animator = new Animator((int) time,mHandler,lat,lon,sec);
 
 		mHandler.postDelayed(animator, 1000);
 		animator.startAnimation(true);
