@@ -177,7 +177,7 @@ public class ProviderQueries {
 		Cursor c = null;
 		try {
 			c = mCon.getContentResolver().query(
-					AlertProvider.CITIES_CONTENT_URI,
+					ContentUris.withAppendedId(AlertProvider.CITIES_CONTENT_URI, cityId),
 					new String[] { CitiesColumns.time }, null, null,null);
 
 			while (c.moveToNext()) {

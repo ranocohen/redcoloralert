@@ -1212,6 +1212,7 @@ public class MainActivity extends FragmentActivity implements
 
 
 		public Animator(final int time, Handler mHandler,double lat,double lon, long sec) {
+			Log.i("TIME", ""+time);
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
 			this.sec = time;
