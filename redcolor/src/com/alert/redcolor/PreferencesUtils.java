@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class PreferencesUtils {
 
@@ -17,8 +18,8 @@ public class PreferencesUtils {
 	public static final String VIBRATE_KEY = "vibrate";
 	public static final String NOTIFY_KEY = "pref_enable_alerts";
 	public static final String NIGHTMODE_KEY = "pref_enable_nightmode";
-	public static final String NIGHTMODE_START_KEY = "pref_night_start";
-	public static final String NIGHTMODE_END_KEY = "pref_night_end";
+	public static final String NIGHTMODE_START_KEY = "night_mode_start";
+	public static final String NIGHTMODE_END_KEY = "night_mode_end";
 	public static final String PREF_ALL_ALERTS_VALUE = "all";
 	public static final String PREF_LOCAL_ALERTS_VALUE = "local";
 	public static final String PREF_CUSTOM_ALERT_VALUE = "custom";
@@ -62,8 +63,8 @@ public class PreferencesUtils {
 		if(!enabled)
 			return false;
 		
-		return true;
-		/*String alertType = PreferencesUtils.getAlertsType(con);
+
+		String alertType = PreferencesUtils.getAlertsType(con);
 		if(alertType.equals(PreferencesUtils.PREF_LOCAL_ALERTS_VALUE))
 			return true;
 		
@@ -82,10 +83,13 @@ public class PreferencesUtils {
 		if(start.isAfter(end))
 			start = start.minusDays(1);
 		
+		Log.i("Night", ""+inNightMode);
+		Log.i("NightStart", start.toString());
+		Log.i("NightEnd", end.toString());
 		
 		Interval inter = new Interval(start,end);
 		return (!inter.contains(alertTime));
-*/		
+		
 
 	}	
 	public static long[] getSelectedTownsIds(Context con) {
