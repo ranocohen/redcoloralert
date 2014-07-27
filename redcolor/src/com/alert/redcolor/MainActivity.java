@@ -1215,7 +1215,7 @@ public class MainActivity extends FragmentActivity implements
 			Log.i("TIME", ""+time);
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
-			this.sec = time;
+			this.sec = sec;
 			endLatLng = new LatLng(lat, lon);
 			beginLatLng = new LatLng(31.522561, 34.453593);
 			
