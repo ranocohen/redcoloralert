@@ -148,7 +148,7 @@ public class GoogleMapFragment extends SupportMapFragment implements LoaderCallb
 				activity.drawMissilePath(pq.getTime(city.getId()),city.getLat(),city.getLng(),seconds.toPeriod().getMillis());
 				//activity.stayInSafePlaceTimer();
 				//Log.i("Paint","Painting city - "+city.getHebName()+ " "+seconds.toString());
-
+				
 			}
 
 		}

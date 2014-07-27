@@ -1210,9 +1210,8 @@ public class MainActivity extends FragmentActivity implements
 		private final Interpolator interpolator = new LinearInterpolator();
 		
 		public Animator(final int time, Handler mHandler,double lat,double lon, int sec) {
-			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
-			this.sec = sec;
+			this.sec = time;
 			endLatLng = new LatLng(lat, lon);
 			beginLatLng = new LatLng(31.522561, 34.453593);
 			
