@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.alert.redcolor.adapters.TopAlert;
+import com.alert.redcolor.adapters.TopAlertsAdapter;
 import com.alert.redcolor.analytics.AnalyticsApp;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -30,7 +33,8 @@ public class StatsFragment extends Fragment {
 
 	public final static String TAG = "Stats";
 	private BarChart mBarChart;
-
+	private ListView mList;
+	private TopAlertsAdapter adapter;
 	public static StatsFragment newInstance() {
 		StatsFragment fragment = new StatsFragment();
 		Bundle args = new Bundle();
@@ -42,22 +46,39 @@ public class StatsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.stats, container, false);
-
-		mBarChart = (BarChart) v.findViewById(R.id.chart);
-
+		mList = (ListView) v.findViewById(R.id.list);
+		adapter = new TopAlertsAdapter(getActivity(), R.id.location,new ArrayList<TopAlert>());
+		mList.setAdapter(adapter);
 		queryData();
 
 		return v;
 	}
 
 	private void queryData() {
-		long now = (long) (DateTime.now().getMillis()/1000.0);
+		DateTime nowDt = DateTime.now();
+		long now = (long) (nowDt.getMillis()/1000.0);
+		long lastWeek = (long) (nowDt.minusDays(7).getMillis()/1000.0);
+		
+		String url = Utils.SERVER_STATS + String.valueOf(lastWeek)+"/"+String.valueOf(now)+"?top=5"; 
 		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET,
-				Utils.SERVER_STATS + "1406129233/"+String.valueOf(now)+"?top=10", null,
+				url, null,
 				new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
 						try {
+							
+							JSONArray data = response.getJSONArray("data");
+							
+							for (int i = 0; i < data.length(); i++) {
+								JSONObject stats = data.getJSONObject(i);
+								int count = stats.getInt("total");
+								String id = stats.getString("_id");
+								
+								adapter.add(new TopAlert(id, count));	
+							}
+							
+							adapter.notifyDataSetChanged();
+							/*
 							JSONArray data = response.getJSONArray("data");
 							ArrayList<Entry> entries = new ArrayList<Entry>();
 							ArrayList<String> xVals = new ArrayList<String>();
@@ -67,7 +88,7 @@ public class StatsFragment extends Fragment {
 								xVals.add("R" + i);
 								entries.add(new Entry(count, i));
 							}
-
+							
 							ChartData chartData = new ChartData(xVals,
 									new DataSet(entries, "RED"));
 							ColorTemplate ct = new ColorTemplate();
@@ -90,8 +111,8 @@ public class StatsFragment extends Fragment {
 							});
 							mBarChart.getLegend().setFormSize(10f);
 							mBarChart.invalidate();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
+					*/	} catch (JSONException e) {
+						e.printStackTrace();
 						}
 						;
 					}
