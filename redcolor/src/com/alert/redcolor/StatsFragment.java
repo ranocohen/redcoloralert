@@ -1,5 +1,6 @@
 package com.alert.redcolor;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
@@ -23,11 +24,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.data.ChartData;
-import com.github.mikephil.charting.data.DataSet;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.Legend.LegendForm;
 
 public class StatsFragment extends Fragment {
 
@@ -72,8 +68,7 @@ public class StatsFragment extends Fragment {
 							for (int i = 0; i < data.length(); i++) {
 								JSONObject stats = data.getJSONObject(i);
 								int count = stats.getInt("total");
-								String id = stats.getString("_id");
-								
+								String id = new String(stats.getString("_id").getBytes("ISO-8859-1"), "UTF-8");
 								adapter.add(new TopAlert(id, count));	
 							}
 							
@@ -113,7 +108,10 @@ public class StatsFragment extends Fragment {
 							mBarChart.invalidate();
 					*/	} catch (JSONException e) {
 						e.printStackTrace();
-						}
+						} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 						;
 					}
 				}, new Response.ErrorListener() {
