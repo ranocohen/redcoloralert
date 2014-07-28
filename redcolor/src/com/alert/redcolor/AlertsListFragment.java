@@ -10,6 +10,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,12 +34,12 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 public class AlertsListFragment extends ListFragment implements
-		LoaderCallbacks<Cursor>, OnScrollListener {
+		LoaderCallbacks<Cursor>, OnScrollListener, OnRefreshListener {
 
 	public final static String TAG = "AlertsList";
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
-
+	private SwipeRefreshLayout swipe;
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
 		Bundle args = new Bundle();
@@ -55,10 +56,8 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 
-		setEmptyText(getString(R.string.no_alerts));
 
-		// Start out with a progress indicator.
-		setListShown(false);
+
 
 		getListView().setDivider(
 				getResources().getDrawable(R.drawable.fade_divider));
@@ -88,7 +87,19 @@ public class AlertsListFragment extends ListFragment implements
 		super.onCreate(savedInstanceState);
 		super.onActivityCreated(savedInstanceState);
 	}
-
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.fragmnet_alerts_list, container, false);
+		  swipe = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+		  swipe.setOnRefreshListener(this);
+		  swipe.setColorScheme(android.R.color.holo_red_dark, 
+	                android.R.color.holo_red_light, 
+	                android.R.color.holo_red_dark, 
+	                android.R.color.holo_red_light);
+		  
+		  return v;
+	}
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
@@ -101,12 +112,7 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
-		// The list should now be shown.
-		if (isResumed()) {
-			setListShown(true);
-		} else {
-			setListShownNoAnimation(true);
-		}
+	
 	}
 
 	@Override
@@ -282,6 +288,12 @@ public class AlertsListFragment extends ListFragment implements
 	            .build());
 		}
 
+	}
+
+	@Override
+	public void onRefresh() {
+		((MainActivity)getActivity()).queryServer();
+		swipe.setRefreshing(false);
 	}
 
 }
