@@ -2,10 +2,6 @@ package com.alert.redcolor;
 
 import org.joda.time.DateTime;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -37,14 +33,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 public class AlertsListFragment extends ListFragment implements
-		LoaderCallbacks<Cursor>, OnScrollListener, OnRefreshListener {
+		LoaderCallbacks<Cursor>, OnScrollListener {
 
 	public final static String TAG = "AlertsList";
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
-	
-	private	PullToRefreshLayout mPullToRefreshLayout;
-
 
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
@@ -79,7 +72,7 @@ public class AlertsListFragment extends ListFragment implements
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
-		
+
 		// analytics
 		// Get tracker.
 		Tracker t = ((AnalyticsApp) getActivity().getApplication())
@@ -94,27 +87,6 @@ public class AlertsListFragment extends ListFragment implements
 
 		super.onCreate(savedInstanceState);
 		super.onActivityCreated(savedInstanceState);
-	}
-	
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onViewCreated(view, savedInstanceState);
-		
-        ViewGroup viewGroup = (ViewGroup) view;
-
-		 // As we're using a ListFragment we create a PullToRefreshLayout manually
-        mPullToRefreshLayout = new PullToRefreshLayout(viewGroup.getContext());
-        
-
-        // We can now setup the PullToRefreshLayout
-        ActionBarPullToRefresh.from(getActivity())
-                // We need to insert the PullToRefreshLayout into the Fragment's ViewGroup
-                .insertLayoutInto(viewGroup)
-                // Here we mark just the ListView and it's Empty View as pullable
-                .theseChildrenArePullable(android.R.id.list, android.R.id.empty)
-                .listener(this)
-                .setup(mPullToRefreshLayout);
 	}
 
 	@Override
@@ -310,14 +282,6 @@ public class AlertsListFragment extends ListFragment implements
 	            .build());
 		}
 
-	}
-
-	@Override
-	public void onRefreshStarted(View view) {
-		//TODO let user refresh database manually
-        mPullToRefreshLayout.setRefreshComplete();
-
-		
 	}
 
 }
