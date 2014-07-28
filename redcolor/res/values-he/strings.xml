@@ -75,5 +75,8 @@
     <string name="location_reminder_message">על מנת להשתמש באפשרות זו, יש לאפשר את שירות המיקום.</string>
     <string name="never_remind">אל תזכיר שנית</string>
     <string name="version">גרסא</string>
-
+<string name="rta_dialog_message">אם אהבת את האפליקציה אנא קח/י רגע לדרג ולתמוך בה</string>
+    <string name="rta_dialog_ok">דרג/י אותנו!</string>
+    <string name="rta_dialog_cancel">הזכר לי מאוחר יותר</string>
+    <string name="rta_dialog_no">לא תודה</string>
 </resources>

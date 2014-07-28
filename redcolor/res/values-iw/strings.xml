@@ -39,13 +39,13 @@
     <string name="alert_areas_summery">בחר יישובים להתרעות</string>
     <string name="vibrate">רטט</string>
     <string name="alerts">התרעות</string>
-        <string name="night_mode">מצב לילה</string>
+    <string name="night_mode">מצב לילה</string>
     <string name="pref_alert_type_default">all</string>
     <string name="pref_alert_type_title">התרעות</string>
     <string name="pref_alert_type_default">all</string>
     <string name="sucessfull_test">התרעת בדיקה!</string>
     <string name="test_connection_summery">התרעת בדיקה</string>
-    
+
     <string-array name="pref_alert_type_enteries"></string-array>
     <string-array name="pref_alert_type_enteries">
         <item>כל ההתרעות</item>
@@ -75,5 +75,9 @@
     <string name="location_reminder_message">על מנת להשתמש באפשרות זו, יש לאפשר את שירות המיקום.</string>
     <string name="never_remind">אל תזכיר שנית</string>
     <string name="version">גירסא</string>
+    <string name="rta_dialog_message">אם אהבת את האפליקציה אנא קח/י רגע לדרג ולתמוך בה</string>
+    <string name="rta_dialog_ok">דרג/י אותנו!</string>
+    <string name="rta_dialog_cancel">הזכר לי מאוחר יותר</string>
+    <string name="rta_dialog_no">לא תודה</string>
 
 </resources>

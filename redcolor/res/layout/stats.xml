@@ -4,21 +4,23 @@
     android:gravity="start"
     android:orientation="vertical" >
 
-    <FrameLayout 
-        android:background="@drawable/bg_card"
-        android:padding="10dp"
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content"
-        >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_card" >
+
         <ListView
             android:id="@+id/list"
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content"
-            ></ListView>
-        </FrameLayout>
-   <!--   <com.github.mikephil.charting.charts.BarChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+    </FrameLayout>
+    <!--
+          <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
--->
+    -->
+
 </LinearLayout>
