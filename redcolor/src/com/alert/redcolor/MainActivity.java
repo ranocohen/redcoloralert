@@ -1111,10 +1111,7 @@ public class MainActivity extends FragmentActivity implements
 					inserter.bind(timeCol, time);
 					inserter.bind(orefIdCol, oref_id);
 					inserter.execute();
-					/*
-					 * getContentResolver().insert(
-					 * AlertProvider.CITIES_CONTENT_URI, cityCv);
-					 */
+				
 					// Avoid duplicates of pikud areas
 					orefMap.put(Long.valueOf(oref_id), oref_loc_str);
 
@@ -1149,7 +1146,7 @@ public class MainActivity extends FragmentActivity implements
 				}
 				db.setTransactionSuccessful();
 			} catch (IOException ex) {
-				// handle exception
+				
 			} finally {
 				try {
 					db.endTransaction();
