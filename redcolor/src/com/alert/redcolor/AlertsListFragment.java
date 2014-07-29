@@ -12,6 +12,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,8 @@ public class AlertsListFragment extends ListFragment implements
 	public final static String TAG = "AlertsList";
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
-	private SwipeRefreshLayout swipe;
+	private SwipeRefreshLayout mSwipe;
+
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
 		Bundle args = new Bundle();
@@ -55,9 +57,6 @@ public class AlertsListFragment extends ListFragment implements
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-
-
-
 
 		getListView().setDivider(
 				getResources().getDrawable(R.drawable.fade_divider));
@@ -87,19 +86,21 @@ public class AlertsListFragment extends ListFragment implements
 		super.onCreate(savedInstanceState);
 		super.onActivityCreated(savedInstanceState);
 	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragmnet_alerts_list, container, false);
-		  swipe = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
-		  swipe.setOnRefreshListener(this);
-		  swipe.setColorScheme(android.R.color.holo_red_dark, 
-	                android.R.color.holo_red_light, 
-	                android.R.color.holo_red_dark, 
-	                android.R.color.holo_red_light);
-		  
-		  return v;
+		View v = inflater.inflate(R.layout.fragmnet_alerts_list, container,
+				false);
+		mSwipe = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+		mSwipe.setOnRefreshListener(this);
+		mSwipe.setColorScheme(android.R.color.holo_red_dark,
+				android.R.color.holo_red_light, android.R.color.holo_red_dark,
+				android.R.color.holo_red_light);
+
+		return v;
 	}
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
@@ -112,7 +113,7 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mAdapter.swapCursor(data);
-	
+
 	}
 
 	@Override
@@ -136,13 +137,13 @@ public class AlertsListFragment extends ListFragment implements
 
 		public void resetPage() {
 			this.page = 0;
-		//	Log.i("Adapter", "resting page to 0");
+			// Log.i("Adapter", "resting page to 0");
 		}
 
 		public void increasePage() {
 
 			page++;
-		//	Log.i("Adapter", "Increasing page to " + page);
+			// Log.i("Adapter", "Increasing page to " + page);
 		}
 
 		public int getPage() {
@@ -189,31 +190,20 @@ public class AlertsListFragment extends ListFragment implements
 
 		public boolean isLoading() {
 
-		//	Log.i("Adapter", "is loading " + isLoading);
+			// Log.i("Adapter", "is loading " + isLoading);
 			return isLoading;
 		}
-
-		public void setLoading(boolean isLoading) {
-			if (getActivity() != null)
-				getActivity().setProgressBarIndeterminateVisibility(isLoading);
-		//	Log.i("Adapter", "setting is loading " + isLoading);
-			this.isLoading = isLoading;
+		public void setLoading(boolean loading) {
+			this.isLoading = loading;
 		}
-
 		public void loadMore() {
-			/*
-			 * We clean the database on push notification , it means we must
-			 * reset page as well
-			 */
-			if (getCount() == Utils.MAX_ENTRIES)
-				resetPage();
 
 			/* Query the server */
 			JsonRequest jr = new JsonRequest();
-			mAdapter.setLoading(true);
+
 			// jr.requestJsonObject("http://213.57.173.69:4567/alerts/"+offset+"/25",getActivity());
-			jr.requestJsonObject(Utils.SERVER_ALERTS + mAdapter.getPage()
-					* Utils.MAX_ENTRIES + "/50", getActivity(), mAdapter);
+			jr.requestJsonObject(Utils.SERVER_ALERTS + String.valueOf(mAdapter.getPage()+1* Utils.MAX_ENTRIES) 
+					+ "/50", getActivity(), mAdapter);
 
 			Toast.makeText(getActivity(),
 					"Loading " + mAdapter.getPage() * Utils.MAX_ENTRIES,
@@ -271,29 +261,28 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onScroll(AbsListView view, int firstVisible, int visibleCount,
 			int totalCount) {
-		
-	
-		
-		boolean loadMore =  firstVisible + visibleCount >= totalCount;
 
-		if (loadMore) {
-			   // Get tracker.
-	        Tracker t = ((AnalyticsApp) getActivity().getApplication()).getTracker(
-	            TrackerName.APP_TRACKER);
-	        // Build and send an Event.
-	        t.send(new HitBuilders.EventBuilder()
-	            .setCategory(getString(R.string.category_id))
-	            .setAction(getString(R.string.action_id))
-	            .setLabel("ScrollEnd")
-	            .build());
+		boolean loadMore;
+		
+		if(mAdapter == null)
+			return; 
+		
+		loadMore = (0 != totalCount)
+				&& ((firstVisible + visibleCount) >= (totalCount));
+
+		if (false == mAdapter.isLoading && true == loadMore) {
+
+				mAdapter.loadMore();
+				mAdapter.isLoading = true;
+			
 		}
 
 	}
 
 	@Override
 	public void onRefresh() {
-		((MainActivity)getActivity()).queryServer();
-		swipe.setRefreshing(false);
+		((MainActivity) getActivity()).queryServer();
+		mSwipe.setRefreshing(false);
 	}
 
 }

@@ -34,7 +34,6 @@ public class AnalyticsApp extends Application {
 	public static final String TAG = AppController.class
             .getSimpleName();
 	private RequestQueue mRequestQueue;
-    private ImageLoader mImageLoader;
     
     private static AnalyticsApp mInstance;
     @Override

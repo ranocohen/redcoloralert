@@ -151,14 +151,12 @@ public class JsonRequest {
 			e.printStackTrace();
 		}
 		if (adapter != null) {
-			adapter.setLoading(false);
-			if (count == 0)
 			{
+				adapter.setLoading(false);
 				adapter.increasePage();
-				adapter.loadMore();
 			}
-			Log.i("adapter"," added "+count);
-				
+			Log.i("adapter", " added " + count);
+
 		}
 
 	}
@@ -170,11 +168,11 @@ public class JsonRequest {
 				AlertColumns.AreaId + " = " + area_id + " AND "
 						+ AlertColumns.time + " = '" + dt.toString() + "'",
 				null, null);
-		if (c.getCount() > 0){
+		if (c.getCount() > 0) {
 			c.close();
 			return true;
 		}
-			c.close();
+		c.close();
 		return false;
 
 	}
@@ -241,22 +239,22 @@ public class JsonRequest {
 
 					@Override
 					public void onResponse(JSONObject response) {
-						//Log.d("VolleyJsonObjectOnResponse", response.toString());
+						// Log.d("VolleyJsonObjectOnResponse",
+						// response.toString());
 						analyzeAlertJson(response, con, null);
 					}
 				}, new Response.ErrorListener() {
 
 					@Override
 					public void onErrorResponse(VolleyError error) {
-						//VolleyLog.d("VolleyJsonObjectError",
-							//	"Error: " + error.getMessage());
+						// VolleyLog.d("VolleyJsonObjectError",
+						// "Error: " + error.getMessage());
 					}
 				});
 
 		// Adding request to request queue
 		AnalyticsApp.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 	}
-
 
 	public void requestJsonObject(String url, final Context con,
 			final AlertsAdapter adapter) {
@@ -267,15 +265,16 @@ public class JsonRequest {
 
 					@Override
 					public void onResponse(JSONObject response) {
-						//Log.d("VolleyJsonObjectOnResponse", response.toString());
+						// Log.d("VolleyJsonObjectOnResponse",
+						// response.toString());
 						analyzeAlertJson(response, con, adapter);
 					}
 				}, new Response.ErrorListener() {
 
 					@Override
 					public void onErrorResponse(VolleyError error) {
-						//VolleyLog.d("VolleyJsonObjectError",
-							//	"Error: " + error.getMessage());
+						// VolleyLog.d("VolleyJsonObjectError",
+						// "Error: " + error.getMessage());
 					}
 				});
 
