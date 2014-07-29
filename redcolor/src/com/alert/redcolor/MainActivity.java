@@ -22,7 +22,6 @@ import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import android.R.interpolator;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
@@ -88,7 +87,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -885,8 +883,8 @@ public class MainActivity extends FragmentActivity implements
 			saveRingtone();
 
 			return;
-		} else
-			queryServer();
+		} 
+			
 
 	}
 
@@ -1174,7 +1172,7 @@ public class MainActivity extends FragmentActivity implements
 
 			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
 			// :OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-			queryServer();
+			
 
 		}
 
@@ -1185,10 +1183,10 @@ public class MainActivity extends FragmentActivity implements
 		ProviderQueries pq = new ProviderQueries(this);
 		long latest = pq.getLastestAlertTime();
 		if (latest != -1)
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25/?timestamp="
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/20/?timestamp="
 					+ latest, getApplicationContext());
 		else
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",
+			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/20",
 					getApplicationContext());
 
 	}

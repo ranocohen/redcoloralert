@@ -140,7 +140,7 @@ public class RedColordb extends SQLiteOpenHelper {
 		}
 		
 	}
-	/* Keeping only 50 entries in db */
+
 	public void updatePainted() {
 		
 		ProviderQueries pq = new ProviderQueries(mCon);

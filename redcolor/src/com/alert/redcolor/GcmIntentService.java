@@ -139,7 +139,7 @@ public class GcmIntentService extends IntentService {
 						e.printStackTrace();
 					}
 
-					RedColordb.getInstance(getApplicationContext()).cleanDatabase();
+				
 
 					boolean toNotify = false;
 					if (PreferencesUtils.toNotify(getApplicationContext(),dt)) {

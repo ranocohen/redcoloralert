@@ -15,7 +15,7 @@ import com.alert.redcolor.db.RedColordb;
 
 public class Utils {
 	/* Max alerts entries on the db */
-	static final int MAX_ENTRIES = 50;
+	static final int MAX_ENTRIES = 25;
 	// give your server registration url here
 
 	static final String SERVER = "http://213.57.173.69:4567";

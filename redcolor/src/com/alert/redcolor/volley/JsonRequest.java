@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Handler;
 import android.util.Log;
 
 import com.alert.redcolor.AlertsListFragment.AlertsAdapter;
@@ -30,10 +29,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 public class JsonRequest {
-	ArrayList<Alert> alerts;
 
 	public JsonRequest() {
-		alerts = new ArrayList<Alert>();
 	}
 
 	public void pushWithParams(String url, final String regid) {
@@ -103,6 +100,8 @@ public class JsonRequest {
 
 	public void analyzeAlertJson(JSONObject response, Context context,
 			AlertsAdapter adapter) {
+		if(adapter == null)
+			return;
 		int count = 0;
 		try {
 			JSONArray data = response.getJSONArray("data");
@@ -122,18 +121,10 @@ public class JsonRequest {
 																	// DB
 					int area_id = area.getInt("area_id");// TODO IDAN DB
 					/* Adding the alert to db */
-					ContentValues cv = new ContentValues();
-					cv.put(AlertColumns.AreaId, area_id);
-					cv.put(AlertColumns.time, dt.toString());
-					cv.put(AlertColumns.painted, 0);
-					if (!isDuplciate(area_id, dt, context)) {
-						context.getContentResolver().insert(
-								AlertProvider.ALERTS_CONTENT_URI, cv);
-						count++;
-					}
-
-					JSONArray locations = area.getJSONArray("locations");
-
+					
+					Alert a = new Alert(area_id,dt);
+					adapter.add(a);
+					count++;
 					// no need for this but we'll keep it just in case
 
 					/*
@@ -145,6 +136,7 @@ public class JsonRequest {
 					 * (DB) }
 					 */
 				}
+				adapter.notifyDataSetChanged();
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -155,10 +147,10 @@ public class JsonRequest {
 				adapter.setLoading(false);
 				adapter.increasePage();
 			}
-			Log.i("adapter", " added " + count);
+		
 
 		}
-
+		Log.i("endless", " added " + count);
 	}
 
 	private boolean isDuplciate(long area_id, DateTime dt, Context context) {
@@ -179,6 +171,7 @@ public class JsonRequest {
 
 	public ArrayList<Alert> analyzeAlertJson2(JSONObject response,
 			Context context) {
+		
 		try {
 			JSONArray data = response.getJSONArray("data");
 			// iterates on each alert
@@ -200,7 +193,7 @@ public class JsonRequest {
 					/* Adding the alert to db */
 
 					Alert a = new Alert(area_id, dt);
-					alerts.add(a);
+					
 
 					JSONArray locations = area.getJSONArray("locations");
 
@@ -220,7 +213,7 @@ public class JsonRequest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return alerts;
+		return null;
 	}
 
 	private static DateTime parseDateTime(String input) {
@@ -234,6 +227,7 @@ public class JsonRequest {
 	public void requestJsonObject(String url, final Context con) {
 		// Tag used to cancel the request
 		String tag_json_obj = "json_obj_req";
+		Log.i("endless", url);
 		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET, url,
 				null, new Response.Listener<JSONObject>() {
 
@@ -260,6 +254,7 @@ public class JsonRequest {
 			final AlertsAdapter adapter) {
 		// Tag used to cancel the request
 		String tag_json_obj = "json_obj_req";
+		Log.i("endless", url);
 		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET, url,
 				null, new Response.Listener<JSONObject>() {
 
