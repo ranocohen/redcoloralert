@@ -21,12 +21,17 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -46,6 +51,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,15 +69,20 @@ import android.widget.Toast;
 
 import com.alert.redcolor.AlertsListFragment.OnRedSelectListener;
 import com.alert.redcolor.GoogleMapFragment.OnGoogleMapFragmentListener;
+import com.alert.redcolor.analytics.AnalyticsApp;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.CitiesColumns;
 import com.alert.redcolor.db.RedColordb.OrefColumns;
 import com.alert.redcolor.db.RedColordb.Tables;
+import com.alert.redcolor.model.Alert;
 import com.alert.redcolor.services.LocationReceiver;
 import com.alert.redcolor.services.LocationService;
 import com.alert.redcolor.ui.RateThisApp;
-import com.alert.redcolor.volley.JsonRequest;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -103,17 +114,16 @@ public class MainActivity extends FragmentActivity implements
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
 	private static final int STARTING_ALPHA = 90; // hot zone starting color
-
+	private ArrayList<Alert> alerts;
 	// fused fuck shit
 	private LocationClient locationclient;
 	private LocationRequest locationrequest;
 	private Intent mIntentService;
 	private PendingIntent mPendingIntent;
 	// =====
-
 	private String SENDER_ID = "295544852061";
 	public static MapView map;
-
+	private BroadcastReceiver mBroadcast;
 	GoogleCloudMessaging gcm;
 	AtomicInteger msgId = new AtomicInteger();
 	SharedPreferences prefs;
@@ -143,14 +153,13 @@ public class MainActivity extends FragmentActivity implements
 	 * app, one at a time.
 	 */
 	ViewPager mViewPager;
-	
 
-	private List<Marker> markers = new ArrayList<Marker>(); //TODO MOVE UP
+	private List<Marker> markers = new ArrayList<Marker>(); // TODO MOVE UP
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		
+
 		Crashlytics.start(this);
 		// run location service
 		// Intent intent = new Intent(this, BackgroundLocationService.class);
@@ -196,12 +205,6 @@ public class MainActivity extends FragmentActivity implements
 			Log.i(Utils.TAG, "No valid Google Play Services APK found.");
 		}
 
-		/*
-		 * JsonRequest jr = new JsonRequest();
-		 * jr.pushWithParams("http://213.57.173.69:4567/android_test",
-		 * getRegistrationId(context));
-		 */
-
 		// check if location service is on
 		LocationManager manager = (LocationManager) getApplication()
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -214,21 +217,15 @@ public class MainActivity extends FragmentActivity implements
 		} else
 			locationEnabled = true;
 
-		// fused testing
-		/*
-		 * locationClient = new LocationClient(this, this, this);
-		 * 
-		 * locationClient.connect();
-		 * 
-		 * locationRequest = LocationRequest.create();
-		 * 
-		 * //----
-		 */
-		// Use high accuracy
+		mBroadcast = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				String s = intent.getStringExtra("TIME");
 
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections
-		// of the app.
+			}
+		};
+	
+
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(
 				getSupportFragmentManager());
 
@@ -279,10 +276,10 @@ public class MainActivity extends FragmentActivity implements
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 
+		actionBar.addTab(actionBar.newTab().setText(getString(R.string.stats))
+				.setTabListener(this));
 		
-		  actionBar.addTab(actionBar.newTab()
-		  .setText(getString(R.string.stats)) .setTabListener(this));
-		 
+		queryServer(0);
 	}
 
 	private void showNoConnectionError() {
@@ -351,7 +348,7 @@ public class MainActivity extends FragmentActivity implements
 			case 0:
 				return new GoogleMapFragment();
 			case 1:
-				return new AlertsListFragment();
+				return AlertsListFragment.newInstance();
 			case 2:
 				return new StatsFragment();
 
@@ -502,25 +499,22 @@ public class MainActivity extends FragmentActivity implements
 		final Circle circleZone;
 
 		circleZone = mUIGoogleMap.addCircle(circleOptions);
-		
-/*		// add to hashmap as well
-		circles.add(circleZone);
-		
-		new CountDownTimer(1100, 10) {
-			
-			@Override
-			public void onTick(long millisUntilFinished) {
-				if(circleZone.getRadius()!=11000.0)
-				circleZone.setRadius(circleZone.getRadius()+100);
-				
-			}
-				
-			@Override
-			public void onFinish() {
-				// TODO Auto-generated method stub
-				
-			}
-		}.start();*/
+
+		/*
+		 * // add to hashmap as well circles.add(circleZone);
+		 * 
+		 * new CountDownTimer(1100, 10) {
+		 * 
+		 * @Override public void onTick(long millisUntilFinished) {
+		 * if(circleZone.getRadius()!=11000.0)
+		 * circleZone.setRadius(circleZone.getRadius()+100);
+		 * 
+		 * }
+		 * 
+		 * @Override public void onFinish() { // TODO Auto-generated method stub
+		 * 
+		 * } }.start();
+		 */
 
 		MarkerOptions markerOptions = new MarkerOptions().position(position);
 		if (color.equals("blue"))
@@ -801,9 +795,9 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void drawMissilePath(long time,double lat,double lon,long sec) {
+	public void drawMissilePath(long time, double lat, double lon, long sec) {
 		final Handler mHandler = new Handler();
-		Animator animator = new Animator((int) time,mHandler,lat,lon,sec);
+		Animator animator = new Animator((int) time, mHandler, lat, lon, sec);
 
 		mHandler.postDelayed(animator, 1000);
 		animator.startAnimation(true);
@@ -818,8 +812,6 @@ public class MainActivity extends FragmentActivity implements
 			mUIGoogleMap.setMyLocationEnabled(true);
 			mUIGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 			mUIGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-			
-			
 
 			// lastLatLng = mUIGoogleMap.getCameraPosition().target;
 
@@ -827,7 +819,6 @@ public class MainActivity extends FragmentActivity implements
 			// Tel aviv location
 			double lat = 32.055168;
 			double lng = 34.799744;
-			
 
 			Location location = new Location("");
 			location.setLatitude(lat);
@@ -846,7 +837,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcast);
 		super.onStop();
 
 	}
@@ -863,9 +854,6 @@ public class MainActivity extends FragmentActivity implements
 		}
 		if (locationClient != null)
 			locationClient.disconnect();
-
-		RedColordb.getInstance(this).cleanDatabase();
-		RedColordb.getInstance(this).updatePainted();
 	}
 
 	/* Inserting the data from csv to database only in the first launch */
@@ -883,8 +871,7 @@ public class MainActivity extends FragmentActivity implements
 			saveRingtone();
 
 			return;
-		} 
-			
+		}
 
 	}
 
@@ -1109,7 +1096,7 @@ public class MainActivity extends FragmentActivity implements
 					inserter.bind(timeCol, time);
 					inserter.bind(orefIdCol, oref_id);
 					inserter.execute();
-				
+
 					// Avoid duplicates of pikud areas
 					orefMap.put(Long.valueOf(oref_id), oref_loc_str);
 
@@ -1144,7 +1131,7 @@ public class MainActivity extends FragmentActivity implements
 				}
 				db.setTransactionSuccessful();
 			} catch (IOException ex) {
-				
+
 			} finally {
 				try {
 					db.endTransaction();
@@ -1172,101 +1159,132 @@ public class MainActivity extends FragmentActivity implements
 
 			// TODO IDAN FORGOT TO CHANGE TO PRODUCTOIN?!??!?!?!?!
 			// :OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-			
 
 		}
 
 	}
 
-	public void queryServer() {
-		JsonRequest jr = new JsonRequest();
-		ProviderQueries pq = new ProviderQueries(this);
-		long latest = pq.getLastestAlertTime();
-		if (latest != -1)
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/20/?timestamp="
-					+ latest, getApplicationContext());
-		else
-			jr.requestJsonObject(Utils.SERVER_ALERTS + "0/20",
-					getApplicationContext());
+	public void queryServer(final int page) {
 
-	}
-	
-	public class Animator implements Runnable {
 		
+		String url = Utils.SERVER_ALERTS + page+"/25";
+		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
+				null, new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						alerts = new ArrayList<Alert>();
+						try {
+
+							JSONArray data = response.getJSONArray("data");
+							// iterates on each alert
+							for (int i = 0; i < data.length(); i++) {
+								JSONObject alert = data.getJSONObject(i);
+								JSONArray areas = alert.getJSONArray("areas");
+								String time = alert.getString("time");
+
+								DateTime dt = Utils.parseDateTime(time);
+
+								for (int j = 0; j < areas.length(); j++) {
+									JSONObject area = areas.getJSONObject(j);
+									int area_id = area.getInt("area_id");
+									Alert a = new Alert(area_id, dt);
+									alerts.add(a);
+								}
+
+							}
+							Log.i("endless","Loading "+page);
+							AlertsListFragment fragment = (AlertsListFragment) getSupportFragmentManager()
+									.findFragmentByTag(makeFragmentName(R.id.pager,1));
+							if (fragment != null)
+								fragment.addAlerts(alerts);
+							
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+
+					}
+				});
+		((AnalyticsApp) getApplication()).addToRequestQueue(jr);
+	}
+
+	public class Animator implements Runnable {
+
 		private int ANIMATE_SPEEED = 5000;
 		private static final int ANIMATE_SPEEED_TURN = 1000;
 		private static final int BEARING_OFFSET = 20;
 		final Handler handler;
 		long sec;
-		
-		Random rnd = new Random(); 
+
+		Random rnd = new Random();
 		int color = Color.argb(255, 255, rnd.nextInt(256), rnd.nextInt(256));
 
 		private final Interpolator interpolator = new LinearInterpolator();
-		
 
-
-		public Animator(final int time, Handler mHandler,double lat,double lon, long sec) {
-			Log.i("TIME", ""+time);
+		public Animator(final int time, Handler mHandler, double lat,
+				double lon, long sec) {
+			Log.i("TIME", "" + time);
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
 			this.sec = sec;
 			endLatLng = new LatLng(lat, lon);
 			beginLatLng = new LatLng(31.522561, 34.453593);
-			
+
 		}
-		
+
 		int currentIndex = 0;
-		
+
 		float tilt = 90;
 		float zoom = 15.5f;
-		boolean upward=true;
-		
+		boolean upward = true;
+
 		long start = SystemClock.uptimeMillis();
-		
-		LatLng endLatLng = null; 
+
+		LatLng endLatLng = null;
 		LatLng beginLatLng = null;
-		
+
 		boolean showPolyline = false;
-		
+
 		private Marker trackingMarker;
-		
+
 		public void reset() {
 			start = SystemClock.uptimeMillis();
 			currentIndex = 0;
-/*			endLatLng = getEndLatLng();
-			beginLatLng = getBeginLatLng();*/
+			/*
+			 * endLatLng = getEndLatLng(); beginLatLng = getBeginLatLng();
+			 */
 		}
-		
+
 		public void stop() {
 			trackingMarker.remove();
 			handler.removeCallbacks(this);
-			
+
 		}
 
 		public void initialize(boolean showPolyLine) {
 			reset();
 			this.showPolyline = showPolyLine;
-			
-			//highLightMarker(0);
-			
+
+			// highLightMarker(0);
+
 			if (showPolyLine) {
 				polyLine = initializePolyLine();
 			}
-			
+
 		}
-		
-		
+
 		private Polyline polyLine;
 		private PolylineOptions rectOptions = new PolylineOptions();
 
-		
 		private Polyline initializePolyLine() {
-			//polyLinePoints = new ArrayList<LatLng>();
+			// polyLinePoints = new ArrayList<LatLng>();
 			rectOptions.add(new LatLng(31.522561, 34.453593)).color(color);
 			return mUIGoogleMap.addPolyline(rectOptions);
 		}
-		
+
 		/**
 		 * Add the marker to the polyline.
 		 */
@@ -1275,82 +1293,86 @@ public class MainActivity extends FragmentActivity implements
 			points.add(latLng);
 			polyLine.setPoints(points);
 		}
-		
 
 		public void stopAnimation() {
 			this.stop();
 		}
-		
-		public void startAnimation(boolean showPolyLine) {
-				this.initialize(showPolyLine);
-		}		
 
+		public void startAnimation(boolean showPolyLine) {
+			this.initialize(showPolyLine);
+		}
 
 		@Override
 		public void run() {
-			
+
 			long elapsed = SystemClock.uptimeMillis() - start;
-			double t = interpolator.getInterpolation((float)elapsed/sec);
-			
-//			LatLng endLatLng = getEndLatLng();
-//			LatLng beginLatLng = getBeginLatLng();
-			
-			double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
-			double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
+			double t = interpolator.getInterpolation((float) elapsed / sec);
+
+			// LatLng endLatLng = getEndLatLng();
+			// LatLng beginLatLng = getBeginLatLng();
+
+			double lat = t * endLatLng.latitude + (1 - t)
+					* beginLatLng.latitude;
+			double lng = t * endLatLng.longitude + (1 - t)
+					* beginLatLng.longitude;
 			LatLng newPosition = new LatLng(lat, lng);
-			
-			//trackingMarker.setPosition(newPosition);
-			
+
+			// trackingMarker.setPosition(newPosition);
+
 			if (showPolyline) {
 				updatePolyLine(newPosition);
 			}
-			
-			// It's not possible to move the marker + center it through a cameraposition update while another camerapostioning was already happening.
-			//navigateToPoint(newPosition,tilt,bearing,currentZoom,false);
-			//navigateToPoint(newPosition,false);
 
-			if (t< 1) {
+			// It's not possible to move the marker + center it through a
+			// cameraposition update while another camerapostioning was already
+			// happening.
+			// navigateToPoint(newPosition,tilt,bearing,currentZoom,false);
+			// navigateToPoint(newPosition,false);
+
+			if (t < 1) {
 				handler.postDelayed(this, 16);
 			} else {
 				drawAlertHotzone(endLatLng, "red", sec);
 				polyLine.remove();
 			}
 		}
-		
-		
 
-		
 		private LatLng getEndLatLng() {
-			return markers.get(currentIndex+1).getPosition();
+			return markers.get(currentIndex + 1).getPosition();
 		}
-		
+
 		private LatLng getBeginLatLng() {
 			return markers.get(currentIndex).getPosition();
 		}
-		
-	};	
-	
+
+	};
+
 	private Location convertLatLngToLocation(LatLng latLng) {
 		Location loc = new Location("someLoc");
 		loc.setLatitude(latLng.latitude);
 		loc.setLongitude(latLng.longitude);
 		return loc;
 	}
-	
-	
-	private float bearingBetweenLatLngs(LatLng begin,LatLng end) {
-		Location beginL= convertLatLngToLocation(begin);
-		Location endL= convertLatLngToLocation(end);
-		
+
+	private float bearingBetweenLatLngs(LatLng begin, LatLng end) {
+		Location beginL = convertLatLngToLocation(begin);
+		Location endL = convertLatLngToLocation(end);
+
 		return beginL.bearingTo(endL);
 	}
 
-@Override
-protected void onStart() {
-	super.onStart();
-    // Monitor launch times and interval from installation
-    RateThisApp.onStart(this);
-    // If the criteria is satisfied, "Rate this app" dialog will be shown
-    RateThisApp.showRateDialogIfNeeded(this);
-}
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Monitor launch times and interval from installation
+		RateThisApp.onStart(this);
+		// If the criteria is satisfied, "Rate this app" dialog will be shown
+		RateThisApp.showRateDialogIfNeeded(this);
+		LocalBroadcastManager.getInstance(this).registerReceiver((mBroadcast),
+				new IntentFilter(GcmIntentService.NEW_PUSH));
+	}
+	private static String makeFragmentName(int viewId, int index)
+	{ 
+	     return "android:switcher:" + viewId + ":" + index;
+	} 
 }

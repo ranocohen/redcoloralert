@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:paddingStart="9dp"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:gravity="end"
             android:paddingEnd="9dp"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <TextView

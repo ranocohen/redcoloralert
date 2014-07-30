@@ -22,11 +22,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.alert.redcolor.db.AlertProvider;
 import com.alert.redcolor.db.ProviderQueries;
-import com.alert.redcolor.db.RedColordb;
 import com.alert.redcolor.db.RedColordb.AlertColumns;
+import com.alert.redcolor.model.Alert;
 import com.alert.redcolor.model.Area;
 import com.alert.redcolor.model.City;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -35,6 +36,8 @@ public class GcmIntentService extends IntentService {
 	public static final int NOTIFICATION_ID = 1;
 	private NotificationManager mNotificationManager;
 	private NotificationCompat.Builder builder;
+	private LocalBroadcastManager mBroadcaster;
+	public static String NEW_PUSH = "com.alert.redcolor.NEW.PUSH";
 	// Distance to get notification is 5km
 	private int radiusDistance = 5 * 1000;
 	private int notificationsNums = 0;
@@ -57,11 +60,25 @@ public class GcmIntentService extends IntentService {
 	 * Log.e("GCM disconnected from location", "onServiceDisconnected"); mBound
 	 * = false; } };
 	 */
-
+@Override
+public void onCreate() {
+	super.onCreate();
+	mBroadcaster = LocalBroadcastManager.getInstance(this);
+}
 	public GcmIntentService() {
 		super("GcmIntentService");
 	}
-
+	
+	
+	public void sendBroadCast(Alert alert) {
+	    Intent intent = new Intent(NEW_PUSH);
+	    if(alert != null){
+	    	intent.putExtra("ID", alert.getAreaId());
+	    	intent.putExtra("TIME", alert.getTime().toString());
+	    }
+	        
+	    mBroadcaster.sendBroadcast(intent);
+	}
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
@@ -120,8 +137,8 @@ public class GcmIntentService extends IntentService {
 
 							long id = json.getLong(i);
 							if(!isDuplciate(id, dt, getApplicationContext()))
-							insertAlert(id, dt, getApplicationContext());
-
+							//insertAlert(id, dt, getApplicationContext());
+								sendBroadCast(new Alert(id,dt));
 							Area a = pq.areaById(id);
 
 							titleBuilder.append(a.getName()).append(" ")
@@ -130,7 +147,7 @@ public class GcmIntentService extends IntentService {
 								titleBuilder.append(", ");
 
 							cities.addAll(pq.getCities(id));
-
+							
 							notificationsNums++;
 
 						}

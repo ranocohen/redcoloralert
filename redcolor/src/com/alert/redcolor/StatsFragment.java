@@ -122,6 +122,6 @@ public class StatsFragment extends Fragment {
 				});
 		((AnalyticsApp) getActivity().getApplication()).addToRequestQueue(jr);
 
-	};
+	}
 
 }

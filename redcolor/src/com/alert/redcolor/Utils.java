@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
@@ -109,4 +113,12 @@ public class Utils {
 			}
 		}
 	}
+	public static DateTime parseDateTime(String input) {
+		String pattern = "yyyy-MM-dd HH:mm:ss 'UTC";
+		DateTime utc = DateTime.parse(input, DateTimeFormat.forPattern(pattern)
+				.withZoneUTC());
+		DateTime dateTime = utc.withZone(DateTimeZone.getDefault());
+		return dateTime;
+	}
+
 }

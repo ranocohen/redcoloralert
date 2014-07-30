@@ -279,7 +279,7 @@ public class AlertsListFragment3 extends ListFragment implements
 
 	@Override
 	public void onRefresh() {
-		((MainActivity) getActivity()).queryServer();
+		((MainActivity) getActivity()).queryServer(0);
 		mSwipe.setRefreshing(false);
 	}
 

@@ -6,10 +6,14 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
@@ -40,16 +44,16 @@ public class AlertsListFragment extends ListFragment implements
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
 	private SwipeRefreshLayout mSwipe;
+	private BroadcastReceiver mBroadcast;
 
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
 		Bundle args = new Bundle();
 		args.putString("tag", TAG);
 		fragment.setArguments(args);
+		Log.i("NEW ALERST FRAGMENT","NEW LAELTRTS FRAG");
 		return fragment;
 	}
-
-	
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -62,20 +66,9 @@ public class AlertsListFragment extends ListFragment implements
 
 		mAdapter = new AlertsAdapter(getActivity(), R.id.location,
 				new ArrayList<Alert>());
+
 		setListAdapter(mAdapter);
-		JsonRequest jr = new JsonRequest();
-		jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",getActivity(),mAdapter);
-		// analytics
-		// Get tracker.
-		Tracker t = ((AnalyticsApp) getActivity().getApplication())
-				.getTracker(TrackerName.APP_TRACKER);
-
-		// Set screen name.
-		// Where path is a String representing the screen name.
-		t.setScreenName(TAG);
-
-		// Send a screen view.
-		t.send(new HitBuilders.AppViewBuilder().build());
+		
 
 		super.onCreate(savedInstanceState);
 		super.onActivityCreated(savedInstanceState);
@@ -109,13 +102,11 @@ public class AlertsListFragment extends ListFragment implements
 
 		public void resetPage() {
 			this.page = 0;
-			// Log.i("Adapter", "resting page to 0");
 		}
 
 		public void increasePage() {
 
 			page++;
-			// Log.i("Adapter", "Increasing page to " + page);
 		}
 
 		public int getPage() {
@@ -175,20 +166,11 @@ public class AlertsListFragment extends ListFragment implements
 		}
 
 		public void loadMore() {
-
-			/* Query the server */
-			JsonRequest jr = new JsonRequest();
-
-			jr.requestJsonObject(
-					Utils.SERVER_ALERTS
-							+ String.valueOf((mAdapter.getPage() + 1)
-									* Utils.MAX_ENTRIES) + "/25",
-					getActivity(), mAdapter);
-
-			Toast.makeText(getActivity(),
-					"Loading " + mAdapter.getPage() * Utils.MAX_ENTRIES,
-					Toast.LENGTH_SHORT).show();
+			setLoading(true);
+			((MainActivity)getActivity()).queryServer(getPage()+1);
+			increasePage();
 		}
+
 		@Override
 		public Alert getItem(int position) {
 			return alerts.get(position);
@@ -234,6 +216,7 @@ public class AlertsListFragment extends ListFragment implements
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnRedSelectedListener");
 		}
+	
 
 	}
 
@@ -255,7 +238,7 @@ public class AlertsListFragment extends ListFragment implements
 				&& ((firstVisible + visibleCount) >= (totalCount));
 
 		if (false == mAdapter.isLoading && true == loadMore) {
-			Log.i("endless","loadingMore "+mAdapter.getPage());
+			Log.i("endless", "loadingMore " + mAdapter.getPage());
 			mAdapter.loadMore();
 			mAdapter.isLoading = true;
 
@@ -266,9 +249,20 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onRefresh() {
 		mAdapter.clear();
-		JsonRequest jr = new JsonRequest();
-		jr.requestJsonObject(Utils.SERVER_ALERTS + "0/25",getActivity());
+		((MainActivity)getActivity()).queryServer(0);
+	}
+	public void addAlerts(ArrayList<Alert> alerts) {
+		mAdapter.addAll(alerts);
+		mAdapter.notifyDataSetChanged();
+		mAdapter.setLoading(false);
+		mSwipe.setRefreshing(false);
+		
+	}
+	public void addAlert(Alert alert) {
+		mAdapter.add(alert);
+		mAdapter.notifyDataSetChanged();
 		mSwipe.setRefreshing(false);
 	}
-
+	
+	
 }
