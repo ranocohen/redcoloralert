@@ -259,7 +259,7 @@ public class AlertsListFragment extends ListFragment implements
 		
 	}
 	public void addAlert(Alert alert) {
-		mAdapter.add(alert);
+		mAdapter.alerts.add(0, alert);
 		mAdapter.notifyDataSetChanged();
 		mSwipe.setRefreshing(false);
 	}

@@ -220,7 +220,20 @@ public class MainActivity extends FragmentActivity implements
 		mBroadcast = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				String s = intent.getStringExtra("TIME");
+				if(intent != null)
+				{
+					long id = intent.getLongExtra("ID", -1);
+					DateTime dt = DateTime.parse(intent.getStringExtra("TIME"));
+					if(id!=-1)
+					{
+						Alert a = new Alert(id,dt);
+						AlertsListFragment fragment = getAlertsListFragment();
+						if(fragment != null)
+							fragment.addAlert(a);
+					}
+						
+				}
+				
 
 			}
 		};
@@ -1192,9 +1205,7 @@ public class MainActivity extends FragmentActivity implements
 								}
 
 							}
-							Log.i("endless","Loading "+page);
-							AlertsListFragment fragment = (AlertsListFragment) getSupportFragmentManager()
-									.findFragmentByTag(makeFragmentName(R.id.pager,1));
+							AlertsListFragment fragment = getAlertsListFragment();
 							if (fragment != null)
 								fragment.addAlerts(alerts);
 							
@@ -1208,6 +1219,7 @@ public class MainActivity extends FragmentActivity implements
 
 					}
 				});
+		jr.setShouldCache(false);
 		((AnalyticsApp) getApplication()).addToRequestQueue(jr);
 	}
 
@@ -1374,5 +1386,12 @@ public class MainActivity extends FragmentActivity implements
 	private static String makeFragmentName(int viewId, int index)
 	{ 
 	     return "android:switcher:" + viewId + ":" + index;
-	} 
+	}
+	public AlertsListFragment getAlertsListFragment() {
+		AlertsListFragment fragment = (AlertsListFragment) getSupportFragmentManager()
+				.findFragmentByTag(makeFragmentName(R.id.pager,1));	
+		return fragment;
+	}
+	
+	
 }
