@@ -230,6 +230,10 @@ public class MainActivity extends FragmentActivity implements
 						AlertsListFragment fragment = getAlertsListFragment();
 						if(fragment != null)
 							fragment.addAlert(a);
+						
+						GoogleMapFragment mapFragment = getMapFragment();
+						if(mapFragment != null)
+							mapFragment.addAlert(a);
 					}
 						
 				}
@@ -1205,9 +1209,13 @@ public class MainActivity extends FragmentActivity implements
 								}
 
 							}
-							AlertsListFragment fragment = getAlertsListFragment();
-							if (fragment != null)
-								fragment.addAlerts(alerts);
+							AlertsListFragment listFragment = getAlertsListFragment();
+							if (listFragment != null)
+								listFragment.addAlerts(alerts);
+							
+							GoogleMapFragment mapFragment = getMapFragment();
+							if (mapFragment != null)
+								mapFragment.setAlerts(alerts);
 							
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -1392,6 +1400,10 @@ public class MainActivity extends FragmentActivity implements
 				.findFragmentByTag(makeFragmentName(R.id.pager,1));	
 		return fragment;
 	}
-	
+	public GoogleMapFragment getMapFragment() {
+		GoogleMapFragment fragment = (GoogleMapFragment) getSupportFragmentManager()
+				.findFragmentByTag(makeFragmentName(R.id.pager,0));	
+		return fragment;
+	}
 	
 }

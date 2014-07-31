@@ -44,14 +44,12 @@ public class AlertsListFragment extends ListFragment implements
 	OnRedSelectListener mCallback;
 	private AlertsAdapter mAdapter;
 	private SwipeRefreshLayout mSwipe;
-	private BroadcastReceiver mBroadcast;
 
 	public static AlertsListFragment newInstance() {
 		AlertsListFragment fragment = new AlertsListFragment();
 		Bundle args = new Bundle();
 		args.putString("tag", TAG);
 		fragment.setArguments(args);
-		Log.i("NEW ALERST FRAGMENT","NEW LAELTRTS FRAG");
 		return fragment;
 	}
 
@@ -180,10 +178,9 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
+
 		super.onListItemClick(l, v, position, id);
-		Cursor c = ((CursorAdapter) l.getAdapter()).getCursor();
-		c.moveToPosition(position);
-		Alert a = new Alert(c);
+		Alert a = mAdapter.getItem(position);
 		mCallback.OnRedSelectedListener(a.getAreaId(), a.getTime());
 	}
 

@@ -51,4 +51,7 @@ public class Alert {
 	public boolean isPainted() {
 		return painted;
 	}
+	public void setPainted(boolean painted) {
+		this.painted = painted;
+	}
 }
