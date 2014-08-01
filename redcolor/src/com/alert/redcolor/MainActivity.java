@@ -293,8 +293,8 @@ public class MainActivity extends FragmentActivity implements
 				.setText(getString(R.string.latest_alerts))
 				.setTabListener(this));
 
-		actionBar.addTab(actionBar.newTab().setText(getString(R.string.stats))
-				.setTabListener(this));
+//		actionBar.addTab(actionBar.newTab().setText(getString(R.string.stats))
+//				.setTabListener(this));
 		
 		queryServer(0);
 	}
@@ -366,8 +366,8 @@ public class MainActivity extends FragmentActivity implements
 				return new GoogleMapFragment();
 			case 1:
 				return AlertsListFragment.newInstance();
-			case 2:
-				return new StatsFragment();
+/*			case 2:
+				return new StatsFragment();*/
 
 			default:
 				// The other sections of the app are dummy placeholders.
@@ -381,7 +381,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return 3;
+			return 2;
 		}
 
 		@Override
