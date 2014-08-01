@@ -1182,9 +1182,9 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void queryServer(final int page) {
-
-		
-		String url = Utils.SERVER_ALERTS + page+"/25";
+		Log.i("endless", "loadingMore Activity " + page);
+		setProgressBarIndeterminateVisibility(true);
+		String url = Utils.SERVER_ALERTS + (page*Utils.MAX_ENTRIES)+"/"+Utils.MAX_ENTRIES;
 		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
 				null, new Response.Listener<JSONObject>() {
 					@Override
@@ -1216,7 +1216,7 @@ public class MainActivity extends FragmentActivity implements
 							GoogleMapFragment mapFragment = getMapFragment();
 							if (mapFragment != null)
 								mapFragment.setAlerts(alerts);
-							
+							setProgressBarIndeterminateVisibility(false);
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

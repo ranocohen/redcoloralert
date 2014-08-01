@@ -6,14 +6,9 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
@@ -23,19 +18,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alert.redcolor.analytics.AnalyticsApp;
-import com.alert.redcolor.analytics.AnalyticsApp.TrackerName;
 import com.alert.redcolor.db.ProviderQueries;
 import com.alert.redcolor.model.Alert;
 import com.alert.redcolor.model.Area;
-import com.alert.redcolor.volley.JsonRequest;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.actions.ReserveIntents;
 
 public class AlertsListFragment extends ListFragment implements
 		OnScrollListener, OnRefreshListener {
@@ -59,9 +48,8 @@ public class AlertsListFragment extends ListFragment implements
 		getListView().setDivider(
 				getResources().getDrawable(R.drawable.fade_divider));
 		getListView().setDividerHeight(1);
-		getListView().setVerticalScrollBarEnabled(false);
+		getListView().setVerticalScrollBarEnabled(true);
 		getListView().setOnScrollListener(this);
-
 		mAdapter = new AlertsAdapter(getActivity(), R.id.location,
 				new ArrayList<Alert>());
 
@@ -93,13 +81,13 @@ public class AlertsListFragment extends ListFragment implements
 
 		public AlertsAdapter(Context context, int resource, List<Alert> alerts) {
 			super(context, resource, alerts);
-			page = 0;
+			page = 1;
 			isLoading = false;
 			this.alerts = alerts;
 		}
 
 		public void resetPage() {
-			this.page = 0;
+			this.page = 1;
 		}
 
 		public void increasePage() {
@@ -165,7 +153,7 @@ public class AlertsListFragment extends ListFragment implements
 
 		public void loadMore() {
 			setLoading(true);
-			((MainActivity)getActivity()).queryServer(getPage()+1);
+			((MainActivity)getActivity()).queryServer(getPage());
 			increasePage();
 		}
 
@@ -246,6 +234,7 @@ public class AlertsListFragment extends ListFragment implements
 	@Override
 	public void onRefresh() {
 		mAdapter.clear();
+		mAdapter.resetPage();
 		((MainActivity)getActivity()).queryServer(0);
 	}
 	public void addAlerts(ArrayList<Alert> alerts) {
