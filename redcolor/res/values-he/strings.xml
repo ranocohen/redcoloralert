@@ -45,7 +45,8 @@
     <string name="pref_alert_type_default">all</string>
     <string name="sucessfull_test">התרעת בדיקה!</string>
     <string name="test_connection_summery">התרעת בדיקה</string>
-    
+        <string name="start">התחלה</string>
+    <string name="end">סיום</string>
     <string-array name="pref_alert_type_enteries"></string-array>
     <string-array name="pref_alert_type_enteries">
         <item>כל ההתרעות</item>

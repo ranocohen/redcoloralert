@@ -58,7 +58,7 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="pref_enable_nightmode"
-            android:title="@string/alerts" />
+            android:title="@string/night_mode" />
         <com.alert.redcolor.ui.TimePreference
             android:key="night_mode_start"
             android:title="@string/start" 
