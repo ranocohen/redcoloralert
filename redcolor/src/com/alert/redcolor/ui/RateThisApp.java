@@ -43,11 +43,11 @@ public class RateThisApp {
 	/** 
 	 * Days after installation until showing rate dialog 
 	 */ 
-	public static final int INSTALL_DAYS = 7;
+	public static final int INSTALL_DAYS = 0;
 	/** 
 	 * App launching times until showing rate dialog 
 	 */ 
-	public static final int LAUNCH_TIMES = 10;
+	public static final int LAUNCH_TIMES = 3;
 
 
 	/** 
