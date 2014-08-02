@@ -165,7 +165,7 @@ public void onCreate() {
 
 						/* build content text */
 						for (int j = 0; j < cities.size(); j++) {
-							contentBuilder.append(cities.get(j).getHebName());
+							contentBuilder.append(cities.get(j).getName(getApplicationContext()));
 							if (j != cities.size() - 1)
 								contentBuilder.append(", ");
 						}
