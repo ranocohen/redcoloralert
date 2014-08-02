@@ -979,6 +979,7 @@ public class MainActivity extends FragmentActivity implements
 		DateTime now = new DateTime();
 		Period period = new Period(time, now);
 		int i = period.getMinutes();
+		
 
 		ProviderQueries pq = new ProviderQueries(getApplicationContext());
 		Location location = pq.getCities(id).get(0).getLocation();
@@ -1004,7 +1005,9 @@ public class MainActivity extends FragmentActivity implements
 		if (timeToShow > 10) {
 			timeToShow = 10;
 		}
-
+		
+		final int timeHolder = timeToShow;
+		
 		final long timeToShowMiliSec = 10 * 60 * 1000;
 		final LatLng latlng = new LatLng(location.getLatitude(),
 				location.getLongitude());
@@ -1015,6 +1018,9 @@ public class MainActivity extends FragmentActivity implements
 
 			@Override
 			public void onFinish() {
+				if(timeHolder<10)
+					return;
+				
 				if (timeToShowMiliSec != 0) {
 					drawAlertHotzone(latlng, "blue", timeToShowMiliSec);
 				}
