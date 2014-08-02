@@ -8,9 +8,9 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,33 +25,10 @@
                 android:layout_weight="2"
                 android:gravity="start"
                 android:paddingStart="9dp"
+                android:text="CCCCCCC"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:typeface="monospace" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:paddingEnd="9dp"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:paddingEnd="9dp"
-                    android:textSize="14sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -60,9 +37,38 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:paddingEnd="9dp"
-            android:text="CCCCCCC"
             android:paddingStart="9dp"
+            android:text="CCCCCCC"
             android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingStart="9dp"
+                android:text="CCCCCCC"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingEnd="9dp"
+                android:text="CCCCCCC"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <ImageView
