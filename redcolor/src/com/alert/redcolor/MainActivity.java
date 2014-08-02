@@ -1188,7 +1188,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void queryServer(final int page) {
-		Log.i("endless", "loadingMore Activity " + page);
+		//Log.i("endless", "loadingMore Activity " + page);
 		setProgressBarIndeterminateVisibility(true);
 		String url = Utils.SERVER_ALERTS + (page*Utils.MAX_ENTRIES)+"/"+Utils.MAX_ENTRIES;
 		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
@@ -1252,7 +1252,7 @@ public class MainActivity extends FragmentActivity implements
 
 		public Animator(final int time, Handler mHandler, double lat,
 				double lon, long sec) {
-			Log.i("TIME", "" + time);
+		//	Log.i("TIME", "" + time);
 			this.ANIMATE_SPEEED = time;
 			this.handler = mHandler;
 			this.sec = sec;

@@ -83,9 +83,9 @@ public class PreferencesUtils {
 		if(start.isAfter(end))
 			start = start.minusDays(1);
 		
-		Log.i("Night", ""+inNightMode);
-		Log.i("NightStart", start.toString());
-		Log.i("NightEnd", end.toString());
+	//	Log.i("Night", ""+inNightMode);
+	//	Log.i("NightStart", start.toString());
+	//	Log.i("NightEnd", end.toString());
 		
 		Interval inter = new Interval(start,end);
 		return (!inter.contains(alertTime));

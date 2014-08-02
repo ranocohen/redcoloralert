@@ -28,7 +28,7 @@ public class LocationService extends IntentService {
 			Location location = intent.getParcelableExtra(LocationClient.KEY_LOCATION_CHANGED);
 			
 			if(location !=null){
-				Log.i(TAG, "onHandleIntent " + location.getLatitude() + "," + location.getLongitude());
+		//		Log.i(TAG, "onHandleIntent " + location.getLatitude() + "," + location.getLongitude());
 				NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); 
 				Builder noti = new NotificationCompat.Builder(this);
 				noti.setContentTitle("Fused Location");
