@@ -1,7 +1,10 @@
 package com.alert.redcolor.model;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
 
@@ -71,6 +74,26 @@ public class City {
 	}
 	public void setAreaId(long areaId) {
 		this.areaId = areaId;
+	}
+	public String getName(Context context) {
+		String locale =Locale.getDefault().getLanguage().toString();
+		boolean hebLocale = false;
+		String regex = "^\"?(.[^\",]*)";
+		Pattern p = Pattern.compile(regex);
+		String[] projection = new String[] { CitiesColumns.name_en };
+		if (locale.equals("iw") || locale.equals("he")) {
+			hebLocale = true;
+		}
+		if(hebLocale) 
+			return getHebName();
+		else
+		{
+			String tmp ="";
+			Matcher m = p.matcher(getEngName());
+			if (m.find()) 
+			    tmp = m.group(1);
+			return tmp;
+		}
 	}
 	
 	
